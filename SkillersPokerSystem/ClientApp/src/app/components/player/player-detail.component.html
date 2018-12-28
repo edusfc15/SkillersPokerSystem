@@ -1,0 +1,35 @@
+<div class="container">
+</div>
+<div class="row">
+  <div class="col">
+    <label>Id</label>
+    {{player.Id}}
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <label>Nome</label>
+    {{player.Name}}
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <label>Criado em:</label>
+    {{player.CreatedDate}}
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <label>Primeira partida</label>
+    {{player.FirstGameDate}}
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <label>Ultima partida</label>
+    {{player.LastGameDate}}
+  </div>
+</div>
+
+<button class="btn btn-info" (click)="onEdit()">Editar</button>
+<button class="btn btn-info" (click)="onBack()" >Voltar</button>

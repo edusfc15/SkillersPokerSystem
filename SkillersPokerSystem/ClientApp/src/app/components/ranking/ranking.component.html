@@ -1,0 +1,66 @@
+<div class="container">
+
+  <div class="row">
+    <div class="col text-right">
+      <label>Escolha o ano:</label>
+      <select (change)="onChangeYear($event.target.value)" class="form-control">
+        <option *ngFor="let year of years; let yIndex = index">{{year.number}}</option>
+      </select>
+    </div>
+    <div class="col">
+      <label *ngIf="showLastMonths">Mostrar últimos:</label>
+      <select *ngIf="showLastMonths" (change)="onChangeMonths($event.target.selectedOptions)" class="form-control">
+        <option selected>1 mês</option>
+        <option *ngFor="let month of months; let mIndex = index">{{month.number}} meses</option>
+      </select>
+    </div>
+
+  </div>
+
+  <hr />
+
+
+  <table class="table table-hover table-responsive">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Nome</th>
+        <th *ngIf="showMonths.Show1" scope="col">Janeiro</th>
+        <th *ngIf="showMonths.Show2" scope="col">Fevereiro</th>
+        <th *ngIf="showMonths.Show3" scope="col">Março</th>
+        <th *ngIf="showMonths.Show4" scope="col">Abril</th>
+        <th *ngIf="showMonths.Show5" scope="col">Maio</th>
+        <th *ngIf="showMonths.Show6" scope="col">Junho</th>
+        <th *ngIf="showMonths.Show7" scope="col">Julho</th>
+        <th *ngIf="showMonths.Show8" scope="col">Agosto</th>
+        <th *ngIf="showMonths.Show9" scope="col">Setembro</th>
+        <th *ngIf="showMonths.Show10" scope="col">Outubro</th>
+        <th *ngIf="showMonths.Show11" scope="col">Novembro</th>
+        <th *ngIf="showMonths.Show12" scope="col">Dezembro</th>
+        <th scope="col">Total Geral</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let rt of rankingTotal; let rtIndex = index">
+        <th scope="row">{{rtIndex+1}}</th>
+        <td>{{rt.Name}}</td>
+        <td *ngIf="showMonths.Show1">{{rt.Janeiro | currency:'BRL'}}</td>
+        <td *ngIf="showMonths.Show2">{{rt.Fevereiro | currency:'BRL'}}</td>
+        <td *ngIf="showMonths.Show3">{{rt.Marco | currency:'BRL'}}</td>
+        <td *ngIf="showMonths.Show4">{{rt.Abril | currency:'BRL'}}</td>
+        <td *ngIf="showMonths.Show5">{{rt.Maio | currency:'BRL'}}</td>
+        <td *ngIf="showMonths.Show6">{{rt.Junho | currency:'BRL'}}</td>
+        <td *ngIf="showMonths.Show7">{{rt.Julho | currency:'BRL'}}</td>
+        <td *ngIf="showMonths.Show8">{{rt.Agosto | currency:'BRL'}}</td>
+        <td *ngIf="showMonths.Show9">{{rt.Setembro | currency:'BRL'}}</td>
+        <td *ngIf="showMonths.Show10">{{rt.Outubro | currency:'BRL'}}</td>
+        <td *ngIf="showMonths.Show11">{{rt.Novembro | currency:'BRL'}}</td>
+        <td *ngIf="showMonths.Show12">{{rt.Dezembro | currency:'BRL'}}</td>
+        <td>{{rt.Total | currency:'BRL'}}</td>
+      </tr>
+
+    </tbody>
+  </table>
+</div>
+
+

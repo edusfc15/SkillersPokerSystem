@@ -1,0 +1,32 @@
+<table class="table table-hover table-responsive">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Nome</th>
+      <th scope="col">Criado em:</th>
+      <th scope="col">Primeira partida:</th>
+      <th scope="col">Ultima partida:</th>
+      <th scope="col">Ativo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let player of players" (click)="onSelect(player)" >
+      <th scope="row">{{player.Id}}</th>
+      <td>{{player.Name}}</td>
+      <td>{{player.CreatedDate | date:'dd/MM/yyyy'}}</td>
+      <td>{{player.FirstGameDate | date:'dd/MM/yyyy'}}</td>
+      <td>{{player.LastGameDate | date:'dd/MM/yyyy'}}</td>
+      <td>
+        <div class="form-group">
+          <span class="switch switch-sm">
+            <input [ngModel]="player.IsActive" type="checkbox" class="switch">
+            <label></label>
+          </span>
+        </div>
+      </td>
+    </tr>
+
+  </tbody>
+</table>
+
+<button class="btn btn-success" [routerLink]="['/player/create']" > Adicionar Jogador</button>

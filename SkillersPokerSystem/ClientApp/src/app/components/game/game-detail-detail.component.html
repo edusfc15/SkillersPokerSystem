@@ -1,0 +1,29 @@
+<div class="container">
+  <table class="table table-hover table-responsive ">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Data e Hora</th>
+        <th scope="col">Nome</th>
+        <th scope="col">Rebuy</th>
+        <th scope="col">Cash Out</th>
+        <th scope="col" *ngIf="gameStatus">Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let gameDetail of gameDetails">
+        <th>{{gameDetail.Id}}</th>
+        <td>{{gameDetail.CreatedDate | date:'dd/MM/yyyy - hh:mm:ss '}}</td>
+        <td>{{gameDetail.Name}}</td>
+        <td>{{gameDetail.Value | currency:'BRL' }}</td>
+        <td>{{gameDetail.ChipsTotal | currency:'BRL' }}</td>
+        <td *ngIf="gameStatus"><button class="btn btn-danger" (click)="onDelete(gameDetail)">X</button></td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <button class="btn btn-info" (click)="onBack()">Voltar</button>
+
+</div>
+

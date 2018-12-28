@@ -1,0 +1,47 @@
+
+<div class="container">
+  <table class="table table-responsive">
+    <thead>
+      <tr>
+        <th scope="col">Nome</th>
+        <th scope="col">Rebuys</th>
+        <th scope="col">Total de Fichas</th>
+        <th scope="col">Fichas - Rebuy</th>
+        <th scope="col">Rake</th>
+        <th scope="col">Total</th>
+        <th scope="col">Lucro/Perda</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let gameDetail of gameDetails">
+        <th scope="row">{{gameDetail.Name}}</th>
+        <td>{{gameDetail.Value | currency : 'BRL'}}</td>
+        <td>{{gameDetail.ChipsTotal | currency : 'BRL' }}</td>
+        <td>{{gameDetail.Result | currency : 'BRL' }} </td>
+        <td>{{gameDetail.Rake | currency : 'BRL'}}</td>
+        <td>{{gameDetail.Total | currency : 'BRL'   }}</td>
+        <td>{{gameDetail.ProfitOrLoss | currency : 'BRL'  }}</td>
+        <td>
+          <button type="button" *ngIf="gameStatus"  [routerLink]="['/gameDetail/create','buy-in', this.game.Id, gameDetail.PlayerId]" class="btn btn-success">+</button>
+          <button type="button" *ngIf="gameStatus " [routerLink]="['/gameDetail/create','cash-out', this.game.Id, gameDetail.PlayerId]" class="btn btn-info">></button>
+        </td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr *ngFor="let tr of totalResult">
+        <td></td>
+        <td>{{tr.Rebuys | currency : 'BRL'}}</td>
+        <td>{{tr.CashOut | currency : 'BRL'}}</td>
+        <td>{{tr.Integrity | currency : 'BRL'}}</td>
+        <td>{{tr.Rake | currency : 'BRL'}}</td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tfoot>
+  </table>
+  <button type="button" [routerLink]="['/home']" class="btn btn-info">Voltar</button>
+  <button type="button" [routerLink]="['/gameDetail/create','buy-in', this.game.Id, 1]" *ngIf="gameStatus " class="btn btn-info">Adicionar Buy in</button>
+  <button type="button" (click)="onSelect(game)" class="btn btn-info">Detalhar Buy ins</button>
+  <button type="button" [disabled]="tempTotalResult.Rebuys !=  tempTotalResult.CashOut" *ngIf="gameStatus "(click)="endGame(game)" class="btn btn-danger"  >Finalizar</button>
+</div>

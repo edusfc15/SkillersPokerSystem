@@ -1,0 +1,36 @@
+<div class="container">
+  <table class="table table-hover table-responsive">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Data</th>
+        <th scope="col">Nº de Jogadores</th>
+        <th scope="col">Total da Partida</th>
+        <th scope="col">Vencedor</th>
+        <th scope="col">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let game of games" (click)="onSelect(game)">
+        <th scope="row">{{game.GameId}}</th>
+        <td>{{game.Date | date:'dd/MM/yyyy'}}</td>
+        <td>{{game.NumberOfPlayers}}</td>
+        <td>{{game.Total | currency:'BRL'}}</td>
+        <td>{{game.Winner}}</td>
+        <td>{{game.Status}}</td>
+      </tr>
+
+    </tbody>
+  </table>
+  <nav aria-label="Page navigation example">
+    <ul class="pagination">
+      <li class="page-item"><a class="page-link" href="#">Anterior</a></li>
+      <li class="page-item"><a class="page-link" href="#">1</a></li>
+      <li class="page-item"><a class="page-link" href="#">2</a></li>
+      <li class="page-item"><a class="page-link" href="#">3</a></li>
+      <li class="page-item"><a class="page-link" href="#">Proximo</a></li>
+    </ul>
+  </nav>
+</div>
+
+
