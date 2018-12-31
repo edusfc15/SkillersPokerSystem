@@ -229,3 +229,12 @@ _Pvt_Extensions
 
 # FAKE - F# Make
 .fake/
+
+# ignore appsettings
+
+**/appsettings.production.json
+
+# ignore connectionstrings
+
+**/connectionstrings.production.json
+
