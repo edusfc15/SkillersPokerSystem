@@ -81,11 +81,11 @@ namespace SkillersPokerSystem.Controllers
 
             var latest = DbContext.GameDetails
                 .Include(g => g.Game)
-                .GroupBy(g => new { g.GameId, g.Game.Date, g.Game.Status })
+                .GroupBy(g => new { g.GameId, g.Game.CreatedDate, g.Game.Status })
                 .Select( a => new
                 {
                     a.Key.GameId,
-                    a.Key.Date,
+                    a.Key.CreatedDate,
                     a.Key.Status,
                     NumberOfPlayers = a.GroupBy(s => s.PlayerId).Count(),
                     Total = a.Sum(i => i.Value),
@@ -98,7 +98,7 @@ namespace SkillersPokerSystem.Controllers
                 
                 
                 )
-                .OrderByDescending( x => x.Date)
+                .OrderByDescending( x => x.CreatedDate)
                 .Take(num)
                 .ToArray();
 
@@ -115,23 +115,54 @@ namespace SkillersPokerSystem.Controllers
 
             int yearForRanking = int.Parse(year);
 
-            var rankingTotal = DbContext.GameDetails
-                .Where(d => d.CreatedDate.Year == yearForRanking)
+            IOrderedQueryable model;
+
+            if (yearForRanking == DateTime.Now.Year)
+            {
+                var rankingTotal = DbContext.GameDetails
+                .Where(d => d.CreatedDate.Year == yearForRanking && d.Player.IsActive == true)
                 .GroupBy(x => new { x.Player.Name, x.CreatedDate.Year })
-                .Select(x => new { x.Key.Name, Month = 13 , x.Key.Year, Total = x.Sum(f => f.ChipsTotal) - x.Sum(f => f.Value) })
-                .OrderByDescending( s=> (s.Total) )
+                .Select(x => new { x.Key.Name, Month = 13, x.Key.Year, Total = x.Sum(f => f.ChipsTotal) - x.Sum(f => f.Value) })
+                .OrderByDescending(s => (s.Total))
                 ;
 
 
-            var ranking = DbContext.GameDetails
-                .Where( d => d.CreatedDate.Year == yearForRanking)
-                .GroupBy( x => new { x.Player.Name , x.CreatedDate.Year, x.CreatedDate.Month } )
-                .Select( x => new {  x.Key.Name, x.Key.Month, x.Key.Year , Total = x.Sum( f => f.ChipsTotal) - x.Sum( f => f.Value )  } )
-                .Union(rankingTotal)
-                .OrderBy( z => z.Year   ).ThenBy( z=> z.Month)
+                var ranking = DbContext.GameDetails
+                    .Where(d => d.CreatedDate.Year == yearForRanking && d.Player.IsActive == true)
+                    .GroupBy(x => new { x.Player.Name, x.CreatedDate.Year, x.CreatedDate.Month })
+                    .Select(x => new { x.Key.Name, x.Key.Month, x.Key.Year, Total = x.Sum(f => f.ChipsTotal) - x.Sum(f => f.Value) })
+                    .Union(rankingTotal)
+                    .OrderBy(z => z.Year).ThenBy(z => z.Month)
+                    ;
+
+                model = ranking;
+            }
+            else
+            {
+
+                var rankingTotal = DbContext.GameDetails
+                .Where(d => d.CreatedDate.Year == yearForRanking )
+                .GroupBy(x => new { x.Player.Name, x.CreatedDate.Year })
+                .Select(x => new { x.Key.Name, Month = 13, x.Key.Year, Total = x.Sum(f => f.ChipsTotal) - x.Sum(f => f.Value) })
+                .OrderByDescending(s => (s.Total))
                 ;
 
-            return new JsonResult(ranking.Adapt<RankingViewModel[]>(), JsonSettings);
+
+                var ranking = DbContext.GameDetails
+                    .Where(d => d.CreatedDate.Year == yearForRanking )
+                    .GroupBy(x => new { x.Player.Name, x.CreatedDate.Year, x.CreatedDate.Month })
+                    .Select(x => new { x.Key.Name, x.Key.Month, x.Key.Year, Total = x.Sum(f => f.ChipsTotal) - x.Sum(f => f.Value) })
+                    .Union(rankingTotal)
+                    .OrderBy(z => z.Year).ThenBy(z => z.Month)
+                    ;
+
+                model = ranking;
+
+            }            
+
+            
+
+            return new JsonResult(model.Adapt<RankingViewModel[]>(), JsonSettings);
         }
 
         [HttpPost]

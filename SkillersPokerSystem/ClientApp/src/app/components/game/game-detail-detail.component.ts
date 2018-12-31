@@ -20,7 +20,9 @@ export class GameDetailDetailComponent {
     private activatedRoute: ActivatedRoute,
     private http: HttpClient,
     @Inject('BASE_URL') private baseUrl: string,
-    private router: Router) {
+    private router: Router,
+    public auth: AuthService
+  ) {
 
     this.gameDetails = [];
 

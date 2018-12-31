@@ -73,8 +73,8 @@ export class GameDetailEditComponent {
             this.fb.group(
               {
                 PlayerId: this.routePlayerId,
-                Value: 0,
-                ChipsTotal: 0
+                Value: [(this.isBuyIn) ? 5 : 0, (this.isBuyIn) ? Validators.min(5) : 0 ],
+                ChipsTotal: (this.isBuyIn) ? 0 : Validators.min(5),
               }
             )
           ])
@@ -85,8 +85,7 @@ export class GameDetailEditComponent {
 
 
   addGameDetails() {
-    this.gameDetails.push(this.fb.group({ PlayerId: '', ChipsTotal: 0, Value: 0  }));
-
+    this.gameDetails.push(this.fb.group({ PlayerId: '', ChipsTotal: 0, Value: 0 }));
   }
 
   deleteGameDetails(index) {

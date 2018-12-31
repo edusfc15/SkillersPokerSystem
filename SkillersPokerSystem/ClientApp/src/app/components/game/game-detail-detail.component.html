@@ -17,7 +17,7 @@
         <td>{{gameDetail.Name}}</td>
         <td>{{gameDetail.Value | currency:'BRL' }}</td>
         <td>{{gameDetail.ChipsTotal | currency:'BRL' }}</td>
-        <td *ngIf="gameStatus"><button class="btn btn-danger" (click)="onDelete(gameDetail)">X</button></td>
+        <td *ngIf="auth.isLoggedIn() && gameStatus"><button class="btn btn-danger" (click)="onDelete(gameDetail)">X</button></td>
       </tr>
 
     </tbody>

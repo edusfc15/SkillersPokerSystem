@@ -2,6 +2,7 @@
 import { Component, Inject } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'player-list',
@@ -15,10 +16,17 @@ export class PlayerListComponent {
   constructor(
     private http: HttpClient,
     @Inject('BASE_URL') private baseUrl: string,
-    private router : Router
+    private router: Router,
+    public auth: AuthService
   ) {
 
     this.players = [];
+    this.loadData();
+    
+
+  }
+
+  loadData() {
 
     var url = this.baseUrl + '/api/player/all'
 
@@ -34,5 +42,14 @@ export class PlayerListComponent {
 
     this.router.navigate(["/player-detail", player.Id]);
 
+  }
+
+  onActive() {
+    var url = this.baseUrl + 'api/player/setActive';
+
+    this.http.get(url).subscribe(
+      res => {
+        this.loadData();
+    })
   }
 }

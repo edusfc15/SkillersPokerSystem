@@ -48,6 +48,7 @@ namespace SkillersPokerSystem.Controllers
                     ProfitOrLoss = p.Sum(i => i.ChipsTotal) - (p.Sum(i => i.ChipsTotal) * rakePercent) - p.Sum(i => i.Value),
                     PlayerId = p.Max( x => x.PlayerId)
                 })
+                .OrderByDescending( x => x.ProfitOrLoss )
                 .ToArray();
 
 
@@ -62,7 +63,7 @@ namespace SkillersPokerSystem.Controllers
         public IActionResult Put([FromBody]List<GameDetailViewModel> model)
         {
 
-            if (model == null) return new StatusCodeResult(500);
+            //if (model == null) return new StatusCodeResult(500);
 
 
             var authorId = DbContext.Users
@@ -70,14 +71,40 @@ namespace SkillersPokerSystem.Controllers
                 .FirstOrDefault()
                 .Id;
 
+            var lastGames = DbContext
+                .GameDetails
+                .GroupBy(g => new { g.GameId, g.CreatedDate })
+                .OrderByDescending(s => s.Max().CreatedDate)
+                .Take(5)
+                .Select(x => x.Key.GameId)
+                .ToList();
+
+            var activePlayers = DbContext.GameDetails
+                .Where(a => lastGames.Contains( a.GameId) )
+                .GroupBy(a => a.PlayerId)
+                .Select( a => a.Key )
+                .ToList()
+                ;
+
+            DbContext.Database.ExecuteSqlCommand("UPDATE Players SET IsActive = 0");
+
+            foreach (var player in activePlayers)
+            {
+
+                var tmpPlayer = DbContext.Players.Where( x => x.Id == player).FirstOrDefault();
+                tmpPlayer.IsActive = true;
+
+                DbContext.SaveChanges();
+
+            }
+
 
             var game = new Game()
             {
                 UserId = authorId,
-                Date = DateTime.Now,
-                RakeId = 1,
-                ViewCount = 0,
                 CreatedDate = DateTime.Now,
+                RakeId = DbContext.Rakes.LastOrDefault().Id,
+                ViewCount = 0,
                 Status = StatusEnum.Aberto
             };
 

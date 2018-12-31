@@ -10,7 +10,7 @@ namespace SkillersPokerSystem.ViewModels
     {
         public int Id { get; set; }
         public int GameId { get; set; }
-        public DateTime Date { get; set; }
+        public DateTime CreatedDate { get; set; }
         public int NumberOfPlayers { get; set; }
         public int Total { get; set; }
         public string Winner { get; set; }

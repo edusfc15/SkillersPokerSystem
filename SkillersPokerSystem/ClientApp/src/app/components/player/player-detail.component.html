@@ -31,5 +31,5 @@
   </div>
 </div>
 
-<button class="btn btn-info" (click)="onEdit()">Editar</button>
+<button *ngIf="auth.isLoggedIn()" class="btn btn-info" (click)="onEdit()">Editar</button>
 <button class="btn btn-info" (click)="onBack()" >Voltar</button>

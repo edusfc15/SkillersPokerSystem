@@ -10,7 +10,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let player of players" (click)="onSelect(player)" >
+    <tr *ngFor="let player of players" (click)="onSelect(player)">
       <th scope="row">{{player.Id}}</th>
       <td>{{player.Name}}</td>
       <td>{{player.CreatedDate | date:'dd/MM/yyyy'}}</td>
@@ -29,4 +29,5 @@
   </tbody>
 </table>
 
-<button class="btn btn-success" [routerLink]="['/player/create']" > Adicionar Jogador</button>
+<button *ngIf="auth.isLoggedIn()" class="btn btn-success m-2" [routerLink]="['/player/create']"> Adicionar Jogador</button>
+<button *ngIf="auth.isLoggedIn()" class="btn btn-info m-2" (click)="onActive()"> Ativar Jogadores Frequentes</button>

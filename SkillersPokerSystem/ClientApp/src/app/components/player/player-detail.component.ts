@@ -2,6 +2,7 @@
 import { Component, Inject } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { ActivatedRoute, Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'player-detail',
@@ -15,7 +16,8 @@ export class PlayerDetailComponent {
     private http: HttpClient,
     @Inject('BASE_URL') private baseUrl: string,
     private activatedRoute: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    public auth: AuthService
   ) {
 
     this.player = <Player>{ };

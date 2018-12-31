@@ -20,9 +20,12 @@ export class GameDetailListComponent implements OnChanges  {
   gameStatus: boolean;
   tempTotalResult: TotalGameDetail;
 
-  constructor(private http: HttpClient,
+  constructor(
+    private http: HttpClient,
     @Inject('BASE_URL') private baseUrl: string,
-    private router: Router) {
+    private router: Router,
+    public auth: AuthService,
+  ) {
 
     this.gameDetails = [];
     this.totalOfGameDetail = [];
