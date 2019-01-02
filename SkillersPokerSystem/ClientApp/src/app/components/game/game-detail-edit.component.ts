@@ -74,7 +74,7 @@ export class GameDetailEditComponent {
               {
                 PlayerId: this.routePlayerId,
                 Value: [(this.isBuyIn) ? 5 : 0, (this.isBuyIn) ? Validators.min(5) : 0 ],
-                ChipsTotal: (this.isBuyIn) ? 0 : Validators.min(5),
+                ChipsTotal: [(this.isBuyIn) ? 0 : 0.25, (this.isBuyIn) ? 0 : Validators.min(0.25)],
               }
             )
           ])

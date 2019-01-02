@@ -17,7 +17,7 @@ export class LoginComponent {
     private authService: AuthService,
     @Inject('BASE_URL') private baseUrl: string) {
 
-    this.title = "User Login";
+    this.title = "Faça o login";
 
     // initialize the form
     this.createForm();

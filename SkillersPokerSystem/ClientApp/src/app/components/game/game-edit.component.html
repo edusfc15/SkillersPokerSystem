@@ -11,11 +11,15 @@
 
 
     <div formArrayName="gameDetailsArray">
-      <div *ngFor="let item of gameDetails.controls; let gdIndex=index" [formGroupName]="gdIndex" class="form-inline">
+      <div *ngIf="this.gameDetails.value.length == 0">
+        Ops... Não tem ninguem pra ver um flopinho?
+      </div>
+      <div *ngFor="let item of gameDetails.controls; let gdIndex=index" [formGroupName]="gdIndex">
+        <hr />
         <div class="row">
           <div class="form-group col">
             <label>Jogador:</label>
-            <select formControlName="PlayerId" class="form-control">
+            <select formControlName="PlayerId" required class="form-control">
               <option value="">Escolha um jogador...</option>
               <option *ngFor="let player of players; let pIndex = index" [value]="player.Id">{{ player.Name}}</option>
             </select>
@@ -28,19 +32,19 @@
           </div>
 
           <div class="form-group col">
-
+            <label>R$</label>
             <input formControlName="Value" value="{{ this.gameDetails.controls[gdIndex].value.Value}}" class="form-control" type="number" min="5" max="1000" step="5">
 
           </div>
+          <button type="button" class="btn btn-danger m-2" (click)="deleteGameDetails(gdIndex)">X</button>
         </div>
 
-        <button type="button" class="btn btn-danger m-2" (click)="deleteGameDetails(gdIndex)">X</button>
 
       </div>
       <button type="button" class="btn btn-info m-2" (click)="addGameDetails()">Adicionar jogador</button>
     </div>
 
-    <button type="button" class="btn btn-success m-2" (click)="startGame(this.gameDetails)">Iniciar</button>
+    <button type="button" class="btn btn-success m-2" (click)="startGame(this.gameDetails)" [disabled]="this.gameDetails.value.length == 0 || gameForm.invalid">Iniciar</button>
 
   </form>
 

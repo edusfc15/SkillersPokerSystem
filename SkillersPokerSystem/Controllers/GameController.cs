@@ -117,7 +117,7 @@ namespace SkillersPokerSystem.Controllers
 
             IOrderedQueryable model;
 
-            if (yearForRanking == DateTime.Now.Year)
+            if (yearForRanking == DateTime.UtcNow.Year)
             {
                 var rankingTotal = DbContext.GameDetails
                 .Where(d => d.CreatedDate.Year == yearForRanking && d.Player.IsActive == true)
@@ -182,7 +182,7 @@ namespace SkillersPokerSystem.Controllers
 
 
             game.Status = StatusEnum.Encerrado;
-            game.LastModifiedDate = DateTime.Now;
+            game.LastModifiedDate = DateTime.UtcNow;
                         
 
             DbContext.SaveChanges();

@@ -60,7 +60,7 @@ export class GameDetailDetailComponent {
 
   onDelete(gameDetail: GameDetail) {
 
-    if ("Tem certeza que deseja excluir o detalhe?") {
+    if (confirm("Tem certeza que deseja excluir o detalhe?")) {
 
       var url = this.baseUrl + 'api/gamedetail/' + gameDetail.Id;
 

@@ -13,7 +13,7 @@
     <tbody>
       <tr *ngFor="let gameDetail of gameDetails">
         <th>{{gameDetail.Id}}</th>
-        <td>{{gameDetail.CreatedDate | date:'dd/MM/yyyy - hh:mm:ss '}}</td>
+        <td>{{gameDetail.CreatedDate | date:'dd/MM/yyyy - HH:mm:ss zzzz'}}</td>
         <td>{{gameDetail.Name}}</td>
         <td>{{gameDetail.Value | currency:'BRL' }}</td>
         <td>{{gameDetail.ChipsTotal | currency:'BRL' }}</td>

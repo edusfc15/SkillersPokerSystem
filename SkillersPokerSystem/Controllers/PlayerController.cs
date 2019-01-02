@@ -131,7 +131,7 @@ namespace SkillersPokerSystem.Controllers
                 .FirstOrDefault()
                 .Id;
 
-            player.CreatedDate = DateTime.Now;
+            player.CreatedDate = DateTime.UtcNow;
             player.LastModifiedDate = player.CreatedDate;
 
             player.UserId = authorId;
@@ -167,7 +167,7 @@ namespace SkillersPokerSystem.Controllers
 
             player.Name = model.Name;
             player.IsActive = model.IsActive;;
-            player.LastModifiedDate = DateTime.Now;
+            player.LastModifiedDate = DateTime.UtcNow;
 
             DbContext.SaveChanges();
 

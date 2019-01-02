@@ -102,7 +102,7 @@ namespace SkillersPokerSystem.Controllers
             var game = new Game()
             {
                 UserId = authorId,
-                CreatedDate = DateTime.Now,
+                CreatedDate = DateTime.UtcNow,
                 RakeId = DbContext.Rakes.LastOrDefault().Id,
                 ViewCount = 0,
                 Status = StatusEnum.Aberto
@@ -116,7 +116,7 @@ namespace SkillersPokerSystem.Controllers
             foreach (var gameDetailvm in model)
             {
                 var gameDetail = gameDetailvm.Adapt<GameDetail>();
-                gameDetail.CreatedDate = DateTime.Now;
+                gameDetail.CreatedDate = DateTime.UtcNow;
                 gameDetail.GameId = game.Id;
                 DbContext.GameDetails.Add(gameDetail);
                 DbContext.SaveChanges();
@@ -137,7 +137,7 @@ namespace SkillersPokerSystem.Controllers
             foreach (var gameDetailvm in model)
             {
                 var gameDetail = gameDetailvm.Adapt<GameDetail>();
-                gameDetail.CreatedDate = DateTime.Now;
+                gameDetail.CreatedDate = DateTime.UtcNow;
                 gameDetail.GameId = gameId;
                 DbContext.GameDetails.Add(gameDetail);
                 DbContext.SaveChanges();

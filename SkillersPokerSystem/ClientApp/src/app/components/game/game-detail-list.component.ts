@@ -7,7 +7,8 @@ import { template } from "@angular/core/src/render3";
 
 @Component({
   selector: "game-detail-list",
-  templateUrl: './game-detail-list.component.html'
+  templateUrl: './game-detail-list.component.html',
+  styleUrls:['game-detail-list.component.css']
 })
 
 export class GameDetailListComponent implements OnChanges  {

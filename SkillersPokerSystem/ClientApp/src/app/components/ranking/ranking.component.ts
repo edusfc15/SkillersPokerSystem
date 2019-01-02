@@ -76,7 +76,7 @@ export class RankingComponent {
     var headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
 
-    var thisYear = new Date(2018, 4).getFullYear();
+    var thisYear = new Date().getFullYear();
 
     this.rankingTotal = [];
 

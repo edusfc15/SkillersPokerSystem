@@ -50,7 +50,7 @@ namespace SkillersPokerSystem.Data
         {
             // local variables
             DateTime createdDate = new DateTime(2018, 03, 01, 12, 30, 00);
-            DateTime lastModifiedDate = DateTime.Now;
+            DateTime lastModifiedDate = DateTime.UtcNow;
 
             string role_Administrator = "Administrator";
             string role_RegisteredUser = "RegisteredUser";
@@ -77,7 +77,7 @@ namespace SkillersPokerSystem.Data
             // Insert "Admin" into the Database and assign the "Administrator" and "Registered" roles to him.
             if (await userManager.FindByIdAsync(user_Admin.Id) == null)
             {
-                await userManager.CreateAsync(user_Admin, "Pass4Admin");
+                await userManager.CreateAsync(user_Admin, "@SkillerS19");
                 await userManager.AddToRoleAsync(user_Admin, role_RegisteredUser);
                 await userManager.AddToRoleAsync(user_Admin, role_Administrator);
                 // Remove Lockout and E-Mail confirmation.
@@ -95,7 +95,7 @@ namespace SkillersPokerSystem.Data
 
             dbContext.Database.SetCommandTimeout(360);
 
-            DateTime lastModifiedDate = DateTime.Now;
+            DateTime lastModifiedDate = DateTime.UtcNow;
             // retrieve the admin user, which we'll use as default author.
             var authorId = dbContext.Users
                 .Where(u => u.UserName == "Admin")
@@ -245,7 +245,7 @@ namespace SkillersPokerSystem.Data
                  thePlayer.CreatedDate = CreateDate;
                 thePlayer.ViewCount = 0;
                 thePlayer.UserId = adminId;
-                thePlayer.LastModifiedDate = DateTime.Now;
+                thePlayer.LastModifiedDate = DateTime.UtcNow;
 
                 dbContext.Database.OpenConnection();
                 dbContext.Add(thePlayer);

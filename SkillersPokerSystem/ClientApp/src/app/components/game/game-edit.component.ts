@@ -1,5 +1,5 @@
 import { Component, Inject } from "@angular/core";
-import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
+import { FormGroup, FormBuilder, FormArray, Validators, SelectControlValueAccessor } from '@angular/forms';
 import { ActivatedRoute, Router } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
 import { interval, Observable } from "rxjs";
@@ -89,8 +89,8 @@ export class GameEditComponent {
           [
             this.fb.group(
               {
-                PlayerId: '',
-                Value: 0
+                PlayerId: ['', Validators.required],
+                Value: [5, Validators.min(5) ]
               }
             )
           ])
@@ -100,7 +100,7 @@ export class GameEditComponent {
 
 
   addGameDetails() {
-    this.gameDetails.push(this.fb.group({ PlayerId: '', Value: 0 }));
+    this.gameDetails.push(this.fb.group({ PlayerId: '', Value: [5, Validators.min(5) ] }));
 
   }
 

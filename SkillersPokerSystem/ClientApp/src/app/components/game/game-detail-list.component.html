@@ -3,6 +3,7 @@
   <table class="table table-responsive">
     <thead>
       <tr>
+        <th *ngIf="auth.isLoggedIn()"></th>
         <th scope="col">Nome</th>
         <th scope="col">Rebuys</th>
         <th scope="col">Total de Fichas</th>
@@ -10,33 +11,32 @@
         <th scope="col">Rake</th>
         <th scope="col">Total</th>
         <th scope="col">Lucro/Perda</th>
-        <th *ngIf="auth.isLoggedIn()"></th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let gameDetail of gameDetails">
-        <th scope="row">{{gameDetail.Name}}</th>
-        <td>{{gameDetail.Value | currency : 'BRL'}}</td>
-        <td>{{gameDetail.ChipsTotal | currency : 'BRL' }}</td>
-        <td>{{gameDetail.Result | currency : 'BRL' }} </td>
-        <td>{{gameDetail.Rake | currency : 'BRL'}}</td>
-        <td>{{gameDetail.Total | currency : 'BRL'   }}</td>
-        <td>{{gameDetail.ProfitOrLoss | currency : 'BRL'  }}</td>
-        <td *ngIf="auth.isLoggedIn()">
-          <button type="button" *ngIf="gameStatus"  [routerLink]="['/gameDetail/create','buy-in', this.game.Id, gameDetail.PlayerId]" class="btn btn-success m-1">+</button>
+        <td class="text-nowrap" *ngIf="auth.isLoggedIn()">
+          <button type="button" *ngIf="gameStatus" [routerLink]="['/gameDetail/create','buy-in', this.game.Id, gameDetail.PlayerId]" class="btn btn-success m-1">+</button>
           <button type="button" *ngIf="gameStatus " [routerLink]="['/gameDetail/create','cash-out', this.game.Id, gameDetail.PlayerId]" class="btn btn-info m-1">></button>
         </td>
+        <td class="text-nowrap">{{gameDetail.Name}}</td>
+        <td class="text-nowrap">{{gameDetail.Value | currency : 'BRL'}}</td>
+        <td class="text-nowrap">{{gameDetail.ChipsTotal | currency : 'BRL' }}</td>
+        <td class="text-nowrap">{{gameDetail.Result | currency : 'BRL' }} </td>
+        <td class="text-nowrap">{{gameDetail.Rake | currency : 'BRL'}}</td>
+        <td class="text-nowrap">{{gameDetail.Total | currency : 'BRL'   }}</td>
+        <td class="text-nowrap">{{gameDetail.ProfitOrLoss | currency : 'BRL'  }}</td>
+
       </tr>
     </tbody>
     <tfoot>
       <tr *ngFor="let tr of totalResult">
         <td></td>
-        <td>{{tr.Rebuys | currency : 'BRL'}}</td>
-        <td>{{tr.CashOut | currency : 'BRL'}}</td>
-        <td>{{tr.Integrity | currency : 'BRL'}}</td>
-        <td>{{tr.Rake | currency : 'BRL'}}</td>
-        <td></td>
-        <td></td>
+        <td class="text-nowrap">{{tr.Rebuys | currency : 'BRL'}}</td>
+        <td class="text-nowrap">{{tr.CashOut | currency : 'BRL'}}</td>
+        <td class="text-nowrap">{{tr.Integrity | currency : 'BRL'}}</td>
+        <td class="text-nowrap">{{tr.Rake | currency : 'BRL'}}</td>
+
       </tr>
     </tfoot>
   </table>
@@ -45,3 +45,5 @@
   <button type="button" (click)="onSelect(game)" class="btn btn-info m-2">Detalhar Buy ins</button>
   <button *ngIf="auth.isLoggedIn() && gameStatus" class="btn btn-danger m-2" type="button" [disabled]="tempTotalResult.Rebuys !=  tempTotalResult.CashOut" (click)="endGame(game)"   >Finalizar</button>
 </div>
+
+

@@ -14,7 +14,7 @@
       <input type="text" required
              formControlName="Username"
              class="form-control"
-             placeholder="Username or Email address" />
+             placeholder="Usuario ou email" />
       <span *ngIf="hasError('Username')"
             class="glyphicon glyphicon-remove form-control-feedback"
             aria-hidden="true"></span>
@@ -28,7 +28,7 @@
       <input type="password" required
              formControlName="Password"
              class="form-control"
-             placeholder="Password" />
+             placeholder="Senha" />
       <span *ngIf="hasError('Password')"
             class="glyphicon glyphicon-remove form-control-feedback"
             aria-hidden="true"></span>
@@ -40,7 +40,7 @@
     <button type="submit"
             [disabled]="form.invalid"
             class="btn btn-md btn-success btn-block btn-signin">
-      Sign in
+      Entrar
     </button>
   </form>
 </div>
