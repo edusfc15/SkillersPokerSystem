@@ -20,6 +20,8 @@ namespace SkillersPokerSystem.Data.Models
 
         public DateTime LastModifiedDate { get; set; }
 
+        public string ImageUrl { get; set; }
+
         [Required]
         public int ViewCount { get; set; }
 

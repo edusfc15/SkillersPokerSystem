@@ -9,4 +9,5 @@ interface GameDetail {
   Total: number;
   ProfitOrLoss: number;
   CreatedDate: string;
+  PlayerImgUrl: string;
 }

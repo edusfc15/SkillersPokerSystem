@@ -1,6 +1,7 @@
 <table class="table table-hover table-responsive">
   <thead>
     <tr>
+      <th scope="col">Foto</th>
       <th scope="col">#</th>
       <th scope="col">Nome</th>
       <th scope="col">Criado em:</th>
@@ -11,7 +12,8 @@
   </thead>
   <tbody>
     <tr *ngFor="let player of players" (click)="onSelect(player)">
-      <th scope="row">{{player.Id}}</th>
+      <td><img id="player-img" class="player-img" src="{{player.ImageUrl}}" /></td>
+      <td scope="row">{{player.Id}}</td>
       <td>{{player.Name}}</td>
       <td>{{player.CreatedDate | date:'dd/MM/yyyy'}}</td>
       <td>{{player.FirstGameDate | date:'dd/MM/yyyy'}}</td>

@@ -5,4 +5,5 @@ interface Player {
   FirstGameDate: string;
   LastGameDate: string;
   IsActive: boolean;
+  ImageUrl: string;
 }

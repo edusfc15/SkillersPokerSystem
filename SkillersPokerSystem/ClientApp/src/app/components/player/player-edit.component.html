@@ -13,6 +13,11 @@
   </div>
 
   <div class="form-group">
+      <label for="playerImageUrl">Url Perfil:</label>
+      <input type="text"  formControlName="ImageUrl"  class="switch form-control" id="playerImageUrl">
+  </div>
+
+  <div class="form-group">
     <button *ngIf="editMode" type="submit"
             [disabled]="form.invalid"
             class="btn btn-success">

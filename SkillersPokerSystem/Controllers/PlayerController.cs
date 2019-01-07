@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Mapster;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,16 +20,19 @@ namespace SkillersPokerSystem.Controllers
     [Route("api/[controller]")]
     public class PlayerController : BaseApiController
     {
+        private IHostingEnvironment _environment;
 
         public PlayerController(
             ApplicationDbContext context,
             RoleManager<IdentityRole> roleManager,
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            IConfiguration configuration
+            IConfiguration configuration,
+            IHostingEnvironment environment
             )
             : base(context, roleManager, userManager, configuration)
         {
+            _environment = environment;
         }
 
         [HttpGet("{id}")]
@@ -67,14 +72,26 @@ namespace SkillersPokerSystem.Controllers
                 .ToList()
                 ;
 
+            var path = "\\players\\SVG-cards-1.3\\";
+
+            string[] filePaths = Directory.GetFileSystemEntries(_environment.WebRootPath+path, "*.svg",
+                                         SearchOption.TopDirectoryOnly);
+
+            
+
             DbContext.Database.ExecuteSqlCommand("UPDATE Players SET IsActive = 0");
+
+            var random = new Random();
 
             foreach (var player in activePlayers)
             {
+                int index = random.Next(filePaths.Length);
+                var url = Path.GetFileName(filePaths[index]);
 
                 var tmpPlayer = DbContext.Players.Where(x => x.Id == player).FirstOrDefault();
+                
                 tmpPlayer.IsActive = true;
-
+                tmpPlayer.ImageUrl = path + url;
                 DbContext.SaveChanges();
 
             }
@@ -135,6 +152,7 @@ namespace SkillersPokerSystem.Controllers
             player.LastModifiedDate = player.CreatedDate;
 
             player.UserId = authorId;
+            player.ImageUrl = "/players/avatar_" + "png";
 
             // retrieve the current user's Id
             //player.UserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -166,7 +184,8 @@ namespace SkillersPokerSystem.Controllers
             }
 
             player.Name = model.Name;
-            player.IsActive = model.IsActive;;
+            player.IsActive = model.IsActive;
+            player.ImageUrl = model.ImageUrl;
             player.LastModifiedDate = DateTime.UtcNow;
 
             DbContext.SaveChanges();

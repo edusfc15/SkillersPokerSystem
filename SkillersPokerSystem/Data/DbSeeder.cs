@@ -105,7 +105,7 @@ namespace SkillersPokerSystem.Data
 
             var gameList = new List<Array>();
 
-            using( var reader = new StreamReader(@"ImportFiles\games.csv"))
+            using( var reader = new StreamReader(@"wwwroot\ImportFiles\games.csv"))
             {
                 while (!reader.EndOfStream)
                 {
@@ -210,7 +210,7 @@ namespace SkillersPokerSystem.Data
 
             var playersList = new List<Array>();
 
-            using( var reader = new StreamReader(@"ImportFiles\players.csv"))
+            using( var reader = new StreamReader(@"wwwroot\ImportFiles\players.csv"))
             {
                 while (!reader.EndOfStream)
                 {

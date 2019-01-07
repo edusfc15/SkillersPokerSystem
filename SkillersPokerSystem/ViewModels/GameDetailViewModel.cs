@@ -19,6 +19,7 @@ namespace SkillersPokerSystem.ViewModels
         public decimal Rake { get; set; }
         public decimal Total { get; set; }
         public decimal ProfitOrLoss { get; set; }
+        public string PlayerImgUrl { get; set; }
 
     }
 }

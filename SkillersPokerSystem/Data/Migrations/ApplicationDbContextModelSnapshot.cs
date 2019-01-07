@@ -258,6 +258,8 @@ namespace SkillersPokerSystem.Data.Migrations
 
                     b.Property<DateTime>("FirstGameDate");
 
+                    b.Property<string>("ImageUrl");
+
                     b.Property<bool>("IsActive");
 
                     b.Property<DateTime>("LastModifiedDate");

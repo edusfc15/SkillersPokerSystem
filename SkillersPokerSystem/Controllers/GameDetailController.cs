@@ -46,7 +46,8 @@ namespace SkillersPokerSystem.Controllers
                     Rake = p.Sum(i => i.ChipsTotal) * rakePercent,
                     Total = p.Sum(i => i.ChipsTotal) - (p.Sum(i => i.ChipsTotal) * rakePercent),
                     ProfitOrLoss = p.Sum(i => i.ChipsTotal) - (p.Sum(i => i.ChipsTotal) * rakePercent) - p.Sum(i => i.Value),
-                    PlayerId = p.Max( x => x.PlayerId)
+                    PlayerId = p.Max( x => x.PlayerId),
+                    PlayerImgUrl = p.Max( x => x.Player.ImageUrl)
                 })
                 .OrderByDescending( x => x.ProfitOrLoss )
                 .ToArray();

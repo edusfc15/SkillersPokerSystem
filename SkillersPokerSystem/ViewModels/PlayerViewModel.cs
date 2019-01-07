@@ -13,5 +13,6 @@ namespace SkillersPokerSystem.ViewModels
         public DateTime FirstGameDate { get; set; }
         public DateTime LastGameDate { get; set; }
         public Boolean IsActive { get; set; }
+        public string ImageUrl { get; set; }
     }
 }

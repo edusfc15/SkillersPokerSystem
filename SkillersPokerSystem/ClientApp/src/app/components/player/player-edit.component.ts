@@ -51,14 +51,16 @@ export class PlayerEditComponent {
   createForm() {
     this.form = this.fb.group({
       Name: ['', Validators.required],
-      IsActive: true
+      IsActive: true,
+      ImageUrl: ''
     });
   }
 
   updateForm() {
     this.form.setValue({
       Name: this.player.Name,
-      IsActive: this.player.IsActive || true
+      IsActive: this.player.IsActive || true,
+      ImageUrl: ''
     });
   }
 

@@ -4,6 +4,7 @@
     <thead>
       <tr>
         <th *ngIf="auth.isLoggedIn()"></th>
+        <th></th>
         <th scope="col">Nome</th>
         <th scope="col">Rebuys</th>
         <th scope="col">Total de Fichas</th>
@@ -19,6 +20,7 @@
           <button type="button" *ngIf="gameStatus" [routerLink]="['/gameDetail/create','buy-in', this.game.Id, gameDetail.PlayerId]" class="btn btn-success m-1">+</button>
           <button type="button" *ngIf="gameStatus " [routerLink]="['/gameDetail/create','cash-out', this.game.Id, gameDetail.PlayerId]" class="btn btn-info m-1">></button>
         </td>
+        <td><img id="player-img" class="player-img" src="{{gameDetail.PlayerImgUrl}}" /></td>
         <td class="text-nowrap">{{gameDetail.Name}}</td>
         <td class="text-nowrap">{{gameDetail.Value | currency : 'BRL'}}</td>
         <td class="text-nowrap">{{gameDetail.ChipsTotal | currency : 'BRL' }}</td>
@@ -32,6 +34,8 @@
     <tfoot>
       <tr *ngFor="let tr of totalResult">
         <td></td>
+        <td></td>
+        <td></td>
         <td class="text-nowrap">{{tr.Rebuys | currency : 'BRL'}}</td>
         <td class="text-nowrap">{{tr.CashOut | currency : 'BRL'}}</td>
         <td class="text-nowrap">{{tr.Integrity | currency : 'BRL'}}</td>
@@ -41,9 +45,7 @@
     </tfoot>
   </table>
   <button type="button" [routerLink]="['/home']" class="btn btn-info m-2">Voltar</button>
-  <button *ngIf="auth.isLoggedIn() && gameStatus" class="btn btn-info m-2" type="button" [routerLink]="['/gameDetail/create','buy-in', this.game.Id, 1]"  >Adicionar Buy in</button>
+  <button *ngIf="auth.isLoggedIn() && gameStatus" class="btn btn-info m-2" type="button" [routerLink]="['/gameDetail/create','buy-in', this.game.Id, 1]">Adicionar Buy in</button>
   <button type="button" (click)="onSelect(game)" class="btn btn-info m-2">Detalhar Buy ins</button>
-  <button *ngIf="auth.isLoggedIn() && gameStatus" class="btn btn-danger m-2" type="button" [disabled]="tempTotalResult.Rebuys !=  tempTotalResult.CashOut" (click)="endGame(game)"   >Finalizar</button>
+  <button *ngIf="auth.isLoggedIn() && gameStatus" class="btn btn-danger m-2" type="button" [disabled]="tempTotalResult.Rebuys !=  tempTotalResult.CashOut" (click)="endGame(game)">Finalizar</button>
 </div>
-
-

@@ -32,7 +32,7 @@ export class GameDetailListComponent implements OnChanges  {
     this.totalOfGameDetail = [];
     this.totalResult = [];
     this.tempTotalResult = <TotalGameDetail>{};
-    
+
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -55,6 +55,10 @@ export class GameDetailListComponent implements OnChanges  {
     this.http.get<GameDetail[]>(url).subscribe(result => {
       this.gameDetails = result;
 
+      this.totalOfGameDetail = [];
+      this.totalResult = [];
+      this.tempTotalResult = <TotalGameDetail>{};
+
       this.gameDetails.forEach(gd => {
 
         var tempTotal = <TotalGameDetail>{};
@@ -73,6 +77,8 @@ export class GameDetailListComponent implements OnChanges  {
 
       this.totalResult.push(this.tempTotalResult);
 
+     
+
     }, error => console.error(error));
   }
 
@@ -86,13 +92,17 @@ export class GameDetailListComponent implements OnChanges  {
     var url = this.baseUrl + 'api/game/endGame';
 
     if (game.Status === 'Aberto') {
+      if (confirm('Tem certeza que deseja finalizar a partida?')) {
 
-      this.http.post<Game>(url, game)
-        .subscribe(res => {
-          this.game = res;
-          this.gameAtDetail.emit(this.game);
-        
-        })
+        this.http.post<Game>(url, game)
+          .subscribe(res => {
+            this.game = res;
+            this.gameAtDetail.emit(this.game);
+            this.loadData();
+          })
+
+      }
+      
       
     }
 
