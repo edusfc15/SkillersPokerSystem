@@ -7,6 +7,9 @@
 
   <form [formGroup]="gameDetailForm" class="form">
 
+    <div class="pokerchip flat purple"></div>
+    <div class="pokerchip flat red"></div>
+    <div class="pokerchip flat blue"></div>
 
     <div formArrayName="gameDetailsArray">
       <div *ngIf="this.gameDetails.value.length == 0">
@@ -47,6 +50,7 @@
           <button type="button" class="btn btn-danger m-2" (click)="deleteGameDetails(gdIndex)">X</button>
         </div>
       </div>
+
       <button type="button" class="btn btn-primary m-2" (click)="addGameDetails()">Adicionar jogador</button>
     </div>
     <button type="button" class="btn btn-success m-2" (click)="onSubmit(this.gameDetails)">Confirmar</button>

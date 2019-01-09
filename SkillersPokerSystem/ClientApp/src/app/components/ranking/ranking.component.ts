@@ -5,7 +5,8 @@ import { forEach } from '@angular/router/src/utils/collection';
 
 @Component({
   selector: 'ranking',
-  templateUrl: 'ranking.component.html'
+  templateUrl: 'ranking.component.html',
+  styleUrls:['ranking.component.css']
 })
 export class RankingComponent {
 

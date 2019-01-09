@@ -71,27 +71,17 @@ namespace SkillersPokerSystem.Controllers
                 .Select(a => a.Key)
                 .ToList()
                 ;
-
-            var path = "\\players\\SVG-cards-1.3\\";
-
-            string[] filePaths = Directory.GetFileSystemEntries(_environment.WebRootPath+path, "*.svg",
-                                         SearchOption.TopDirectoryOnly);
-
             
-
             DbContext.Database.ExecuteSqlCommand("UPDATE Players SET IsActive = 0");
 
             var random = new Random();
 
             foreach (var player in activePlayers)
             {
-                int index = random.Next(filePaths.Length);
-                var url = Path.GetFileName(filePaths[index]);
 
                 var tmpPlayer = DbContext.Players.Where(x => x.Id == player).FirstOrDefault();
                 
                 tmpPlayer.IsActive = true;
-                tmpPlayer.ImageUrl = path + url;
                 DbContext.SaveChanges();
 
             }

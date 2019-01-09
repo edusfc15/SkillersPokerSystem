@@ -60,7 +60,7 @@ export class PlayerEditComponent {
     this.form.setValue({
       Name: this.player.Name,
       IsActive: this.player.IsActive || true,
-      ImageUrl: ''
+      ImageUrl: this.player.ImageUrl
     });
   }
 
@@ -70,6 +70,7 @@ export class PlayerEditComponent {
     var tempPlayer = <Player>{};
     tempPlayer.Name = this.form.value.Name;
     tempPlayer.IsActive = this.form.value.IsActive;
+    tempPlayer.ImageUrl = this.form.value.ImageUrl;
 
 
     var url = this.baseUrl + "api/player";
