@@ -59,7 +59,7 @@ namespace SkillersPokerSystem.Controllers
         {
             var lastGames = DbContext
                 .GameDetails
-                .GroupBy(g => new { g.GameId, g.CreatedDate })
+                .GroupBy(g => new { g.GameId })
                 .OrderByDescending(s => s.Max().CreatedDate)
                 .Take(5)
                 .Select(x => x.Key.GameId)
