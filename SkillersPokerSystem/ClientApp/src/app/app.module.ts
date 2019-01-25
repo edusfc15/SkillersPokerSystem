@@ -27,6 +27,8 @@ import { RankingComponent } from './components/ranking/ranking.component';
 import { PlayerListComponent } from './components/player/player-list.component';
 import { PlayerEditComponent } from './components/player/player-edit.component';
 import { PlayerDetailComponent } from './components/player/player-detail.component';
+import { UserListComponent } from './components/user/user-list.component';
+import { ChangePasswordComponent } from './components/user/change-password.component';
 
 
 
@@ -48,7 +50,9 @@ import { PlayerDetailComponent } from './components/player/player-detail.compone
     RankingComponent,
     PlayerListComponent,
     PlayerEditComponent,
-    PlayerDetailComponent
+    PlayerDetailComponent,
+    UserListComponent,
+    ChangePasswordComponent
   ],
   imports: [
     BrowserModule,
@@ -63,6 +67,7 @@ import { PlayerDetailComponent } from './components/player/player-detail.compone
       { path: 'login', component: LoginComponent },
       { path: 'game', component: GameListComponent },
       { path: 'player', component: PlayerListComponent },
+      { path: 'user', component: UserListComponent },
       { path: 'player/create', component: PlayerEditComponent },
       { path: 'player/edit/:id', component: PlayerEditComponent },
       { path: 'ranking', component: RankingComponent },

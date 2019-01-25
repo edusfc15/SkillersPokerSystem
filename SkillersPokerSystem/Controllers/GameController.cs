@@ -5,6 +5,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
 using Mapster;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -120,7 +121,7 @@ namespace SkillersPokerSystem.Controllers
             if (yearForRanking == DateTime.UtcNow.Year)
             {
                 var rankingTotal = DbContext.GameDetails
-                .Where(d => d.CreatedDate.Year == yearForRanking && d.Player.IsActive == true)
+                .Where(d => d.CreatedDate.Year == yearForRanking && d.Player.IsActive == true && d.Game.Status == StatusEnum.Encerrado)
                 .GroupBy(x => new { x.Player.Name, x.CreatedDate.Year })
                 .Select(x => new { x.Key.Name, Month = 13, x.Key.Year, Total = x.Sum(f => f.ChipsTotal) - x.Sum(f => f.Value) })
                 .OrderByDescending(s => (s.Total))
@@ -128,7 +129,7 @@ namespace SkillersPokerSystem.Controllers
 
 
                 var ranking = DbContext.GameDetails
-                    .Where(d => d.CreatedDate.Year == yearForRanking && d.Player.IsActive == true)
+                    .Where(d => d.CreatedDate.Year == yearForRanking && d.Player.IsActive == true && d.Game.Status == StatusEnum.Encerrado)
                     .GroupBy(x => new { x.Player.Name, x.CreatedDate.Year, x.CreatedDate.Month })
                     .Select(x => new { x.Key.Name, x.Key.Month, x.Key.Year, Total = x.Sum(f => f.ChipsTotal) - x.Sum(f => f.Value) })
                     .Union(rankingTotal)
@@ -167,6 +168,7 @@ namespace SkillersPokerSystem.Controllers
 
         [HttpPost]
         [Route("EndGame")]
+        [Authorize]
         public IActionResult EndGame( [FromBody]GameViewModel model)
         {
             var game = DbContext.Games.Where(i => i.Id == model.Id)

@@ -17,7 +17,6 @@ namespace SkillersPokerSystem.Controllers
 {
     public class UserController : BaseApiController
     {
-        #region Constructor
         public UserController(
             ApplicationDbContext context,
             RoleManager<IdentityRole> roleManager,
@@ -25,13 +24,17 @@ namespace SkillersPokerSystem.Controllers
             IConfiguration configuration
             )
             : base(context, roleManager, userManager, configuration) { }
-        #endregion
 
-        #region RESTful Conventions
-        /// <summary>
-        /// PUT: api/user
-        /// </summary>
-        /// <returns>Creates a new User and return it accordingly.</returns>
+        [HttpGet("GetAll")]
+        public  IActionResult GetAll()
+        {
+            var users = DbContext.Users.ToList();
+
+            return new JsonResult(
+                users.Adapt<UserViewModel[]>(), JsonSettings
+                );
+        }
+
         [HttpPut()]
         public async Task<IActionResult> Put([FromBody]UserViewModel model)
         {
@@ -45,6 +48,9 @@ namespace SkillersPokerSystem.Controllers
 
             user = await UserManager.FindByEmailAsync(model.Email);
             if (user != null) return BadRequest("Email already exists.");
+
+            if (!PasswordCheck.IsValidPassword(model.Password, UserManager.Options.Password)) return BadRequest("Password is too weak.");
+
 
             var now = DateTime.Now;
 
@@ -94,8 +100,7 @@ namespace SkillersPokerSystem.Controllers
 
             return new OkResult();
         }
-        #endregion
 
-        
+
     }
 }

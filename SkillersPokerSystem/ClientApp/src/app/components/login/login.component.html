@@ -16,7 +16,7 @@
              class="form-control"
              placeholder="Usuario ou email" />
       <span *ngIf="hasError('Username')"
-            class="glyphicon glyphicon-remove form-control-feedback"
+            class="fas fa-user-times form-control-feedback"
             aria-hidden="true"></span>
       <div *ngIf="hasError('Username')"
            class="help-block">
@@ -30,7 +30,7 @@
              class="form-control"
              placeholder="Senha" />
       <span *ngIf="hasError('Password')"
-            class="glyphicon glyphicon-remove form-control-feedback"
+            class="fas fa-user-times form-control-feedback"
             aria-hidden="true"></span>
       <div *ngIf="hasError('Password')"
            class="help-block">
@@ -44,3 +44,5 @@
     </button>
   </form>
 </div>
+
+<i class="fas fa-user-times"></i>

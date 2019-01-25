@@ -1,0 +1,19 @@
+<div class="container">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Usuário</th>
+        <th>Email</th>
+        <th></th>
+      </tr>
+    </thead>
+    
+
+    <tr *ngFor="let user of users">
+      <td>{{user.UserName}}</td>
+      <td>{{user.Email}}</td>
+      <td><button type="button" class="btn btn-dark">Alterar senha</button></td>
+    </tr>
+  </table>
+</div>
+

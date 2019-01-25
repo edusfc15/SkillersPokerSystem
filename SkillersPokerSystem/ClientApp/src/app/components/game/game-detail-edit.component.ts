@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from "@angular/core";
 import { FormGroup, FormControl, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { ActivatedRoute, Router } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
+import { catchError } from 'rxjs/operators';
 
 @Component({
   selector: "game-detail-edit",
@@ -73,8 +74,8 @@ export class GameDetailEditComponent {
             this.fb.group(
               {
                 PlayerId: this.routePlayerId,
-                Value: [(this.isBuyIn) ? 5 : 0, (this.isBuyIn) ? Validators.min(5) : 0 ],
-                ChipsTotal: [(this.isBuyIn) ? 0 : 0.25, (this.isBuyIn) ? 0 : Validators.min(0.25)],
+                Value: [0, (this.isBuyIn) ? Validators.min(5) : 0 ],
+                ChipsTotal: [0, (this.isBuyIn) ? 0 : Validators.min(0.25)],
               }
             )
           ])
@@ -102,14 +103,22 @@ export class GameDetailEditComponent {
     tempGameDetails = gameDetails.value;
 
     this.http
-      .put<GameDetail>(url, tempGameDetails,)
+      .put<GameDetail>(url, tempGameDetails)
       .subscribe(
-      res => {
-        this.gameDetail = res;
-        this.router.navigate(["game/" + this.routeGameId]);
-      }
-      )
+        (res) => {
+          this.gameDetail = res;
+          this.router.navigate(["game/" + this.routeGameId]);
+      })
 
+
+  }
+
+  onAddValue(value, index) {
+    if (this.isBuyIn) {
+      this.gameDetails.controls[index].value.Value += value;
+    } else {
+      this.gameDetails.controls[index].value.ChipsTotal += value;
+    }
   }
 
   onBack() {

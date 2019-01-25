@@ -120,9 +120,11 @@ export class GameEditComponent {
    this.http
        .put<Game>(url, tempGameDetails)
      .subscribe(res => {
-       var v = res;
-       this.router.navigate(["game/" + v.Id]);
-     }, error => console.log(error));
+         var v = res;
+         this.router.navigate(["game/" + v.Id]);
+       }, error => console.log(error)
+       ,() => console.log('HTTP request completed.')
+     );
 
   }
 

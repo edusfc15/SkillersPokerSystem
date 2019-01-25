@@ -7,10 +7,7 @@
 
   <form [formGroup]="gameDetailForm" class="form">
 
-    <div class="pokerchip flat purple"></div>
-    <div class="pokerchip flat red"></div>
-    <div class="pokerchip flat blue"></div>
-
+    
     <div formArrayName="gameDetailsArray">
       <div *ngIf="this.gameDetails.value.length == 0">
         Ops... Não tem ninguem pra ver um flopinho?
@@ -49,6 +46,13 @@
 
           <button type="button" class="btn btn-danger m-2" (click)="deleteGameDetails(gdIndex)">X</button>
         </div>
+
+        <div *ngIf="!isBuyIn" (click)="onAddValue(0.25, gdIndex)" class="pokerchip flat green"></div>
+        <div *ngIf="!isBuyIn" (click)="onAddValue(1, gdIndex)" class="pokerchip flat black"></div>
+        <div (click)="onAddValue(5, gdIndex)" class="pokerchip flat purple"></div>
+        <div (click)="onAddValue(10, gdIndex)" class="pokerchip flat red"></div>
+        <div *ngIf="isBuyIn" (click)="onAddValue(25, gdIndex)" class="pokerchip flat blue"></div>
+
       </div>
 
       <button type="button" class="btn btn-primary m-2" (click)="addGameDetails()">Adicionar jogador</button>

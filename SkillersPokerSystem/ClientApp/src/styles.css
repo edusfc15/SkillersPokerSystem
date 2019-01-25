@@ -89,6 +89,18 @@
     background-size: contain;
   }
 
+  .pokerchip.green {
+    background: #15d000;
+    background-image: url('./assets/FichasCopag025.png');
+    background-size: contain;
+  }
+
+  .pokerchip.black {
+    background: #000;
+    background-image: url('./assets/FichasCopag100.png');
+    background-size: contain;
+  }
+
 
 
   .pokerchip.iso {

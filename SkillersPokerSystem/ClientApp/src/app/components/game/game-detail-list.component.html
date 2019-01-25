@@ -25,7 +25,7 @@
         <td class="text-nowrap">{{gameDetail.Value | currency : 'BRL'}}</td>
         <td class="text-nowrap">{{gameDetail.ChipsTotal | currency : 'BRL' }}</td>
         <td class="text-nowrap">{{gameDetail.Result | currency : 'BRL' }} </td>
-        <td class="text-nowrap">{{gameDetail.Rake | currency : 'BRL'}}</td>
+        <td class="text-nowrap">{{gameDetail.Rake | currency : 'BRL'}}  <small *ngIf="gameDetail.Rake > 0" class="text-muted">({{gameDetail.RakePercent}}%)</small> </td>
         <td class="text-nowrap">{{gameDetail.Total | currency : 'BRL'   }}</td>
         <td class="text-nowrap">{{gameDetail.ProfitOrLoss | currency : 'BRL'  }}</td>
 

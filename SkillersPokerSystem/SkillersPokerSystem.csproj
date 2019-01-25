@@ -40,6 +40,7 @@
     <None Remove="ClientApp\src\app\components\player\player-edit.component.ts" />
     <None Remove="ClientApp\src\app\components\player\player-list.component.ts" />
     <None Remove="ClientApp\src\app\components\ranking\ranking.component.ts" />
+    <None Remove="ClientApp\src\app\components\user\user-list.component.ts" />
     <None Remove="ClientApp\src\app\interfaces\player.ts" />
     <None Remove="ClientApp\src\app\interfaces\ranking.ts" />
     <None Remove="ClientApp\src\app\interfaces\rankingTotal.ts" />
@@ -64,6 +65,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\components\player\player-edit.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\player\player-list.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\ranking\ranking.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\components\user\user-list.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\interfaces\player.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\interfaces\rankingTotal.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\interfaces\ranking.ts" />

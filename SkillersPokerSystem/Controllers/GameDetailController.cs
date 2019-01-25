@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Mapster;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -31,27 +32,26 @@ namespace SkillersPokerSystem.Controllers
         [HttpGet("All/{gameId}")]
         public IActionResult All(int gameId)
         {
-
-            decimal rakePercent = (decimal)0.1;
-
             var gameDetails = DbContext.GameDetails
                 .Where(q => q.GameId == gameId)
                 .Include(p => p.Player)
+                .Include( g=> g.Game.Rake.RakeDetails)
                 .GroupBy(p => p.Player.Name)
                 .Select(p => new {
                     Name = p.Key,
                     Value = p.Sum(i => i.Value),
                     ChipsTotal = p.Sum(i => i.ChipsTotal),
                     Result = p.Sum(i => i.ChipsTotal) - p.Sum(i => i.Value),
-                    Rake = p.Sum(i => i.ChipsTotal) * rakePercent,
-                    Total = p.Sum(i => i.ChipsTotal) - (p.Sum(i => i.ChipsTotal) * rakePercent),
-                    ProfitOrLoss = p.Sum(i => i.ChipsTotal) - (p.Sum(i => i.ChipsTotal) * rakePercent) - p.Sum(i => i.Value),
+                    Rake =  p.Sum(i => i.ChipsTotal) * (p.Max( s => s.Game.Rake.RakeDetails.Where( a=> a.Value > p.Sum(i => i.Value) ).FirstOrDefault().Percent  )/100),
+                    RakePercent = p.Max(s => s.Game.Rake.RakeDetails.Where(a => a.Value > p.Sum(i => i.Value)).FirstOrDefault().Percent),
+                    Total = p.Sum(i => i.ChipsTotal) - (p.Sum(i => i.ChipsTotal) * (p.Max(s => s.Game.Rake.RakeDetails.Where(a => a.Value > p.Sum(i => i.Value)).FirstOrDefault().Percent) / 100)),
+                    ProfitOrLoss = p.Sum(i => i.ChipsTotal) - (p.Sum(i => i.ChipsTotal) * (p.Max(s => s.Game.Rake.RakeDetails.Where(a => a.Value > p.Sum(i => i.Value)).FirstOrDefault().Percent) / 100)) - p.Sum(i => i.Value),
                     PlayerId = p.Max( x => x.PlayerId),
                     PlayerImgUrl = p.Max( x => x.Player.ImageUrl)
                 })
                 .OrderByDescending( x => x.ProfitOrLoss )
                 .ToArray();
-
+                
 
             return new JsonResult(
                 gameDetails.Adapt<GameDetailViewModel[]>()
@@ -61,16 +61,14 @@ namespace SkillersPokerSystem.Controllers
 
 
         [HttpPut]
+        [Authorize]
         public IActionResult Put([FromBody]List<GameDetailViewModel> model)
         {
 
             //if (model == null) return new StatusCodeResult(500);
 
 
-            var authorId = DbContext.Users
-                .Where(u => u.UserName == "Admin")
-                .FirstOrDefault()
-                .Id;
+            var authorId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
             var lastGames = DbContext
                 .GameDetails
@@ -129,6 +127,7 @@ namespace SkillersPokerSystem.Controllers
 
         [HttpPut]
         [Route("AddDetail/{gameId}")]
+        [Authorize]
         public IActionResult AddDetail(int gameId, [FromBody]List<GameDetailViewModel> model)
         {
 
@@ -166,19 +165,19 @@ namespace SkillersPokerSystem.Controllers
                 JsonSettings);
         }
 
-        [HttpDelete]
         [HttpDelete("{id}")]
+        [Authorize]
         public IActionResult Delete(int id)
         {
-            var question = DbContext.GameDetails.Where(i => i.Id == id)
+            var gameDetail = DbContext.GameDetails.Where(i => i.Id == id)
                 .FirstOrDefault();
 
-            if (question == null) return NotFound(new
+            if (gameDetail == null) return NotFound(new
             {
                 Error = String.Format("GameDetail ID {0} has not been found", id)
             });
 
-            DbContext.GameDetails.Remove(question);
+            DbContext.GameDetails.Remove(gameDetail);
             DbContext.SaveChanges();
 
             return new NoContentResult();
