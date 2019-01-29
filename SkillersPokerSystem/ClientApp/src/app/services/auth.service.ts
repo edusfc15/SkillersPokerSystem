@@ -7,7 +7,7 @@ import { catchError, map } from 'rxjs/operators';
 @Injectable()
 export class AuthService {
   authKey: string = "auth";
-  clientId: string = "TestMakerFree";
+  clientId: string = "SkillersPokerSystem";
 
   constructor(private http: HttpClient,
     @Inject(PLATFORM_ID) private platformId: any) {

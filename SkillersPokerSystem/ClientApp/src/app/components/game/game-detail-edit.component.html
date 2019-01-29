@@ -24,7 +24,7 @@
           </div>
         </div>
         <div class="row">
-          <div class="form-group col" *ngIf="isBuyIn">
+          <div class="form-group col" *ngIf="isBuyIn" id="hideRange">
             <label>Buy in:</label>
             <input formControlName="Value" type="range" class="form-control custom-range" min="5" max="50" step="5">
           </div>
@@ -34,7 +34,7 @@
             <input formControlName="Value" value="{{ this.gameDetails.controls[gdIndex].value.Value}}" class="form-control" type="number" min="5" max="1000" step="5">
           </div>
 
-          <div class="form-group col" *ngIf="!isBuyIn">
+          <div class="form-group col" *ngIf="!isBuyIn" id="hideRange">
             <label>Cash out:</label>
             <input formControlName="ChipsTotal" type="range" class="form-control custom-range" min="0" max="100" step="5">
           </div>
@@ -43,8 +43,8 @@
             <label>R$</label>
             <input formControlName="ChipsTotal" value="{{ this.gameDetails.controls[gdIndex].value.ChipsTotal}}" class="form-control" type="number" min="0" max="5000" step="0.25">
           </div>
-
-          <button type="button" class="btn btn-danger m-2" (click)="deleteGameDetails(gdIndex)">X</button>
+          <button type="button" class="btn btn-dark m-2" (click)="onClear(0, gdIndex)">0</button>
+          <button type="button" class="btn btn-outline-dark m-2" (click)="deleteGameDetails(gdIndex)">X</button>
         </div>
 
         <div *ngIf="!isBuyIn" (click)="onAddValue(0.25, gdIndex)" class="pokerchip flat green"></div>

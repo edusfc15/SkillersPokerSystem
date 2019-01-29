@@ -26,7 +26,7 @@
           </div>
         </div>
         <div class="row">
-          <div class="form-group col">
+          <div class="form-group col hideRange" id="hideRange">
             <label>Buy in:</label>
             <input formControlName="Value" type="range" class="form-control custom-range" min="5" max="50" step="5">
           </div>
@@ -36,8 +36,16 @@
             <input formControlName="Value" value="{{ this.gameDetails.controls[gdIndex].value.Value}}" class="form-control" type="number" min="5" max="1000" step="5">
 
           </div>
-          <button type="button" class="btn btn-danger m-2" (click)="deleteGameDetails(gdIndex)">X</button>
+          <button type="button" class="btn btn-dark m-2"(click)="onClear(0, gdIndex)" >0</button>
+          <button type="button" class="btn btn-outline-dark m-2" (click)="deleteGameDetails(gdIndex)">X</button>
         </div>
+
+
+
+        <div (click)="onAddValue(5, gdIndex)" class="pokerchip flat purple"></div>
+        <div (click)="onAddValue(10, gdIndex)" class="pokerchip flat red"></div>
+        <div (click)="onAddValue(25, gdIndex)" class="pokerchip flat blue"></div>
+        
 
 
       </div>
@@ -47,6 +55,5 @@
     <button type="button" class="btn btn-success m-2" (click)="startGame(this.gameDetails)" [disabled]="this.gameDetails.value.length == 0 || gameForm.invalid">Iniciar</button>
 
   </form>
-
 
 </div>

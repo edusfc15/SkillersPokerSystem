@@ -108,6 +108,13 @@ export class GameEditComponent {
     this.gameDetails.removeAt(index);
   }
 
+  onAddValue(value, index) {
+    this.gameDetails.controls[index].value.Value += value;
+  }
+
+  onClear(value, index) {
+    this.gameDetails.controls[index].value.Value = value;
+  }
 
   startGame(gameDetails: FormArray) {
 

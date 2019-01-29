@@ -17,6 +17,7 @@ export class NavMenuComponent implements OnInit {
 
   ngOnInit() {
     this.navbarCollapsed = true;
+
   }
 
 

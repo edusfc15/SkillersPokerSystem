@@ -7,8 +7,7 @@ import {
 } from "@angular/common/http";
 import { AuthService } from "./auth.service";
 import { Observable } from "rxjs";
-import { tap } from 'rxjs/internal/operators';
-import { mergeMap, catchError } from 'rxjs/operators';
+import { tap, mergeMap, catchError } from 'rxjs/operators';
 
 
 @Injectable()
@@ -34,13 +33,15 @@ export class AuthResponseInterceptor implements HttpInterceptor {
       this.currentRequest = request;
 
       return next.handle(request).pipe(
-        tap((event => {
+        tap(
+          (event => {
           if (event instanceof HttpResponse) {
             // do nothing
           }
         })
-          , catchError(error => { return this.handleError(error, next) })
-        ));
+        ),
+        catchError(error => { return this.handleError(error, next) })
+      );
     }
     else {
       return next.handle(request);

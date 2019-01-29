@@ -121,6 +121,14 @@ export class GameDetailEditComponent {
     }
   }
 
+  onClear(value, index) {
+    if (this.isBuyIn) {
+      this.gameDetails.controls[index].value.Value = value;
+    } else {
+      this.gameDetails.controls[index].value.ChipsTotal = value;
+    }
+  }
+
   onBack() {
     this.router.navigate(["home"]);
   }
