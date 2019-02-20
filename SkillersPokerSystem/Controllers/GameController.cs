@@ -129,8 +129,8 @@ namespace SkillersPokerSystem.Controllers
 
 
                 var ranking = DbContext.GameDetails
-                    .Where(d => d.CreatedDate.Year == yearForRanking && d.Player.IsActive == true && d.Game.Status == StatusEnum.Encerrado)
-                    .GroupBy(x => new { x.Player.Name, x.CreatedDate.Year, x.CreatedDate.Month })
+                    .Where(d => d.Game.CreatedDate.Year == yearForRanking && d.Player.IsActive == true && d.Game.Status == StatusEnum.Encerrado)
+                    .GroupBy(x => new { x.Player.Name, x.Game.CreatedDate.Year, x.Game.CreatedDate.Month })
                     .Select(x => new { x.Key.Name, x.Key.Month, x.Key.Year, Total = x.Sum(f => f.ChipsTotal) - x.Sum(f => f.Value) })
                     .Union(rankingTotal)
                     .OrderBy(z => z.Year).ThenBy(z => z.Month)
@@ -142,8 +142,8 @@ namespace SkillersPokerSystem.Controllers
             {
 
                 var rankingTotal = DbContext.GameDetails
-                .Where(d => d.CreatedDate.Year == yearForRanking )
-                .GroupBy(x => new { x.Player.Name, x.CreatedDate.Year })
+                .Where(d => d.Game.CreatedDate.Year == yearForRanking )
+                .GroupBy(x => new { x.Player.Name, x.Game.CreatedDate.Year })
                 .Select(x => new { x.Key.Name, Month = 13, x.Key.Year, Total = x.Sum(f => f.ChipsTotal) - x.Sum(f => f.Value) })
                 .OrderByDescending(s => (s.Total))
                 ;
@@ -151,7 +151,7 @@ namespace SkillersPokerSystem.Controllers
 
                 var ranking = DbContext.GameDetails
                     .Where(d => d.CreatedDate.Year == yearForRanking )
-                    .GroupBy(x => new { x.Player.Name, x.CreatedDate.Year, x.CreatedDate.Month })
+                    .GroupBy(x => new { x.Player.Name, x.Game.CreatedDate.Year, x.Game.CreatedDate.Month })
                     .Select(x => new { x.Key.Name, x.Key.Month, x.Key.Year, Total = x.Sum(f => f.ChipsTotal) - x.Sum(f => f.Value) })
                     .Union(rankingTotal)
                     .OrderBy(z => z.Year).ThenBy(z => z.Month)
