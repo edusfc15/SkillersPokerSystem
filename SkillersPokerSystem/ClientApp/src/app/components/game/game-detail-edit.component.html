@@ -43,8 +43,8 @@
             <label>R$</label>
             <input formControlName="ChipsTotal" value="{{ this.gameDetails.controls[gdIndex].value.ChipsTotal}}" class="form-control" type="number" min="0" max="5000" step="0.25">
           </div>
-          <button type="button" class="btn btn-dark m-2" (click)="onClear(0, gdIndex)">0</button>
-          <button type="button" class="btn btn-outline-dark m-2" (click)="deleteGameDetails(gdIndex)">X</button>
+          <button type="button" class="btn btn-dark m-2" (click)="onClear(0, gdIndex)"><i class="fas fa-broom"></i></button>
+          <button type="button" class="btn btn-outline-dark m-2" (click)="deleteGameDetails(gdIndex)"><i class="fas fa-times"></i></button>
         </div>
 
         <div *ngIf="!isBuyIn" (click)="onAddValue(0.25, gdIndex)" class="pokerchip flat green"></div>

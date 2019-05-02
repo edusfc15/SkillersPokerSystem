@@ -13,6 +13,7 @@ export class GameListComponent {
 
   games: Game[];
   selectedGame: Game;
+  diaDaSemana: string;
 
   constructor(
     private http: HttpClient,

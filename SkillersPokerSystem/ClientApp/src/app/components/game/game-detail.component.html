@@ -13,7 +13,7 @@
             </div>
             <div class="form-group">
               <label  class="">Data</label>
-                <input type="text" readonly class="form-control-plaintext"  value="{{game.CreatedDate | date:'dd/MM/yyy'}}">
+                <input type="text" readonly class="form-control-plaintext"  value="{{game.CreatedDate | date:'dd/MM/yyy' : 'GMT-6'}}">
             </div>
             <div class="form-group ">
               <label  class="">Status</label>

@@ -111,17 +111,32 @@ namespace SkillersPokerSystem.Controllers
 
         
         [HttpGet("Ranking")]
-        public IActionResult Ranking(string year = null)
+        public IActionResult Ranking(string year = null, string month = null)
         {
 
             int yearForRanking = int.Parse(year);
+            int monthForRanking = int.Parse(month);
 
             IOrderedQueryable model;
 
-            if (yearForRanking == DateTime.UtcNow.Year)
+            if (yearForRanking == DateTime.UtcNow.Year && monthForRanking == DateTime.UtcNow.Month)
+            {
+
+                var rankingTotal = DbContext.GameDetails
+                .Where(d => d.Game.CreatedDate.Year == yearForRanking && d.Game.CreatedDate.Month == monthForRanking && d.Game.Status == StatusEnum.Encerrado)
+                .GroupBy(x => new { x.Player.Name, x.CreatedDate.Year })
+                .Select(x => new { x.Key.Name, Month = 13, x.Key.Year, Total = x.Sum(f => f.ChipsTotal) - x.Sum(f => f.Value) })
+                .OrderByDescending(s => (s.Total))
+                ;
+
+
+                model = rankingTotal;
+            }
+
+            else if (yearForRanking == DateTime.UtcNow.Year)
             {
                 var rankingTotal = DbContext.GameDetails
-                .Where(d => d.CreatedDate.Year == yearForRanking && d.Player.IsActive == true && d.Game.Status == StatusEnum.Encerrado)
+                .Where(d => d.Game.CreatedDate.Year == yearForRanking && d.Player.IsActive == true && d.Game.Status == StatusEnum.Encerrado)
                 .GroupBy(x => new { x.Player.Name, x.CreatedDate.Year })
                 .Select(x => new { x.Key.Name, Month = 13, x.Key.Year, Total = x.Sum(f => f.ChipsTotal) - x.Sum(f => f.Value) })
                 .OrderByDescending(s => (s.Total))

@@ -1,12 +1,11 @@
-<br />
-<br />
-<br />
+
 <div class="container">
   <table id="no-more-tables" class="table table-hover table-responsive">
     <thead>
       <tr>
         <th scope="col">#</th>
         <th scope="col">Data</th>
+        <th scope="col">Dia da semana</th>
         <th scope="col">Nº de Jogadores</th>
         <th scope="col">Total da Partida</th>
         <th scope="col">Vencedor</th>
@@ -16,7 +15,8 @@
     <tbody>
       <tr *ngFor="let game of games" (click)="onSelect(game)">
         <th scope="row">{{game.GameId}}</th>
-        <td>{{game.CreatedDate | date:'dd/MM/yyyy'}}</td>
+        <td>{{game.CreatedDate | date:'dd/MM/yyyy' : 'GMT-6'}}</td>
+        <td>{{game.CreatedDate | date:'EEEE' : 'GMT-6' | titlecase}}</td>
         <td>{{game.NumberOfPlayers}}</td>
         <td>{{game.Total | currency:'BRL'}}</td>
         <td>{{game.Winner}}</td>
@@ -24,6 +24,8 @@
       </tr>
 
     </tbody>
+
+    
   </table>
 
 </div>

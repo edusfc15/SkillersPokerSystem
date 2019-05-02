@@ -45,7 +45,7 @@ export class PlayerListComponent {
   }
 
   onActive() {
-    var url = this.baseUrl + 'api/player/setActive';
+    var url = this.baseUrl + 'api/baseApi/setActive';
 
     this.http.get(url).subscribe(
       res => {

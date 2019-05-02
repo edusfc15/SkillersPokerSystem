@@ -1,9 +1,12 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, LOCALE_ID  } from '@angular/core';
+
+import ptBr from '@angular/common/locales/pt';
+
 
 
 import { AppComponent } from './components/app/app.component';
-import { CommonModule } from '@angular/common';
+import { CommonModule, registerLocaleData, TitleCasePipe } from '@angular/common';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -83,6 +86,7 @@ import { ChangePasswordComponent } from './components/user/change-password.compo
   providers: [
     { provide: 'BASE_URL', useFactory: getBaseUrl },
     AuthService,
+    TitleCasePipe,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
@@ -92,7 +96,8 @@ import { ChangePasswordComponent } from './components/user/change-password.compo
       provide: HTTP_INTERCEPTORS,
       useClass: AuthResponseInterceptor,
       multi: true
-    }
+    },
+    { provide: LOCALE_ID, useValue: 'pt' }
   ],
   bootstrap: [AppComponent]
 })
@@ -101,3 +106,5 @@ export class AppModule { }
 export function getBaseUrl() {
   return document.getElementsByTagName('base')[0].href;
 }
+
+registerLocaleData(ptBr)

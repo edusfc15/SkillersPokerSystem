@@ -1,6 +1,8 @@
+<h2>{{title}}</h2>
+
 <div class="container">
 
-  <div class="row">
+  <div class="row" *ngIf="!mensal">
     <div class="col text-right">
       <label>Escolha o ano:</label>
       <select (change)="onChangeYear($event.target.value)" class="form-control">
@@ -22,7 +24,7 @@
 
   <table class="table table-hover table-responsive">
     <thead>
-      <tr>
+      <tr *ngIf="!mensal">
         <th scope="col">#</th>
         <th scope="col">Nome</th>
         <th *ngIf="showMonths.Show1" scope="col">Janeiro</th>
@@ -44,19 +46,19 @@
       <tr *ngFor="let rt of rankingTotal; let rtIndex = index">
         <th scope="row">{{rtIndex+1}}</th>
         <td>{{rt.Name}}</td>
-        <td *ngIf="showMonths.Show1">{{rt.Janeiro | currency:'BRL'}}</td>
-        <td *ngIf="showMonths.Show2">{{rt.Fevereiro | currency:'BRL'}}</td>
-        <td *ngIf="showMonths.Show3">{{rt.Marco | currency:'BRL'}}</td>
-        <td *ngIf="showMonths.Show4">{{rt.Abril | currency:'BRL'}}</td>
-        <td *ngIf="showMonths.Show5">{{rt.Maio | currency:'BRL'}}</td>
-        <td *ngIf="showMonths.Show6">{{rt.Junho | currency:'BRL'}}</td>
-        <td *ngIf="showMonths.Show7">{{rt.Julho | currency:'BRL'}}</td>
-        <td *ngIf="showMonths.Show8">{{rt.Agosto | currency:'BRL'}}</td>
-        <td *ngIf="showMonths.Show9">{{rt.Setembro | currency:'BRL'}}</td>
-        <td *ngIf="showMonths.Show10">{{rt.Outubro | currency:'BRL'}}</td>
-        <td *ngIf="showMonths.Show11">{{rt.Novembro | currency:'BRL'}}</td>
-        <td *ngIf="showMonths.Show12">{{rt.Dezembro | currency:'BRL'}}</td>
-        <td>{{rt.Total | currency:'BRL'}}</td>
+        <td class="text-nowrap" *ngIf="showMonths.Show1  && !mensal">{{rt.Janeiro | currency:'BRL'}}</td>
+        <td class="text-nowrap" *ngIf="showMonths.Show2  && !mensal">{{rt.Fevereiro | currency:'BRL'}}</td>
+        <td class="text-nowrap" *ngIf="showMonths.Show3  && !mensal">{{rt.Marco | currency:'BRL'}}</td>
+        <td class="text-nowrap" *ngIf="showMonths.Show4  && !mensal">{{rt.Abril | currency:'BRL'}}</td>
+        <td class="text-nowrap" *ngIf="showMonths.Show5  && !mensal">{{rt.Maio | currency:'BRL'}}</td>
+        <td class="text-nowrap" *ngIf="showMonths.Show6  && !mensal">{{rt.Junho | currency:'BRL'}}</td>
+        <td class="text-nowrap" *ngIf="showMonths.Show7  && !mensal">{{rt.Julho | currency:'BRL'}}</td>
+        <td class="text-nowrap" *ngIf="showMonths.Show8  && !mensal">{{rt.Agosto | currency:'BRL'}}</td>
+        <td class="text-nowrap" *ngIf="showMonths.Show9  && !mensal">{{rt.Setembro | currency:'BRL'}}</td>
+        <td class="text-nowrap" *ngIf="showMonths.Show10  && !mensal">{{rt.Outubro | currency:'BRL'}}</td>
+        <td class="text-nowrap" *ngIf="showMonths.Show11  && !mensal">{{rt.Novembro | currency:'BRL'}}</td>
+        <td class="text-nowrap" *ngIf="showMonths.Show12  && !mensal">{{rt.Dezembro | currency:'BRL'}}</td>
+        <td class="text-nowrap" >{{rt.Total | currency:'BRL'}}</td>
       </tr>
 
     </tbody>

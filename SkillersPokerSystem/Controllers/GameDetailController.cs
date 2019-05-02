@@ -70,32 +70,7 @@ namespace SkillersPokerSystem.Controllers
 
             var authorId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-            var lastGames = DbContext
-                .GameDetails
-                .GroupBy(g => new { g.GameId, g.CreatedDate })
-                .OrderByDescending(s => s.Max().CreatedDate)
-                .Take(5)
-                .Select(x => x.Key.GameId)
-                .ToList();
-
-            var activePlayers = DbContext.GameDetails
-                .Where(a => lastGames.Contains( a.GameId) )
-                .GroupBy(a => a.PlayerId)
-                .Select( a => a.Key )
-                .ToList()
-                ;
-
-            DbContext.Database.ExecuteSqlCommand("UPDATE Players SET IsActive = 0");
-
-            foreach (var player in activePlayers)
-            {
-
-                var tmpPlayer = DbContext.Players.Where( x => x.Id == player).FirstOrDefault();
-                tmpPlayer.IsActive = true;
-
-                DbContext.SaveChanges();
-
-            }
+            base.SetActive();
 
 
             var game = new Game()

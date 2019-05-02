@@ -1,4 +1,7 @@
-<table class="table table-hover table-responsive">
+<button *ngIf="auth.isLoggedIn()" class="btn btn-success m-2" [routerLink]="['/player/create']"> Adicionar Jogador</button>
+<button *ngIf="auth.isLoggedIn()" class="btn btn-info m-2" (click)="onActive()"> Ativar Jogadores Frequentes</button>
+
+<table class="table table-hover table-responsive" id="no-more-tables">
   <thead>
     <tr>
       <th scope="col">Foto</th>
@@ -15,9 +18,9 @@
       <td><img id="player-img" class="player-img" src="{{player.ImageUrl}}" /></td>
       <td scope="row">{{player.Id}}</td>
       <td>{{player.Name}}</td>
-      <td>{{player.CreatedDate | date:'dd/MM/yyyy'}}</td>
-      <td>{{player.FirstGameDate | date:'dd/MM/yyyy'}}</td>
-      <td>{{player.LastGameDate | date:'dd/MM/yyyy'}}</td>
+      <td>{{player.CreatedDate | date:'dd/MM/yyyy' : 'GMT-6'}}</td>
+      <td>{{player.FirstGameDate | date:'dd/MM/yyyy' : 'GMT-6'}}</td>
+      <td>{{player.LastGameDate | date:'dd/MM/yyyy' : 'GMT-6'}}</td>
       <td>
         <div class="form-group">
           <span class="switch switch-sm">
@@ -31,5 +34,3 @@
   </tbody>
 </table>
 
-<button *ngIf="auth.isLoggedIn()" class="btn btn-success m-2" [routerLink]="['/player/create']"> Adicionar Jogador</button>
-<button *ngIf="auth.isLoggedIn()" class="btn btn-info m-2" (click)="onActive()"> Ativar Jogadores Frequentes</button>
