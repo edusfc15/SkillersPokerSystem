@@ -29,7 +29,9 @@ namespace SkillersPokerSystem.Data.Models
         public DateTime CreatedDate { get; set; }
 
         public DateTime LastModifiedDate { get; set; }
-               
+
+        public bool IsPaid { get; set; }
+
         [ForeignKey("GameId")]
         public virtual Game Game { get; set; }
 

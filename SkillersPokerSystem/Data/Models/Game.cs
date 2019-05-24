@@ -28,6 +28,8 @@ namespace SkillersPokerSystem.Data.Models
         [Required]
         public string UserId { get; set; }
 
+        public int NumberOfHands { get; set; }
+
         [ForeignKey("UserId")]
         public virtual ApplicationUser User { get; set; }
 

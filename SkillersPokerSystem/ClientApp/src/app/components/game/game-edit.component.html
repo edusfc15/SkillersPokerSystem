@@ -33,10 +33,9 @@
 
           <div class="form-group col">
             <label>R$</label>
-            <input formControlName="Value" value="{{ this.gameDetails.controls[gdIndex].value.Value}}" class="form-control" type="number" min="5" max="1000" step="5">
-
+            <input formControlName="Value" value="{{ this.gameDetails.controls[gdIndex].value.Value}}" class="form-control" type="number" min="5" max="1000" step="5">  
           </div>
-          <button type="button" class="btn btn-dark m-2"(click)="onClear(0, gdIndex)" >0</button>
+          <button type="button" class="btn btn-dark m-2"(click)="onClear(0, gdIndex)" ><i class="fas fa-broom"></i></button>
           <button type="button" class="btn btn-outline-dark m-2" (click)="deleteGameDetails(gdIndex)">X</button>
         </div>
 
