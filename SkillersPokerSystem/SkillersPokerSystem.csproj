@@ -46,6 +46,7 @@
     <None Remove="ClientApp\src\app\interfaces\ranking.ts" />
     <None Remove="ClientApp\src\app\interfaces\rankingTotal.ts" />
     <None Remove="ClientApp\src\app\interfaces\totalGameDetail.ts" />
+    <None Remove="ClientApp\src\app\services\http.ts" />
   </ItemGroup>
 
   <ItemGroup>
@@ -60,7 +61,6 @@
     <TypeScriptCompile Include="ClientApp\src\app\components\game\game-detail.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\game\game-edit.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\game\game-list.component.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\components\login\change-password.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\navbar\nav-menu.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\player\player-detail.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\components\player\player-edit.component.ts" />
@@ -71,6 +71,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\interfaces\rankingTotal.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\interfaces\ranking.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\interfaces\totalGameDetail.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\RxJS\HTTPListener.service.ts" />
   </ItemGroup>
 
   <ItemGroup>

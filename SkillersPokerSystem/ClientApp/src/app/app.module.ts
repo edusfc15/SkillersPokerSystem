@@ -3,8 +3,6 @@ import { NgModule, LOCALE_ID  } from '@angular/core';
 
 import ptBr from '@angular/common/locales/pt';
 
-
-
 import { AppComponent } from './components/app/app.component';
 import { CommonModule, registerLocaleData, TitleCasePipe } from '@angular/common';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -18,6 +16,8 @@ import { AuthInterceptor } from './services/auth.interceptor';
 import { AuthResponseInterceptor } from './services/auth.response.interceptor';
 import { AuthService } from './services/auth.service';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+
+//import { HTTPListener, HTTPStatus } from './services/RxJS/HTTPListener.service';
 
 import { GameListComponent } from './components/game/game-list.component';
 import { GameDetailComponent } from './components/game/game-detail.component';
@@ -33,8 +33,7 @@ import { PlayerDetailComponent } from './components/player/player-detail.compone
 import { UserListComponent } from './components/user/user-list.component';
 import { ChangePasswordComponent } from './components/user/change-password.component';
 
-
-
+//const RxJS_Services = [HTTPListener, HTTPStatus];
 
 @NgModule({
   declarations: [
@@ -71,6 +70,7 @@ import { ChangePasswordComponent } from './components/user/change-password.compo
       { path: 'game', component: GameListComponent },
       { path: 'player', component: PlayerListComponent },
       { path: 'user', component: UserListComponent },
+      { path: 'change-password', component: ChangePasswordComponent },
       { path: 'player/create', component: PlayerEditComponent },
       { path: 'player/edit/:id', component: PlayerEditComponent },
       { path: 'ranking', component: RankingComponent },
@@ -84,6 +84,13 @@ import { ChangePasswordComponent } from './components/user/change-password.compo
     ])
   ],
   providers: [
+    /*...RxJS_Services,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HTTPListener,
+      multi: true
+    },
+    */
     { provide: 'BASE_URL', useFactory: getBaseUrl },
     AuthService,
     TitleCasePipe,

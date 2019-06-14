@@ -26,6 +26,7 @@ namespace SkillersPokerSystem.Controllers
             : base(context, roleManager, userManager, configuration) { }
 
         [HttpGet("GetAll")]
+        [Authorize]
         public  IActionResult GetAll()
         {
             var users = DbContext.Users.ToList();
@@ -36,6 +37,7 @@ namespace SkillersPokerSystem.Controllers
         }
 
         [HttpPut()]
+        [Authorize]
         public async Task<IActionResult> Put([FromBody]UserViewModel model)
         {
             // return a generic HTTP Status 500 (Server Error)
@@ -83,6 +85,8 @@ namespace SkillersPokerSystem.Controllers
                 JsonSettings);
         }
 
+        [HttpPost("ChangePassword")]
+        [Authorize]
         public async Task<IActionResult> ChangePassword([FromBody]UserViewModel model)
         {
 
@@ -90,7 +94,7 @@ namespace SkillersPokerSystem.Controllers
 
             if (user == null) new StatusCodeResult(500);
 
-            IdentityResult result = await UserManager.ChangePasswordAsync(user, model.Password, model.ConfirmPassword);
+            IdentityResult result = await UserManager.ChangePasswordAsync(user, model.OldPassword, model.ConfirmPassword);
 
             if (!result.Succeeded)
             {

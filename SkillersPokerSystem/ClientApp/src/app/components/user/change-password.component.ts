@@ -29,7 +29,7 @@ export class ChangePasswordComponent {
         Username: ['', Validators.required],
         OldPassword: ['', Validators.required],
         Password: ['', Validators.required],
-        PasswordConfirm: ['', Validators.required]
+        ConfirmPassword: ['', Validators.required]
       }, {
           validator: this.passwordConfirmValidator
         });
@@ -39,27 +39,26 @@ export class ChangePasswordComponent {
       // build a temporary user object from form values
       var tempUser = <User>{};
       tempUser.Username = this.form.value.Username;
-      tempUser.OldPassword = this.form.value.Password;
-      tempUser.Password = this.form.value.Password;
+      tempUser.OldPassword = this.form.value.OldPassword;
+      tempUser.ConfirmPassword = this.form.value.ConfirmPassword;
 
-      var url = this.baseUrl + "api/user";
+      var url = this.baseUrl + "api/user/changePassword";
 
       this.http
         .post<User>(url, tempUser)
         .subscribe(res => {
-          if (res) {
             var v = res;
-            console.log("User " + v.Username + " has been created.");
+            console.log("User " + v.Username + " has been changed password.");
             // redirect to login page
             this.router.navigate(["login"]);
-          }
-          else {
-            // registration failed
+
+        }, error => {
+
             this.form.setErrors({
-              "register": "User registration failed."
+              "changepw": "Erro ao trocar senha!"
             });
-          }
-        }, error => console.log(error));
+            console.log(error);
+          })
     }
 
     onBack() {
@@ -72,7 +71,7 @@ export class ChangePasswordComponent {
 
       // retrieve the two Controls
       let p = control.root.get('Password');
-      let pc = control.root.get('PasswordConfirm');
+      let pc = control.root.get('ConfirmPassword');
 
       if (p && pc) {
         if (p.value !== pc.value) {
