@@ -261,3 +261,4 @@ __pycache__/
 *.pyc
 
 SkillersPokerSystem/appsettings.json
+/SkillersPokerSystem/ClientApp/package-lock.json_
