@@ -18,9 +18,7 @@ import { AuthInterceptor } from './services/auth.interceptor';
 import { AuthResponseInterceptor } from './services/auth.response.interceptor';
 import { AuthService } from './services/auth.service';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-
-import { HTTPListener } from './services/RxJS/HTTPListener.service';
-import {  HTTPStatus } from './services/RxJS/HTTPStatus.service';
+import { LoaderInterceptorService } from './services/loader.interceptor';
 
 import { GameListComponent } from './components/game/game-list.component';
 import { GameDetailComponent } from './components/game/game-detail.component';
@@ -35,8 +33,7 @@ import { PlayerEditComponent } from './components/player/player-edit.component';
 import { PlayerDetailComponent } from './components/player/player-detail.component';
 import { UserListComponent } from './components/user/user-list.component';
 import { ChangePasswordComponent } from './components/user/change-password.component';
-
-const RxJS_Services = [HTTPListener, HTTPStatus];
+import { LoaderComponent } from './components/loader/loader.component';
 
 @NgModule({
   declarations: [
@@ -57,7 +54,8 @@ const RxJS_Services = [HTTPListener, HTTPStatus];
     PlayerEditComponent,
     PlayerDetailComponent,
     UserListComponent,
-    ChangePasswordComponent
+    ChangePasswordComponent,
+    LoaderComponent
   ],
   imports: [
     BrowserModule,
@@ -88,13 +86,11 @@ const RxJS_Services = [HTTPListener, HTTPStatus];
     ])
   ],
   providers: [
-    ...RxJS_Services,
     {
       provide: HTTP_INTERCEPTORS,
-      useClass: HTTPListener,
+      useClass: LoaderInterceptorService,
       multi: true
-    },
-    
+    },    
     { provide: 'BASE_URL', useFactory: getBaseUrl },
     AuthService,
     TitleCasePipe,
