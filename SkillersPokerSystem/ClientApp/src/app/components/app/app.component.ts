@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { HTTPStatus } from '../../services/rxjs/HTTPListener.service';
+import { HTTPStatus } from '../../services/rxjs/HTTPStatus.service';
 
+import { version } from '../../../../package.json';
 
 @Component({
   selector: 'app-root',
@@ -8,6 +9,9 @@ import { HTTPStatus } from '../../services/rxjs/HTTPListener.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+
+  public version: string = version;
+
   title = 'ClientApp';
   HTTPActivity: boolean;
   constructor(/*private httpStatus: HTTPStatus*/) {

@@ -1,35 +1,16 @@
 import { Injectable } from '@angular/core';
+import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/common/http';
+import { HTTPStatus } from './HTTPStatus.service';
 import { Observable } from 'rxjs/Observable';
-import {
-  HttpEvent,
-  HttpHandler,
-  HttpInterceptor,
-  HttpRequest
-} from '@angular/common/http';
+import { catchError } from 'rxjs/operators/catchError';
+import { finalize } from 'rxjs/operators/finalize';
+import { map } from 'rxjs/operators/map';
 
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { catchError, finalize, map } from 'rxjs/operators';
-import 'rxjs/add/observable/throw';
 
-@Injectable()
-export class HTTPStatus {
-  private requestInFlight$: BehaviorSubject<boolean>;
-  constructor() {
-    this.requestInFlight$ = new BehaviorSubject(false);
-  }
-
-  setHttpStatus(inFlight: boolean) {
-    this.requestInFlight$.next(inFlight);
-  }
-
-  getHttpStatus(): Observable<boolean> {
-    return this.requestInFlight$.asObservable();
-  }
-}
 
 @Injectable()
 export class HTTPListener implements HttpInterceptor {
-  constructor(private status: HTTPStatus) {}
+  constructor(private status: HTTPStatus) { }
 
   intercept(
     req: HttpRequest<any>,
@@ -37,6 +18,7 @@ export class HTTPListener implements HttpInterceptor {
   ): Observable<HttpEvent<any>> {
     return next.handle(req).pipe(
       map(event => {
+        console.log('event', event);
         return event;
       }),
       catchError(error => {
@@ -45,6 +27,6 @@ export class HTTPListener implements HttpInterceptor {
       finalize(() => {
         this.status.setHttpStatus(false);
       })
-    )
+    );
   }
 }

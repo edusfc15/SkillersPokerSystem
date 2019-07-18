@@ -1,45 +1,46 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 
   <a class="navbar-brand" [routerLink]="['/home']">
-    <img src="./assets/logo.png" alt="">
-    Skillers Poker Club
-  </a>
+    <img src="./assets/logo.png" alt=""> 
+      Skillers Poker Club
+    </a>
 
-  <nav-menu></nav-menu>
-</nav>
+    <nav-menu></nav-menu>
+  </nav>
 
-<div [hidden]=!HTTPActivity>
-  Teste
-  Teste
-</div>
-<div class="container">
-  <router-outlet></router-outlet>
-</div>
-
-
-<!-- Footer -->
-<footer>
-
-  <!-- Footer Elements -->
+  <div [hidden]=!HTTPActivity>
+    Teste
+    Teste
+  </div>
   <div class="container">
+    <router-outlet></router-outlet>
+  </div>
 
-    <!-- Grid row-->
-    <div class="row">
 
-      <!-- Grid column -->
-      <div class="col-md-12 py-5">
-        <div class="mb-5 flex-center">
+  <!-- Footer -->
+    <footer>
 
+      <!-- Footer Elements -->
+      <div class="container">
+
+        <!-- Grid row-->
+        <div class="row">
+
+          <!-- Grid column -->
+          <div class="col-md-12 py-5">
+            <div class="mb-5 flex-center">
+
+
+            </div>
+          </div>
+          <!-- Grid column -->
 
         </div>
+        <!-- Grid row-->
+
       </div>
-      <!-- Grid column -->
+      <!-- Footer Elements -->
+      <h6>{{version}}</h6>
 
-    </div>
-    <!-- Grid row-->
-
-  </div>
-  <!-- Footer Elements -->
-
-</footer>
-<!-- Footer -->
+    </footer>
+    <!-- Footer -->
