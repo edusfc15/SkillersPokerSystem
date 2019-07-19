@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
 import { interval, Observable } from "rxjs";
 import { map, share } from "rxjs/operators";
+import { GameStatus } from "src/app/services/game.status.service";
 
 @Component({
   selector: "game-edit",
@@ -27,7 +28,7 @@ export class GameEditComponent {
     private router: Router,
     private http: HttpClient,
     private fb: FormBuilder,
-
+	private gameStatus: GameStatus,
     @Inject('BASE_URL') private baseUrl: string) {
 
     this.game = <Game>{};
@@ -36,8 +37,11 @@ export class GameEditComponent {
       .subscribe(res => {
         this.activeGame = res;
         if (this.activeGame) {
-          this.router.navigate(['game/' + this.activeGame.Id]);
-        }
+		  this.router.navigate(['game/' + this.activeGame.Id]);
+		  this.gameStatus.setGameStatus(true);
+        } else{
+			this.gameStatus.setGameStatus(false);
+		}
       }
     );
 
@@ -127,10 +131,12 @@ export class GameEditComponent {
    this.http
        .put<Game>(url, tempGameDetails)
      .subscribe(res => {
-         var v = res;
-         this.router.navigate(["game/" + v.Id]);
+		 var v = res;
+		 
+		 this.router.navigate(["game/" + v.Id]);
+		 this.gameStatus.setGameStatus(true);
        }, error => console.log(error)
-       ,() => console.log('HTTP request completed.')
+       
      );
 
   }

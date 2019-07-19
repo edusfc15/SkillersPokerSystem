@@ -41,7 +41,7 @@
 
 
       <li *ngIf="auth.isLoggedIn()" class="nav-item" [routerLinkActive]="['link-active']">
-        <a class="nav-link" [routerLink]="['/game/create']">Iniciar Jogo </a>
+        <a class="nav-link" [routerLink]="['/game/create']">{{gameStatusDescription}}</a>
       </li>
 
     </ul>

@@ -34,6 +34,7 @@ import { PlayerDetailComponent } from './components/player/player-detail.compone
 import { UserListComponent } from './components/user/user-list.component';
 import { ChangePasswordComponent } from './components/user/change-password.component';
 import { LoaderComponent } from './components/loader/loader.component';
+import { GameStatus } from './services/game.status.service';
 
 @NgModule({
   declarations: [
@@ -86,6 +87,7 @@ import { LoaderComponent } from './components/loader/loader.component';
     ])
   ],
   providers: [
+	  GameStatus,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: LoaderInterceptorService,

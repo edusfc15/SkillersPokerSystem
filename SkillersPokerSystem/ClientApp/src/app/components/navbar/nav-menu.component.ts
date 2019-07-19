@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { Router } from "@angular/router";
+import { GameStatus } from '../../services/game.status.service';
 
 @Component({
   selector: 'nav-menu',
@@ -9,14 +10,24 @@ import { Router } from "@angular/router";
 export class NavMenuComponent implements OnInit {
 
   navbarCollapsed: boolean;
+  gameStatusDescription : string; 
+  activeGame: boolean;
 
   constructor(
     public auth: AuthService,
-    private router: Router
-  ) { }
+	private router: Router,
+	private gameStatus : GameStatus
+  ) { 
+
+	  this.gameStatus.getGameStatus().subscribe( (status:boolean) => { 
+		  this.activeGame = status; 
+		  this.checkStatus(this.activeGame);
+	} )
+
+  }
 
   ngOnInit() {
-    this.navbarCollapsed = true;
+	this.navbarCollapsed = true;
 
   }
 
@@ -27,6 +38,14 @@ export class NavMenuComponent implements OnInit {
       this.router.navigate([""]);
     }
     return false;
+  }
+
+  checkStatus(ActiveGameStatus: boolean){
+		if (ActiveGameStatus) {
+			this.gameStatusDescription = "Gerenciar Jogo"
+		} else {
+			this.gameStatusDescription = "Iniciar Jogo"
+		}
   }
 
 

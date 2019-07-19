@@ -2,8 +2,7 @@ import { Component, Inject, Input, OnChanges, SimpleChanges, Output, EventEmitte
 import {  Router } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
 import { AuthService } from '../../services/auth.service';
-import { template } from "@angular/core/src/render3";
-
+import { GameStatus } from "src/app/services/game.status.service";
 
 @Component({
   selector: "game-detail-list",
@@ -25,7 +24,8 @@ export class GameDetailListComponent implements OnChanges  {
     private http: HttpClient,
     @Inject('BASE_URL') private baseUrl: string,
     private router: Router,
-    public auth: AuthService,
+	public auth: AuthService,
+	private navGameStatus : GameStatus
   ) {
 
     this.gameDetails = [];
@@ -98,7 +98,8 @@ export class GameDetailListComponent implements OnChanges  {
           .subscribe(res => {
             this.game = res;
             this.gameAtDetail.emit(this.game);
-            this.loadData();
+			this.loadData();
+			this.navGameStatus.setGameStatus(false);
           })
 
       }
