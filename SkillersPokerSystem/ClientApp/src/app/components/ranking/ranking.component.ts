@@ -4,271 +4,289 @@ import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { TitleCasePipe } from '@angular/common';
 
 @Component({
-  selector: 'ranking',
-  templateUrl: 'ranking.component.html',
-  styleUrls: ['ranking.component.css']
+	selector: 'ranking',
+	templateUrl: 'ranking.component.html',
+	styleUrls: ['ranking.component.css']
 })
 export class RankingComponent implements OnInit {
 
-  @Input() type: string;
-  ranking: Ranking[];
-  rankingTotal: RankingTotal[];
-  distinctPlayers;
-  months;
-  years;
-  showMonths;
-  showLastMonths: boolean;
-  title: string;
-  mensal: boolean;
-
-  constructor(
-    private http: HttpClient,
-    private titlecasePipe: TitleCasePipe,
-    @Inject('BASE_URL') private baseUrl: string
-  ) { }
+	@Input() type: string;
+	ranking: Ranking[];
+	rankingTotal: RankingTotal[];
+	distinctPlayers;
+	months;
+	years;
+	showMonths;
+	monthsDescriptions
+	showLastMonths: boolean;
+	title: string;
+	mensal: boolean;
+
+	constructor(
+		private http: HttpClient,
+		private titlecasePipe: TitleCasePipe,
+		@Inject('BASE_URL') private baseUrl: string
+	) { }
+
+	ngOnInit() {
+
+		const formatter = new Intl.DateTimeFormat('pt', { month: 'long' });
+
+		this.mensal = this.type == 'mes'
+
+		this.rankingTotal = [];
+		this.months = [];
+		this.monthsDescriptions = [];
+		this.showLastMonths = true;
+
+		var today = new Date();
+
+		var currentMonth = today.getMonth() + 1;
+
+		var monthDesc = this.titlecasePipe.transform(today.toLocaleString('pt-br', { month: 'long' }));
+
+
+		for (var i = 0; i <= currentMonth; i++) {
+			if (i > 1) {
+				this.months.push({ "number": i });
+			}
+			if ( i < currentMonth)
+			this.monthsDescriptions.push({ "description": formatter.format(new Date(today.getFullYear(), i, 1, 0, 0, 0, 0)) });
+
+		}
+
+		this.years = [];
+
+		var currentYear = new Date().getFullYear();
+		var startYear = 2015;
+		while (currentYear >= startYear) {
+			this.years.push({ "number": currentYear-- });
+		}
+
+		this.showMonths =
+			{
+				"Show1": false,
+				"Show2": false,
+				"Show3": false,
+				"Show4": false,
+				"Show5": false,
+				"Show6": false,
+				"Show7": false,
+				"Show8": false,
+				"Show9": false,
+				"Show10": false,
+				"Show11": false,
+				"Show12": false
+			}
+			;
+
+		this.showMonths["Show" + currentMonth] = true;
+
+		switch (this.type) {
+			case "mes":
+				this.loadData(new Date().getFullYear(), currentMonth);
+				this.title = "Ranking de " + monthDesc;
+				break;
+			case "total":
+			default:
+				this.loadData();
+				this.title = "Ranking Total";
+				break;
+		}
+
+	}
+
+	loadData(year?: number, month?: number) {
+
+		var url = this.baseUrl + 'api/game/ranking'
+
+		var headers = new HttpHeaders();
+		headers.append('Content-Type', 'application/json');
+
+		var thisYear = new Date().getFullYear();
+		var thisMonth = new Date().getMonth();
+
+		this.rankingTotal = [];
+
+		var yearForParam = thisYear.toString();
+		var monthForParam = "0";
+		if (year) {
+			yearForParam = year.toString();
+		}
+
+		if (month) {
+			monthForParam = month.toString();
+		}
+
+		var params = new HttpParams()
+			.set("year", yearForParam)
+			.set("month", monthForParam);
+
+		this.http.get<Ranking[]>(url, { headers: headers, params: params }).subscribe(
+			res => {
+
+				var rankingPlayers = [];
+				this.ranking = res;
+				this.ranking.map(x => rankingPlayers.push(x.Name));
+
+				const distinct = (value, index, self) => {
+					return self.indexOf(value) === index;
+				}
+
+				this.distinctPlayers = rankingPlayers.filter(distinct);
+
+				for (var i = 0; i < this.distinctPlayers.length; i++) {
+					var filter = [];
+					filter = this.ranking.filter(x => x.Name === this.distinctPlayers[i]);
+					var tmp = { "Name": '', "Janeiro": 0, "Fevereiro": 0, "Marco": 0, "Abril": 0, "Maio": 0, "Junho": 0, "Julho": 0, "Agosto": 0, "Setembro": 0, "Outubro": 0, "Novembro": 0, "Dezembro": 0, "Total": 0 };
+					for (var j = 0; j < filter.length; j++) {
+
+						tmp.Name = filter[j].Name;
+
+						switch (filter[j].Month) {
+
+							case (1): {
+								tmp.Janeiro = filter[j].Total;
+								break;
+							}
+							case (2): {
+								tmp.Fevereiro = filter[j].Total;
+								break;
+							}
+							case (3): {
+								tmp.Marco = filter[j].Total;
+								break;
+							}
+							case (4): {
+								tmp.Abril = filter[j].Total;
+								break;
+							}
+							case (5): {
+								tmp.Maio = filter[j].Total;
+								break;
+							}
+							case (6): {
+								tmp.Junho = filter[j].Total;
+								break;
+							}
+							case (7): {
+								tmp.Julho = filter[j].Total;
+								break;
+							}
+							case (8): {
+								tmp.Agosto = filter[j].Total;
+								break;
+							}
+							case (9): {
+								tmp.Setembro = filter[j].Total;
+								break;
+							}
+							case (10): {
+								tmp.Outubro = filter[j].Total;
+								break;
+							}
+							case (11): {
+								tmp.Novembro = filter[j].Total;
+								break;
+							}
+							case (12): {
+								tmp.Dezembro = filter[j].Total;
+								break;
+							}
+							case (13): {
+								tmp.Total = filter[j].Total;
+								break;
+							}
 
-  ngOnInit() {
-
-    this.mensal = this.type == 'mes'
 
-    this.rankingTotal = [];
-    this.months = [];
-    this.showLastMonths = true;
 
-    var today = new Date();
-
-    var currentMonth = today.getMonth() + 1;
+						}
+					}
+					this.rankingTotal.push(tmp);
 
-    var monthDesc = this.titlecasePipe.transform(today.toLocaleString('pt-br', { month: 'long' }));
+				}
 
+				this.rankingTotal.sort((x, y) => {
 
-    for (var i = 0; i <= currentMonth; i++) {
-      if (i > 1) {
-        this.months.push({ "number": i });
+					var comparison = 0;
 
-      }
-
-    }
-
-
-    this.years = [];
-
-    var currentYear = new Date().getFullYear();
-    var startYear = 2015;
-    while (currentYear >= startYear) {
-      this.years.push({ "number": currentYear-- });
-    }
-
-    this.showMonths =
-      {
-        "Show1": false,
-        "Show2": false,
-        "Show3": false,
-        "Show4": false,
-        "Show5": false,
-        "Show6": false,
-        "Show7": false,
-        "Show8": false,
-        "Show9": false,
-        "Show10": false,
-        "Show11": false,
-        "Show12": false
-      }
-      ;
-
-    this.showMonths["Show" + currentMonth] = true;
-
-    switch (this.type) {
-      case "mes":
-        this.loadData(new Date().getFullYear(), currentMonth);
-        this.title = "Ranking de " + monthDesc;
-        break;
-      case "total":
-      default:
-        this.loadData();
-        this.title = "Ranking Total";
-        break;
-    }
-
-  }
-
-  loadData(year?: number, month?: number) {
-
-    var url = this.baseUrl + 'api/game/ranking'
-
-    var headers = new HttpHeaders();
-    headers.append('Content-Type', 'application/json');
-
-    var thisYear = new Date().getFullYear();
-    var thisMonth = new Date().getMonth();
-
-    this.rankingTotal = [];
-
-    var yearForParam = thisYear.toString();
-    var monthForParam = "0";
-    if (year) {
-      yearForParam = year.toString();
-    }
-
-    if (month) {
-      monthForParam = month.toString();
-    }
-
-    var params = new HttpParams()
-      .set("year", yearForParam)
-      .set("month", monthForParam);
-
-    this.http.get<Ranking[]>(url, { headers: headers, params: params }).subscribe(
-      res => {
-
-        var rankingPlayers = [];
-        this.ranking = res;
-        this.ranking.map(x => rankingPlayers.push(x.Name));
-
-        const distinct = (value, index, self) => {
-          return self.indexOf(value) === index;
-        }
-
-        this.distinctPlayers = rankingPlayers.filter(distinct);
-
-        for (var i = 0; i < this.distinctPlayers.length; i++) {
-          var filter = [];
-          filter = this.ranking.filter(x => x.Name === this.distinctPlayers[i]);
-          var tmp = { "Name": '', "Janeiro": 0, "Fevereiro": 0, "Marco": 0, "Abril": 0, "Maio": 0, "Junho": 0, "Julho": 0, "Agosto": 0, "Setembro": 0, "Outubro": 0, "Novembro": 0, "Dezembro": 0, "Total": 0 };
-          for (var j = 0; j < filter.length; j++) {
-
-            tmp.Name = filter[j].Name;
-
-            switch (filter[j].Month) {
-
-              case (1): {
-                tmp.Janeiro = filter[j].Total;
-                break;
-              }
-              case (2): {
-                tmp.Fevereiro = filter[j].Total;
-                break;
-              }
-              case (3): {
-                tmp.Marco = filter[j].Total;
-                break;
-              }
-              case (4): {
-                tmp.Abril = filter[j].Total;
-                break;
-              }
-              case (5): {
-                tmp.Maio = filter[j].Total;
-                break;
-              }
-              case (6): {
-                tmp.Junho = filter[j].Total;
-                break;
-              }
-              case (7): {
-                tmp.Julho = filter[j].Total;
-                break;
-              }
-              case (8): {
-                tmp.Agosto = filter[j].Total;
-                break;
-              }
-              case (9): {
-                tmp.Setembro = filter[j].Total;
-                break;
-              }
-              case (10): {
-                tmp.Outubro = filter[j].Total;
-                break;
-              }
-              case (11): {
-                tmp.Novembro = filter[j].Total;
-                break;
-              }
-              case (12): {
-                tmp.Dezembro = filter[j].Total;
-                break;
-              }
-              case (13): {
-                tmp.Total = filter[j].Total;
-                break;
-              }
+					if (x.Total > y.Total) {
+						comparison = -1;
+					} else if (x.Total < y.Total) {
+						comparison = 1;
+					}
 
+					return comparison;
+				});
 
+			}
 
-            }
-          }
-          this.rankingTotal.push(tmp);
+		);
 
-        }
 
-        this.rankingTotal.sort((x, y) => {
+	}
 
-          var comparison = 0;
+	onChangeMonths(selectedOptions) {
 
-          if (x.Total > y.Total) {
-            comparison = -1;
-          } else if (x.Total < y.Total) {
-            comparison = 1;
-          }
 
-          return comparison;
-        });
 
-      }
+		var monthIndex = selectedOptions[0].index;
+		monthIndex++;
+		var monthToStart = new Date().getMonth();
+		monthToStart++;
 
-    );
+		for (var i = 0; i < Object.keys(this.showMonths).length; i++) {
+			this.showMonths["Show" + i] = false;
+		}
 
+		for (monthToStart; monthIndex > 0; monthIndex--) {
+			this.showMonths["Show" + monthToStart] = true;
+			monthToStart--;
+		}
 
-  }
+	}
 
-  onChangeMonths(selectedOptions) {
 
+	onChangeYear(year) {
+		this.loadData(year);
 
+		var now = new Date();
+		var thisYear = now.getFullYear()
 
-    var monthIndex = selectedOptions[0].index;
-    monthIndex++;
-    var monthToStart = new Date().getMonth();
-    monthToStart++;
+		if (year < thisYear) {
+			this.showLastMonths = false;
 
-    for (var i = 0; i < Object.keys(this.showMonths).length; i++) {
-      this.showMonths["Show" + i] = false;
-    }
+			for (var i = 0; i < Object.keys(this.showMonths).length; i++) {
+				this.showMonths["Show" + i] = true;
+			}
 
-    for (monthToStart; monthIndex > 0; monthIndex--) {
-      this.showMonths["Show" + monthToStart] = true;
-      monthToStart--;
-    }
+		} else {
 
-  }
+			for (var i = 0; i < Object.keys(this.showMonths).length; i++) {
+				this.showMonths["Show" + i] = false;
+			}
 
 
-  onChangeYear(year) {
-    this.loadData(year);
+			this.showLastMonths = true;
+			this.showMonths["Show" + (now.getMonth() + 1)] = true;
 
-    var now = new Date();
-    var thisYear = now.getFullYear()
+		}
 
-    if (year < thisYear) {
-      this.showLastMonths = false;
 
-      for (var i = 0; i < Object.keys(this.showMonths).length; i++) {
-        this.showMonths["Show" + i] = true;
-      }
+	}
 
-    } else {
+	onChangeMonth(month) {
 
-      for (var i = 0; i < Object.keys(this.showMonths).length; i++) {
-        this.showMonths["Show" + i] = false;
-      }
+		var now = new Date();
+		var monthChosen = new Date(now.getFullYear(), month-1)
+		var thisYear = now.getFullYear()
+		var monthDesc = this.titlecasePipe.transform(monthChosen.toLocaleString('pt-br', { month: 'long' }));
 
 
-      this.showLastMonths = true;
-      this.showMonths["Show" + (now.getMonth() + 1)] = true;
+		this.loadData(thisYear, month);
 
-    }
+		this.title = 'Ranking de ' + monthDesc
 
-
-  }
+	}
 
 }

@@ -119,7 +119,7 @@ namespace SkillersPokerSystem.Controllers
 
             IOrderedQueryable model;
 
-            if (yearForRanking == DateTime.UtcNow.Year && monthForRanking == DateTime.UtcNow.Month)
+            if (yearForRanking == DateTime.UtcNow.Year && monthForRanking != 0)
             {
 
                 var rankingTotal = DbContext.GameDetails
