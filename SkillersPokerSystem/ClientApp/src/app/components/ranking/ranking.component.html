@@ -19,6 +19,16 @@
 
   </div>
 
+  <div class="row" *ngIf="mensal">
+    <div class="col text-right">
+	  <label>Escolha o mês:</label>
+      <select (change)="onChangeMonth($event.target.value)" class="form-control">
+        <option selected *ngFor="let month of monthsDescriptions; let mIndex = index" [value]="mIndex+1" >{{month.description | titlecase}}</option>
+      </select>
+    </div>
+
+  </div>
+
   <hr />
 
 
@@ -64,5 +74,8 @@
     </tbody>
   </table>
 </div>
+
+
+
 
 
