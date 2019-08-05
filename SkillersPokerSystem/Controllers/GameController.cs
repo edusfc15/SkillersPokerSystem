@@ -111,11 +111,12 @@ namespace SkillersPokerSystem.Controllers
 
         
         [HttpGet("Ranking")]
-        public IActionResult Ranking(string year = null, string month = null)
+        public IActionResult Ranking(string year = null, string month = null, string realProfit = null)
         {
 
             int yearForRanking = int.Parse(year);
             int monthForRanking = int.Parse(month);
+            Boolean realProfitForRanking = bool.Parse(realProfit);
 
             IOrderedQueryable model;
 
@@ -125,7 +126,10 @@ namespace SkillersPokerSystem.Controllers
                 var rankingTotal = DbContext.GameDetails
                 .Where(d => d.Game.CreatedDate.Year == yearForRanking && d.Game.CreatedDate.Month == monthForRanking && d.Game.Status == StatusEnum.Encerrado)
                 .GroupBy(x => new { x.Player.Name, x.CreatedDate.Year })
-                .Select(x => new { x.Key.Name, Month = 13, x.Key.Year, Total = x.Sum(f => f.ChipsTotal) - x.Sum(f => f.Value) })
+                .Select(x => new { x.Key.Name, Month = 13, x.Key.Year, 
+                Total = realProfitForRanking ?
+                x.Sum(i => i.ChipsTotal) - (x.Sum(i => i.ChipsTotal) * (x.Max(s => s.Game.Rake.RakeDetails.Where(a => a.Value > x.Sum(i => i.Value)).FirstOrDefault().Percent) / 100)) - x.Sum(i => i.Value)
+                : x.Sum(f => f.ChipsTotal) - x.Sum(f => f.Value) })
                 .OrderByDescending(s => (s.Total))
                 ;
 

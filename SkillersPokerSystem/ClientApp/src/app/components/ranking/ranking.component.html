@@ -2,6 +2,26 @@
 
 <div class="container">
 
+  <div class="row">
+    <form [formGroup]="form" class="float-right ml-auto">
+        <div class="form-group" *ngIf="!mensal">
+            <span class="switch switch-sm">
+              <label class="m-md-3" for="realProfit1">Lucro real:</label>
+              <input formControlName="RealProfit1" type="checkbox" class="switch form-control" id="realProfit1">
+              <label for="realProfit1"></label>
+            </span>
+          </div>
+          <div class="form-group" *ngIf="mensal" >
+              <span class="switch switch-sm">
+                <label class="m-md-3" for="realProfit2">Lucro real:</label>
+                <input formControlName="RealProfit2" type="checkbox" class="switch form-control" id="realProfit2">
+                <label for="realProfit2"></label>
+              </span>
+            </div>
+    </form>
+
+  </div>
+
   <div class="row" *ngIf="!mensal">
     <div class="col text-right">
       <label>Escolha o ano:</label>

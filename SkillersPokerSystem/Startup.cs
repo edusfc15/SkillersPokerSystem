@@ -35,7 +35,9 @@ namespace SkillersPokerSystem
 
             // Add ApplicationDbContext.
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
+                options
+                .UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
+                .UseLazyLoadingProxies()
                 );
 
             // Add ASP.NET Identity support
