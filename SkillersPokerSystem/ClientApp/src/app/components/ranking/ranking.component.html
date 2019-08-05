@@ -7,14 +7,14 @@
         <div class="form-group" *ngIf="!mensal">
             <span class="switch switch-sm">
               <label class="m-md-3" for="realProfit1">Lucro real:</label>
-              <input formControlName="RealProfit1" type="checkbox" class="switch form-control" id="realProfit1">
+              <input formControlName="RealProfit1" type="checkbox" class="switch form-control" (change)="onChangeYear(selectedYear)" id="realProfit1">
               <label for="realProfit1"></label>
             </span>
           </div>
           <div class="form-group" *ngIf="mensal" >
               <span class="switch switch-sm">
                 <label class="m-md-3" for="realProfit2">Lucro real:</label>
-                <input formControlName="RealProfit2" type="checkbox" class="switch form-control" id="realProfit2">
+                <input formControlName="RealProfit2" type="checkbox" class="switch form-control" (change)="onChangeMonth(selectedMonth)"   id="realProfit2">
                 <label for="realProfit2"></label>
               </span>
             </div>
@@ -25,7 +25,7 @@
   <div class="row" *ngIf="!mensal">
     <div class="col text-right">
       <label>Escolha o ano:</label>
-      <select (change)="onChangeYear($event.target.value)" class="form-control">
+      <select [(ngModel)]="selectedYear" (change)="onChangeYear($event.target.value)" class="form-control">
         <option *ngFor="let year of years; let yIndex = index">{{year.number}}</option>
       </select>
     </div>
@@ -42,10 +42,11 @@
   <div class="row" *ngIf="mensal">
     <div class="col text-right">
 	  <label>Escolha o mês:</label>
-      <select (change)="onChangeMonth($event.target.value)" class="form-control">
-        <option selected *ngFor="let month of monthsDescriptions; let mIndex = index" [value]="mIndex+1" >{{month.description | titlecase}}</option>
+      <select [(ngModel)]="selectedMonth" (change)="onChangeMonth($event.target.value)" class="form-control">
+        <option *ngFor="let month of monthsDescriptions; let mIndex = index" [value]="mIndex+1" >{{month.description | titlecase}}</option>
       </select>
-    </div>
+	</div>
+	
 
   </div>
 

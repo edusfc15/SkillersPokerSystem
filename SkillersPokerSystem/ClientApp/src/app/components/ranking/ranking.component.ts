@@ -23,7 +23,9 @@ export class RankingComponent implements OnInit {
   title: string;
   mensal: boolean;
   form: FormGroup;
-
+  selectedMonth: number;
+  selectedYear: number;
+  
   constructor(
     private http: HttpClient,
     private titlecasePipe: TitleCasePipe,
@@ -55,7 +57,11 @@ export class RankingComponent implements OnInit {
 
     const today = new Date();
 
-    const currentMonth = today.getMonth() + 1;
+	const currentMonth = today.getMonth() + 1;
+	const currentYear = new Date().getFullYear();
+	
+	this.selectedYear = currentYear;
+	this.selectedMonth = currentMonth;
 
     const monthDesc = this.titlecasePipe.transform(today.toLocaleString('pt-br', { month: 'long' }));
 
@@ -72,7 +78,6 @@ export class RankingComponent implements OnInit {
 
     this.years = [];
 
-    var currentYear = new Date().getFullYear();
     var startYear = 2015;
     while (currentYear >= startYear) {
       this.years.push({ "number": currentYear-- });
@@ -302,7 +307,7 @@ export class RankingComponent implements OnInit {
     var monthChosen = new Date(now.getFullYear(), month - 1)
     var thisYear = now.getFullYear()
     var monthDesc = this.titlecasePipe.transform(monthChosen.toLocaleString('pt-br', { month: 'long' }));
-
+	console.log(month);
 
     this.loadData(thisYear, month,this.form.get('RealProfit2').value);
 
