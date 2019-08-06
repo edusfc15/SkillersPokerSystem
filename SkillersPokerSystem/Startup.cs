@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using SkillersPokerSystem.Data;
 using SkillersPokerSystem.Data.Models;
+using StackExchange.Profiling;
 using System;
 using System.Text;
 
@@ -88,6 +89,8 @@ namespace SkillersPokerSystem
             {
                 configuration.RootPath = "ClientApp/dist/ClientApp";
             });
+
+            services.AddMiniProfiler();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -126,6 +129,8 @@ namespace SkillersPokerSystem
             });
 
             app.UseSpaStaticFiles();
+
+            app.UseMiniProfiler();
 
             app.UseMvc(routes =>
             {

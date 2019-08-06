@@ -25,7 +25,7 @@ export class RankingComponent implements OnInit {
   form: FormGroup;
   selectedMonth: number;
   selectedYear: number;
-  
+
   constructor(
     private http: HttpClient,
     private titlecasePipe: TitleCasePipe,
@@ -58,8 +58,8 @@ export class RankingComponent implements OnInit {
     const today = new Date();
 
 	const currentMonth = today.getMonth() + 1;
-	const currentYear = new Date().getFullYear();
-	
+	var currentYear = new Date().getFullYear();
+
 	this.selectedYear = currentYear;
 	this.selectedMonth = currentMonth;
 
