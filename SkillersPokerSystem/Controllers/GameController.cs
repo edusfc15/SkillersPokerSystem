@@ -128,7 +128,7 @@ namespace SkillersPokerSystem.Controllers
                 .GroupBy(x => new { x.Player.Name, x.CreatedDate.Year })
                 .Select(x => new { x.Key.Name, Month = 13, x.Key.Year, 
                 Total = realProfitForRanking ?
-                x.Sum(i => i.ChipsTotal) - (x.Sum(i => i.ChipsTotal) * (x.Max(s => s.Game.Rake.RakeDetails.Where(a => a.Value > x.Sum(i => i.Value)).FirstOrDefault().Percent) / 100)) - x.Sum(i => i.Value)
+                x.Sum(i => i.ChipsTotal) - (x.Sum(i => i.ChipsTotal) * (x.Max(s => s.Game.Rake.RakeDetails.Where(a => a.Value > x.Sum(i => i.Value)  ).FirstOrDefault().Percent) / 100)) - x.Sum(i => i.Value)
                 : x.Sum(f => f.ChipsTotal) - x.Sum(f => f.Value) })
                 .OrderByDescending(s => (s.Total))
                 ;
