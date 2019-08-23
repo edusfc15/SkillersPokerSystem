@@ -111,68 +111,202 @@ namespace SkillersPokerSystem.Controllers
 
         
         [HttpGet("Ranking")]
-        public IActionResult Ranking(string year = null, string month = null)
+        public IActionResult Ranking(string year = null, string month = null, string realProfit = null)
         {
 
             int yearForRanking = int.Parse(year);
             int monthForRanking = int.Parse(month);
+            Boolean realProfitForRanking = bool.Parse(realProfit);
 
             IOrderedQueryable model;
 
             if (yearForRanking == DateTime.UtcNow.Year && monthForRanking != 0)
             {
 
-                var rankingTotal = DbContext.GameDetails
-                .Where(d => d.Game.CreatedDate.Year == yearForRanking && d.Game.CreatedDate.Month == monthForRanking && d.Game.Status == StatusEnum.Encerrado)
-                .GroupBy(x => new { x.Player.Name, x.CreatedDate.Year })
-                .Select(x => new { x.Key.Name, Month = 13, x.Key.Year, Total = x.Sum(f => f.ChipsTotal) - x.Sum(f => f.Value) })
-                .OrderByDescending(s => (s.Total))
-                ;
+				var a1 = DbContext.GameDetails
+				.Where(d => d.Game.CreatedDate.Year == yearForRanking && d.Game.CreatedDate.Month == monthForRanking  && d.Game.Status == StatusEnum.Encerrado)
+				.GroupBy( x => new{  x.GameId, x.Game.RakeId, x.Player.Name, x.CreatedDate.Year }).ToList().AsQueryable()
+				.Select( x => new { 
+					x.Key.Name, 
+					Month = 13, 
+					x.Key.Year,
+					BuyIns = x.Sum( s => s.Value),
+					Cashout = x.Sum( c => c.ChipsTotal),
+					RakeId = x.Key.RakeId
+				 }  )
+				 .OrderBy(s => (s.Name))
+				 ;
 
+				 var a2 = a1.Select(
+					 x => new { 
+						 Name = x.Name,
+					 	 Month = x.Month,
+						 Year = x.Year,
+						 RakeId = x.RakeId,
+						 Buyins = x.BuyIns,
+						 Total = realProfitForRanking ? x.Cashout - 
+					 (x.Cashout * 
+					 DbContext.RakeDetails.Where( rd => rd.RakeId == x.RakeId && rd.Value > x.BuyIns ).First().Percent 
+					 / 100 ) 
+					 - x.BuyIns : x.Cashout - x.BuyIns
+					  }
+				 ).OrderBy(s => (s.Name));
 
-                model = rankingTotal;
+				 var a3 = a2.GroupBy( x => new { x.Name, x.Month, x.Year } )
+				 .Select( s => new { s.Key.Name,s.Key.Month, s.Key.Year, Total = s.Sum( f => f.Total )  })
+				 .OrderByDescending( s => s.Total)
+				 ;
+
+                model = a3;
             }
 
             else if (yearForRanking == DateTime.UtcNow.Year)
             {
-                var rankingTotal = DbContext.GameDetails
-                .Where(d => d.Game.CreatedDate.Year == yearForRanking && d.Player.IsActive == true && d.Game.Status == StatusEnum.Encerrado)
-                .GroupBy(x => new { x.Player.Name, x.CreatedDate.Year })
-                .Select(x => new { x.Key.Name, Month = 13, x.Key.Year, Total = x.Sum(f => f.ChipsTotal) - x.Sum(f => f.Value) })
-                .OrderByDescending(s => (s.Total))
-                ;
 
+				var a1 = DbContext.GameDetails
+				.Where(d => d.Game.CreatedDate.Year == yearForRanking && d.Player.IsActive == true  && d.Game.Status == StatusEnum.Encerrado)
+				.GroupBy( x => new{  x.GameId, x.Game.RakeId, x.Player.Name, x.CreatedDate.Year }).ToList().AsQueryable()
+				.Select( x => new { 
+					x.Key.Name, 
+					Month = 13, 
+					x.Key.Year,
+					BuyIns = x.Sum( s => s.Value),
+					Cashout = x.Sum( c => c.ChipsTotal),
+					RakeId = x.Key.RakeId
+				 }  )
+				 .OrderBy(s => (s.Name))
+				 ;
 
-                var ranking = DbContext.GameDetails
-                    .Where(d => d.Game.CreatedDate.Year == yearForRanking && d.Player.IsActive == true && d.Game.Status == StatusEnum.Encerrado)
-                    .GroupBy(x => new { x.Player.Name, x.Game.CreatedDate.Year, x.Game.CreatedDate.Month })
-                    .Select(x => new { x.Key.Name, x.Key.Month, x.Key.Year, Total = x.Sum(f => f.ChipsTotal) - x.Sum(f => f.Value) })
-                    .Union(rankingTotal)
-                    .OrderBy(z => z.Year).ThenBy(z => z.Month)
-                    ;
+				 var a2 = a1.Select(
+					 x => new { 
+						 Name = x.Name,
+					 	 Month = x.Month,
+						 Year = x.Year,
+						 RakeId = x.RakeId,
+						 Buyins = x.BuyIns,
+						 Total = realProfitForRanking ? x.Cashout - 
+					 (x.Cashout * 
+					 DbContext.RakeDetails.Where( rd => rd.RakeId == x.RakeId && rd.Value > x.BuyIns ).First().Percent 
+					 / 100 ) 
+					 - x.BuyIns : x.Cashout - x.BuyIns
+					  }
+				 ).OrderBy(s => (s.Name));
 
-                model = ranking;
+				 var a3 = a2.GroupBy( x => new { x.Name, x.Month, x.Year } )
+				 .Select( s => new { s.Key.Name,s.Key.Month, s.Key.Year, Total = s.Sum( f => f.Total )  })
+				 .OrderByDescending( s => s.Total)
+				 ;
+
+				 var b1 = DbContext.GameDetails
+				.Where(d => d.Game.CreatedDate.Year == yearForRanking && d.Player.IsActive == true  && d.Game.Status == StatusEnum.Encerrado)
+				.GroupBy( x => new{  x.GameId, x.Game.RakeId, x.Player.Name, x.CreatedDate.Year,x.Game.CreatedDate.Month }).ToList().AsQueryable()
+				.Select( x => new { 
+					x.Key.Name, 
+					x.Key.Month, 
+					x.Key.Year,
+					BuyIns = x.Sum( s => s.Value),
+					Cashout = x.Sum( c => c.ChipsTotal),
+					RakeId = x.Key.RakeId
+				 }  )
+				 .OrderBy(s => (s.Name))
+				 ;
+
+				 var b2 = b1.Select(
+					 x => new { 
+						 Name = x.Name,
+					 	 Month = x.Month,
+						 Year = x.Year,
+						 RakeId = x.RakeId,
+						 Buyins = x.BuyIns,
+						 Total = realProfitForRanking ? x.Cashout - 
+					 (x.Cashout * 
+					 DbContext.RakeDetails.Where( rd => rd.RakeId == x.RakeId && rd.Value > x.BuyIns ).First().Percent 
+					 / 100 ) 
+					 - x.BuyIns : x.Cashout - x.BuyIns
+					  }
+				 ).OrderBy(s => (s.Name));
+
+				 var b3 = b2.GroupBy( x => new { x.Name, x.Month, x.Year } )
+				 .Select( s => new { s.Key.Name,s.Key.Month, s.Key.Year, Total = s.Sum( f => f.Total )  })
+				 .Union(a3)
+				 .OrderBy( s => s.Year).ThenBy( s => s.Month)
+				 ;
+
+                model = b3;
             }
             else
             {
 
-                var rankingTotal = DbContext.GameDetails
-                .Where(d => d.Game.CreatedDate.Year == yearForRanking )
-                .GroupBy(x => new { x.Player.Name, x.Game.CreatedDate.Year })
-                .Select(x => new { x.Key.Name, Month = 13, x.Key.Year, Total = x.Sum(f => f.ChipsTotal) - x.Sum(f => f.Value) })
-                .OrderByDescending(s => (s.Total))
-                ;
+				var a1 = DbContext.GameDetails
+				.Where(d => d.Game.CreatedDate.Year == yearForRanking)
+				.GroupBy( x => new{  x.GameId, x.Game.RakeId, x.Player.Name, x.CreatedDate.Year }).ToList().AsQueryable()
+				.Select( x => new { 
+					x.Key.Name, 
+					Month = 13, 
+					x.Key.Year,
+					BuyIns = x.Sum( s => s.Value),
+					Cashout = x.Sum( c => c.ChipsTotal),
+					RakeId = x.Key.RakeId
+				 }  )
+				 .OrderBy(s => (s.Name))
+				 ;
 
+				 var a2 = a1.Select(
+					 x => new { 
+						 Name = x.Name,
+					 	 Month = x.Month,
+						 Year = x.Year,
+						 RakeId = x.RakeId,
+						 Buyins = x.BuyIns,
+						 Total = realProfitForRanking ? x.Cashout - 
+					 (x.Cashout * 
+					 DbContext.RakeDetails.Where( rd => rd.RakeId == x.RakeId && rd.Value > x.BuyIns ).First().Percent 
+					 / 100 ) 
+					 - x.BuyIns : x.Cashout - x.BuyIns
+					  }
+				 ).OrderBy(s => (s.Name));
 
-                var ranking = DbContext.GameDetails
-                    .Where(d => d.CreatedDate.Year == yearForRanking )
-                    .GroupBy(x => new { x.Player.Name, x.Game.CreatedDate.Year, x.Game.CreatedDate.Month })
-                    .Select(x => new { x.Key.Name, x.Key.Month, x.Key.Year, Total = x.Sum(f => f.ChipsTotal) - x.Sum(f => f.Value) })
-                    .Union(rankingTotal)
-                    .OrderBy(z => z.Year).ThenBy(z => z.Month)
-                    ;
+				 var a3 = a2.GroupBy( x => new { x.Name, x.Month, x.Year } )
+				 .Select( s => new { s.Key.Name,s.Key.Month, s.Key.Year, Total = s.Sum( f => f.Total )  })
+				 .OrderByDescending( s => s.Total)
+				 ;
 
-                model = ranking;
+				 var b1 = DbContext.GameDetails
+				.Where(d => d.Game.CreatedDate.Year == yearForRanking)
+				.GroupBy( x => new{  x.GameId, x.Game.RakeId, x.Player.Name, x.CreatedDate.Year,x.Game.CreatedDate.Month }).ToList().AsQueryable()
+				.Select( x => new { 
+					x.Key.Name, 
+					x.Key.Month, 
+					x.Key.Year,
+					BuyIns = x.Sum( s => s.Value),
+					Cashout = x.Sum( c => c.ChipsTotal),
+					RakeId = x.Key.RakeId
+				 }  )
+				 .OrderBy(s => (s.Name))
+				 ;
+
+				 var b2 = b1.Select(
+					 x => new { 
+						 Name = x.Name,
+					 	 Month = x.Month,
+						 Year = x.Year,
+						 RakeId = x.RakeId,
+						 Buyins = x.BuyIns,
+						 Total = realProfitForRanking ? x.Cashout - 
+					 (x.Cashout * 
+					 DbContext.RakeDetails.Where( rd => rd.RakeId == x.RakeId && rd.Value > x.BuyIns ).First().Percent 
+					 / 100 ) 
+					 - x.BuyIns : x.Cashout - x.BuyIns
+					  }
+				 ).OrderBy(s => (s.Name));
+
+				 var b3 = b2.GroupBy( x => new { x.Name, x.Month, x.Year } )
+				 .Select( s => new { s.Key.Name,s.Key.Month, s.Key.Year, Total = s.Sum( f => f.Total )  })
+				 .Union(a3)
+				 .OrderBy( s => s.Year).ThenBy( s => s.Month)
+				 ;
+
+                model = b3;
 
             }            
 
