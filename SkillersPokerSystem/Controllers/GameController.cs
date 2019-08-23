@@ -116,14 +116,14 @@ namespace SkillersPokerSystem.Controllers
 
             int yearForRanking = int.Parse(year);
             int monthForRanking = int.Parse(month);
-            //Boolean realProfitForRanking = bool.Parse(realProfit);
+            Boolean realProfitForRanking = bool.Parse(realProfit);
 
             IOrderedQueryable model;
 
             if (yearForRanking == DateTime.UtcNow.Year && monthForRanking != 0)
             {
 
-				var rankingReal = DbContext.GameDetails
+				var a1 = DbContext.GameDetails
 				.Where(d => d.Game.CreatedDate.Year == yearForRanking && d.Game.Status == StatusEnum.Encerrado)
 				.GroupBy( x => new{  x.GameId, x.Game.RakeId, x.Player.Name, x.CreatedDate.Year }).ToList().AsQueryable()
 				.Select( x => new { 
@@ -137,18 +137,18 @@ namespace SkillersPokerSystem.Controllers
 				 .OrderBy(s => (s.Name))
 				 ;
 
-				 var a2 = rankingReal.Select(
+				 var a2 = a1.Select(
 					 x => new { 
 						 Name = x.Name,
 					 	 Month = x.Month,
 						 Year = x.Year,
 						 RakeId = x.RakeId,
 						 Buyins = x.BuyIns,
-						 Total = x.Cashout - 
+						 Total = realProfitForRanking ? x.Cashout - 
 					 (x.Cashout * 
 					 DbContext.RakeDetails.Where( rd => rd.RakeId == x.RakeId && rd.Value > x.BuyIns ).First().Percent 
 					 / 100 ) 
-					 - x.BuyIns
+					 - x.BuyIns : x.Cashout - x.BuyIns
 					  }
 				 ).OrderBy(s => (s.Name));
 
