@@ -116,25 +116,48 @@ namespace SkillersPokerSystem.Controllers
 
             int yearForRanking = int.Parse(year);
             int monthForRanking = int.Parse(month);
-            Boolean realProfitForRanking = bool.Parse(realProfit);
+            //Boolean realProfitForRanking = bool.Parse(realProfit);
 
             IOrderedQueryable model;
 
             if (yearForRanking == DateTime.UtcNow.Year && monthForRanking != 0)
             {
 
-                var rankingTotal = DbContext.GameDetails
-                .Where(d => d.Game.CreatedDate.Year == yearForRanking && d.Game.CreatedDate.Month == monthForRanking && d.Game.Status == StatusEnum.Encerrado)
-                .GroupBy(x => new { x.Player.Name, x.CreatedDate.Year })
-                .Select(x => new { x.Key.Name, Month = 13, x.Key.Year, 
-                Total = realProfitForRanking ?
-                x.Sum(i => i.ChipsTotal) - (x.Sum(i => i.ChipsTotal) * (x.Max(s => s.Game.Rake.RakeDetails.Where(a => a.Value > x.Sum(i => i.Value)  ).FirstOrDefault().Percent) / 100)) - x.Sum(i => i.Value)
-                : x.Sum(f => f.ChipsTotal) - x.Sum(f => f.Value) })
-                .OrderByDescending(s => (s.Total))
-                ;
+				var rankingReal = DbContext.GameDetails
+				.Where(d => d.Game.CreatedDate.Year == yearForRanking && d.Game.Status == StatusEnum.Encerrado)
+				.GroupBy( x => new{  x.GameId, x.Game.RakeId, x.Player.Name, x.CreatedDate.Year }).ToList().AsQueryable()
+				.Select( x => new { 
+					x.Key.Name, 
+					Month = 13, 
+					x.Key.Year,
+					BuyIns = x.Sum( s => s.Value),
+					Cashout = x.Sum( c => c.ChipsTotal),
+					RakeId = x.Key.RakeId
+				 }  )
+				 .OrderBy(s => (s.Name))
+				 ;
 
+				 var a2 = rankingReal.Select(
+					 x => new { 
+						 Name = x.Name,
+					 	 Month = x.Month,
+						 Year = x.Year,
+						 RakeId = x.RakeId,
+						 Buyins = x.BuyIns,
+						 Total = x.Cashout - 
+					 (x.Cashout * 
+					 DbContext.RakeDetails.Where( rd => rd.RakeId == x.RakeId && rd.Value > x.BuyIns ).First().Percent 
+					 / 100 ) 
+					 - x.BuyIns
+					  }
+				 ).OrderBy(s => (s.Name));
 
-                model = rankingTotal;
+				 var a3 = a2.GroupBy( x => new { x.Name, x.Month, x.Year } )
+				 .Select( s => new { s.Key.Name, s.Key.Year, Total = s.Sum( f => f.Total )  })
+				 .OrderBy( s => s.Total)
+				 ;
+
+                model = a3;
             }
 
             else if (yearForRanking == DateTime.UtcNow.Year)
