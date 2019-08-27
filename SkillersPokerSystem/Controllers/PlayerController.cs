@@ -71,19 +71,19 @@ namespace SkillersPokerSystem.Controllers
         public IActionResult All()
         {
             
-            var all = DbContext.Players
-                .Include(g => g.GameDetails)
-                .GroupBy(x => new { x.Id, x.Name, x.IsActive })
-                .Select(x => new {
-                    x.Key.Id,
-                    x.Key.Name,
-                    x.Key.IsActive,
-                    FirstGameDate = (DateTime?) null,
-                    LastGameDate = (DateTime?) null,
-                    CreatedDate = x.Max( s => s.CreatedDate)
-                } )
-                //.OrderByDescending( s => s.LastGameDate )
-                .ToArray();
+            var all = DbContext.Players .Include(g => g.GameDetails) 
+			.Select(x => new { 
+				x.Id, 
+				x.Name, 
+				x.IsActive, 
+				FirstGameDate  = x.GameDetails.OrderBy(a => a.Game.CreatedDate).FirstOrDefault().Game.CreatedDate == null 
+					? (DateTime?) null 
+					: x.GameDetails.OrderBy(a => a.Game.CreatedDate).FirstOrDefault().Game.CreatedDate,  
+				LastGameDate = x.GameDetails.OrderByDescending(a => a.Game.CreatedDate).FirstOrDefault().Game.CreatedDate == null 
+					? (DateTime?) null 
+					: x.GameDetails.OrderByDescending(a => a.Game.CreatedDate).FirstOrDefault().Game.CreatedDate, 
+			
+			} ).ToList();
             return new JsonResult(
                 all.Adapt<PlayerViewModel[]>(),
                 JsonSettings);

@@ -7,9 +7,8 @@
       <th scope="col">Foto</th>
       <th scope="col">#</th>
       <th scope="col">Nome</th>
-      <th scope="col">Criado em:</th>
-      <th scope="col">Primeira partida:</th>
-      <th scope="col">Ultima partida:</th>
+      <th scope="col">Primeira partida</th>
+      <th scope="col">Ultima partida</th>
       <th scope="col">Ativo</th>
     </tr>
   </thead>
@@ -18,7 +17,6 @@
       <td><img id="player-img" class="player-img" src="{{player.ImageUrl}}" /></td>
       <td scope="row">{{player.Id}}</td>
       <td>{{player.Name}}</td>
-      <td>{{player.CreatedDate | date:'dd/MM/yyyy' : 'GMT-6'}}</td>
       <td>{{player.FirstGameDate | date:'dd/MM/yyyy' : 'GMT-6'}}</td>
       <td>{{player.LastGameDate | date:'dd/MM/yyyy' : 'GMT-6'}}</td>
       <td>
