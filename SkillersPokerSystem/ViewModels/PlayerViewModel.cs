@@ -14,5 +14,6 @@ namespace SkillersPokerSystem.ViewModels
         public DateTime LastGameDate { get; set; }
         public Boolean IsActive { get; set; }
         public string ImageUrl { get; set; }
+        public int ShowUpCount { get; set; }
     }
 }

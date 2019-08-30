@@ -9,6 +9,7 @@
       <th scope="col">Nome</th>
       <th scope="col">Primeira partida</th>
       <th scope="col">Ultima partida</th>
+      <th scope="col">Quantidade de Partidas</th>
       <th scope="col">Ativo</th>
     </tr>
   </thead>
@@ -19,6 +20,7 @@
       <td>{{player.Name}}</td>
       <td>{{player.FirstGameDate | date:'dd/MM/yyyy' : 'GMT-6'}}</td>
       <td>{{player.LastGameDate | date:'dd/MM/yyyy' : 'GMT-6'}}</td>
+      <td>{{player.ShowUpCount}}</td>
       <td>
         <div class="form-group">
           <span class="switch switch-sm">

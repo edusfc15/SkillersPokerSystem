@@ -38,7 +38,24 @@ namespace SkillersPokerSystem.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            var player = DbContext.Players.Where(i => i.Id == id)
+            var player = DbContext.Players
+                .Include(g => g.GameDetails)
+                .Where(i => i.Id == id)
+                .Select(x => new
+                {
+                    x.Id,
+                    x.ImageUrl,
+                    x.Name,
+                    x.IsActive,
+                    ShowUpCount = x.GameDetails.GroupBy( a => a.GameId ).Count(),
+                    FirstGameDate = x.GameDetails.OrderBy(a => a.Game.CreatedDate).FirstOrDefault().Game.CreatedDate == null
+                    ? (DateTime?)null
+                    : x.GameDetails.OrderBy(a => a.Game.CreatedDate).FirstOrDefault().Game.CreatedDate,
+                    LastGameDate = x.GameDetails.OrderByDescending(a => a.Game.CreatedDate).FirstOrDefault().Game.CreatedDate == null
+                    ? (DateTime?)null
+                    : x.GameDetails.OrderByDescending(a => a.Game.CreatedDate).FirstOrDefault().Game.CreatedDate,
+
+                })
                 .FirstOrDefault();
 
             if (player == null)
@@ -71,19 +88,27 @@ namespace SkillersPokerSystem.Controllers
         public IActionResult All()
         {
             
-            var all = DbContext.Players .Include(g => g.GameDetails) 
+            var all = DbContext.Players 
+                .Include(gd => gd.GameDetails) 
 			.Select(x => new { 
-				x.Id, 
-				x.Name, 
+				x.Id,
+                x.ImageUrl,
+                x.Name, 
 				x.IsActive, 
-				FirstGameDate  = x.GameDetails.OrderBy(a => a.Game.CreatedDate).FirstOrDefault().Game.CreatedDate == null 
+                ShowUpCount = x.GameDetails.GroupBy(a => a.GameId).Count(),
+                FirstGameDate  = x.GameDetails.OrderBy(a => a.Game.CreatedDate).FirstOrDefault().Game.CreatedDate == null 
 					? (DateTime?) null 
 					: x.GameDetails.OrderBy(a => a.Game.CreatedDate).FirstOrDefault().Game.CreatedDate,  
 				LastGameDate = x.GameDetails.OrderByDescending(a => a.Game.CreatedDate).FirstOrDefault().Game.CreatedDate == null 
 					? (DateTime?) null 
 					: x.GameDetails.OrderByDescending(a => a.Game.CreatedDate).FirstOrDefault().Game.CreatedDate, 
 			
-			} ).ToList();
+			} )
+            .OrderByDescending( x => x.ShowUpCount)
+            .ThenBy( x=> x.IsActive)
+            .ToList()
+
+            ;
             return new JsonResult(
                 all.Adapt<PlayerViewModel[]>(),
                 JsonSettings);

@@ -6,7 +6,8 @@ import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'player-detail',
-  templateUrl: 'player-detail.component.html'
+  templateUrl: 'player-detail.component.html',
+  styleUrls: ['player-detail.component.css']
 })
 export class PlayerDetailComponent {
 
