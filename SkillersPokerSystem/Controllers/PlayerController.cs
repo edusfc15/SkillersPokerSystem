@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Mapster;
 using Microsoft.AspNetCore.Hosting;
@@ -120,22 +121,15 @@ namespace SkillersPokerSystem.Controllers
 
             if (model == null) return new StatusCodeResult(500);
 
-
             var player = model.Adapt<Player>();
-
-            var authorId = DbContext.Users
-                .Where(u => u.UserName == "Admin")
-                .FirstOrDefault()
-                .Id;
+            
+            var authorId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
             player.CreatedDate = DateTime.UtcNow;
             player.LastModifiedDate = player.CreatedDate;
-
+            player.IsActive = true;
             player.UserId = authorId;
-            player.ImageUrl = "/players/avatar_" + "png";
-
-            // retrieve the current user's Id
-            //player.UserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            player.ImageUrl = "/players/avatar_" + ".png";
 
             DbContext.Players.Add(player);
             DbContext.SaveChanges();
