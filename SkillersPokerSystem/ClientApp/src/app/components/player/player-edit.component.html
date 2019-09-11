@@ -17,6 +17,8 @@
       <input type="text"  formControlName="ImageUrl"  class="switch form-control" id="playerImageUrl">
   </div>
 
+  <image-upload></image-upload>
+
   <div class="form-group">
     <button *ngIf="editMode" type="submit"
             [disabled]="form.invalid"

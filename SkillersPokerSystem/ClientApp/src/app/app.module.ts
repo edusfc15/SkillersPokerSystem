@@ -35,6 +35,8 @@ import { UserListComponent } from './components/user/user-list.component';
 import { ChangePasswordComponent } from './components/user/change-password.component';
 import { LoaderComponent } from './components/loader/loader.component';
 import { GameStatus } from './services/game.status.service';
+import { ImageUploadComponent } from './components/image-uploader/image-upload.component';
+import { ImageService } from './services/image.service';
 
 @NgModule({
   declarations: [
@@ -56,7 +58,8 @@ import { GameStatus } from './services/game.status.service';
     PlayerDetailComponent,
     UserListComponent,
     ChangePasswordComponent,
-    LoaderComponent
+	LoaderComponent,
+	ImageUploadComponent
   ],
   imports: [
     BrowserModule,
@@ -94,7 +97,8 @@ import { GameStatus } from './services/game.status.service';
       multi: true
     },    
     { provide: 'BASE_URL', useFactory: getBaseUrl },
-    AuthService,
+	AuthService,
+	ImageService,
     TitleCasePipe,
     {
       provide: HTTP_INTERCEPTORS,

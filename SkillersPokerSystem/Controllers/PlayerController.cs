@@ -168,5 +168,13 @@ namespace SkillersPokerSystem.Controllers
                 , JsonSettings);
         }
 
+		[HttpPost]
+		[Route("[action]")]
+        public string PostImage([FromBody]PlayerViewModel model)
+        {
+
+            return "";
+        }
+
     }
 }
