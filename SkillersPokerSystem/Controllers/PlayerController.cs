@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Mapster;
 using Microsoft.AspNetCore.Hosting;
@@ -38,7 +39,24 @@ namespace SkillersPokerSystem.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            var player = DbContext.Players.Where(i => i.Id == id)
+            var player = DbContext.Players
+                .Include(g => g.GameDetails)
+                .Where(i => i.Id == id)
+                .Select(x => new
+                {
+                    x.Id,
+                    x.ImageUrl,
+                    x.Name,
+                    x.IsActive,
+                    ShowUpCount = x.GameDetails.GroupBy( a => a.GameId ).Count(),
+                    FirstGameDate = x.GameDetails.OrderBy(a => a.Game.CreatedDate).FirstOrDefault().Game.CreatedDate == null
+                    ? (DateTime?)null
+                    : x.GameDetails.OrderBy(a => a.Game.CreatedDate).FirstOrDefault().Game.CreatedDate,
+                    LastGameDate = x.GameDetails.OrderByDescending(a => a.Game.CreatedDate).FirstOrDefault().Game.CreatedDate == null
+                    ? (DateTime?)null
+                    : x.GameDetails.OrderByDescending(a => a.Game.CreatedDate).FirstOrDefault().Game.CreatedDate,
+
+                })
                 .FirstOrDefault();
 
             if (player == null)
@@ -71,19 +89,27 @@ namespace SkillersPokerSystem.Controllers
         public IActionResult All()
         {
             
-            var all = DbContext.Players .Include(g => g.GameDetails) 
+            var all = DbContext.Players 
+                .Include(gd => gd.GameDetails) 
 			.Select(x => new { 
-				x.Id, 
-				x.Name, 
+				x.Id,
+                x.ImageUrl,
+                x.Name, 
 				x.IsActive, 
-				FirstGameDate  = x.GameDetails.OrderBy(a => a.Game.CreatedDate).FirstOrDefault().Game.CreatedDate == null 
+                ShowUpCount = x.GameDetails.GroupBy(a => a.GameId).Count(),
+                FirstGameDate  = x.GameDetails.OrderBy(a => a.Game.CreatedDate).FirstOrDefault().Game.CreatedDate == null 
 					? (DateTime?) null 
 					: x.GameDetails.OrderBy(a => a.Game.CreatedDate).FirstOrDefault().Game.CreatedDate,  
 				LastGameDate = x.GameDetails.OrderByDescending(a => a.Game.CreatedDate).FirstOrDefault().Game.CreatedDate == null 
 					? (DateTime?) null 
 					: x.GameDetails.OrderByDescending(a => a.Game.CreatedDate).FirstOrDefault().Game.CreatedDate, 
 			
-			} ).ToList();
+			} )
+            .OrderByDescending( x => x.ShowUpCount)
+            .ThenBy( x=> x.IsActive)
+            .ToList()
+
+            ;
             return new JsonResult(
                 all.Adapt<PlayerViewModel[]>(),
                 JsonSettings);
@@ -95,22 +121,15 @@ namespace SkillersPokerSystem.Controllers
 
             if (model == null) return new StatusCodeResult(500);
 
-
             var player = model.Adapt<Player>();
-
-            var authorId = DbContext.Users
-                .Where(u => u.UserName == "Admin")
-                .FirstOrDefault()
-                .Id;
+            
+            var authorId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
             player.CreatedDate = DateTime.UtcNow;
             player.LastModifiedDate = player.CreatedDate;
-
+            player.IsActive = true;
             player.UserId = authorId;
-            player.ImageUrl = "/players/avatar_" + "png";
-
-            // retrieve the current user's Id
-            //player.UserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            player.ImageUrl = "/players/avatar_" + ".png";
 
             DbContext.Players.Add(player);
             DbContext.SaveChanges();

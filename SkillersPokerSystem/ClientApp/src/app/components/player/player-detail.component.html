@@ -1,35 +1,23 @@
+<br />
+
 <div class="container">
-</div>
-<div class="row">
-  <div class="col">
-    <label>Id</label>
-    {{player.Id}}
+
+  <div class="card" style="width: 18rem;">
+    <img class="card-img-top player-img" src="{{player.ImageUrl}}" alt="Foto do jogador">
+    <div class="card-body">
+      <h5 class="card-title">{{player.Name}}({{player.Id}})</h5>
+    </div>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item"><b>Primeira partida:</b> {{player.FirstGameDate| date:'dd/MM/yyyy' : 'GMT-6'}}</li>
+      <li class="list-group-item"><b>Ultima partida:</b> {{player.LastGameDate| date:'dd/MM/yyyy' : 'GMT-6'}}</li>
+      <li class="list-group-item"><b>Quantidade de partidas:</b> {{player.ShowUpCount}}</li>
+    </ul>
+    <div class="card-body">
+      <button *ngIf="auth.isLoggedIn()" class="btn btn-info card-link" (click)="onEdit()">Editar</button>
+      <button class="btn btn-info  card-link" (click)="onBack()">Voltar</button>
+    </div>
   </div>
-</div>
-<div class="row">
-  <div class="col">
-    <label>Nome</label>
-    {{player.Name}}
-  </div>
-</div>
-<div class="row">
-  <div class="col">
-    <label>Criado em:</label>
-    {{player.CreatedDate}}
-  </div>
-</div>
-<div class="row">
-  <div class="col">
-    <label>Primeira partida</label>
-    {{player.FirstGameDate}}
-  </div>
-</div>
-<div class="row">
-  <div class="col">
-    <label>Ultima partida</label>
-    {{player.LastGameDate}}
-  </div>
+
 </div>
 
-<button *ngIf="auth.isLoggedIn()" class="btn btn-info" (click)="onEdit()">Editar</button>
-<button class="btn btn-info" (click)="onBack()" >Voltar</button>
+

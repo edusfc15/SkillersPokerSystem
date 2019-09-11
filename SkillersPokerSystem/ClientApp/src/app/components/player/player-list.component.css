@@ -6,3 +6,11 @@ body {
 .dropdown-menu {
   margin-top: .75rem;
 }
+
+.player-img {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 10px;
+  display: block;
+  border-image-outset: 20px;
+}

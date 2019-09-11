@@ -6,4 +6,5 @@ interface Player {
   LastGameDate: string;
   IsActive: boolean;
   ImageUrl: string;
+  ShowUpCount: number;
 }
