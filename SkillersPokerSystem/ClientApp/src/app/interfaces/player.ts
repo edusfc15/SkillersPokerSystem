@@ -7,4 +7,5 @@ interface Player {
   IsActive: boolean;
   ImageUrl: string;
   ShowUpCount: number;
+  Image: FormData;
 }
