@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, LOCALE_ID  } from '@angular/core';
+import { NgModule, LOCALE_ID } from '@angular/core';
 
 import ptBr from '@angular/common/locales/pt';
 
@@ -35,6 +35,7 @@ import { UserListComponent } from './components/user/user-list.component';
 import { ChangePasswordComponent } from './components/user/change-password.component';
 import { LoaderComponent } from './components/loader/loader.component';
 import { GameStatus } from './services/game.status.service';
+import { GameDetailTipEditComponent } from './components/game/game-detail-tip-edit.component';
 
 @NgModule({
   declarations: [
@@ -49,6 +50,7 @@ import { GameStatus } from './services/game.status.service';
     GameDetailDetailComponent,
     GameEditComponent,
     GameDetailEditComponent,
+    GameDetailTipEditComponent,
     NavMenuComponent,
     RankingComponent,
     PlayerListComponent,
@@ -82,17 +84,18 @@ import { GameStatus } from './services/game.status.service';
       { path: 'game-detail-detail/:id', component: GameDetailDetailComponent },
       { path: 'player-detail/:id', component: PlayerDetailComponent },
       { path: 'gameDetail/create/:action/:gameId/:playerId', component: GameDetailEditComponent },
+      { path: 'gameDetail/tip/:gameId', component: GameDetailTipEditComponent },
       { path: 'register', component: RegisterComponent },
       { path: '**', component: PageNotFoundComponent }
     ])
   ],
   providers: [
-	  GameStatus,
+    GameStatus,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: LoaderInterceptorService,
       multi: true
-    },    
+    },
     { provide: 'BASE_URL', useFactory: getBaseUrl },
     AuthService,
     TitleCasePipe,

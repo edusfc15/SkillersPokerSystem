@@ -4,5 +4,6 @@ interface TotalGameDetail {
   CashOut: number;
   Rake: number;
   Integrity: number;
+  Tip: number;
 
 }

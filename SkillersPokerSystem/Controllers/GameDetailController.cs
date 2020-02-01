@@ -35,23 +35,25 @@ namespace SkillersPokerSystem.Controllers
             var gameDetails = DbContext.GameDetails
                 .Where(q => q.GameId == gameId)
                 .Include(p => p.Player)
-                .Include( g=> g.Game.Rake.RakeDetails)
+                .Include(g => g.Game.Rake.RakeDetails)
                 .GroupBy(p => p.Player.Name)
-                .Select(p => new {
+                .Select(p => new
+                {
                     Name = p.Key,
                     Value = p.Sum(i => i.Value),
                     ChipsTotal = p.Sum(i => i.ChipsTotal),
+                    Tip = p.Sum(i => i.Tip),
                     Result = p.Sum(i => i.ChipsTotal) - p.Sum(i => i.Value),
-                    Rake =  p.Sum(i => i.ChipsTotal) * (p.Max( s => s.Game.Rake.RakeDetails.Where( a=> a.Value > p.Sum(i => i.Value) ).FirstOrDefault().Percent  )/100),
+                    Rake = p.Sum(i => i.ChipsTotal) * (p.Max(s => s.Game.Rake.RakeDetails.Where(a => a.Value > p.Sum(i => i.Value)).FirstOrDefault().Percent) / 100),
                     RakePercent = p.Max(s => s.Game.Rake.RakeDetails.Where(a => a.Value > p.Sum(i => i.Value)).FirstOrDefault().Percent),
                     Total = p.Sum(i => i.ChipsTotal) - (p.Sum(i => i.ChipsTotal) * (p.Max(s => s.Game.Rake.RakeDetails.Where(a => a.Value > p.Sum(i => i.Value)).FirstOrDefault().Percent) / 100)),
                     ProfitOrLoss = p.Sum(i => i.ChipsTotal) - (p.Sum(i => i.ChipsTotal) * (p.Max(s => s.Game.Rake.RakeDetails.Where(a => a.Value > p.Sum(i => i.Value)).FirstOrDefault().Percent) / 100)) - p.Sum(i => i.Value),
-                    PlayerId = p.Max( x => x.PlayerId),
-                    PlayerImgUrl = p.Max( x => x.Player.ImageUrl)
+                    PlayerId = p.Max(x => x.PlayerId),
+                    PlayerImgUrl = p.Max(x => x.Player.ImageUrl)
                 })
-                .OrderByDescending( x => x.ProfitOrLoss )
+                .OrderByDescending(x => x.ProfitOrLoss)
                 .ToArray();
-                
+
 
             return new JsonResult(
                 gameDetails.Adapt<GameDetailViewModel[]>()

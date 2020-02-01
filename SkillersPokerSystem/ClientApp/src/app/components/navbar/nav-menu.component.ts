@@ -10,24 +10,24 @@ import { GameStatus } from '../../services/game.status.service';
 export class NavMenuComponent implements OnInit {
 
   navbarCollapsed: boolean;
-  gameStatusDescription : string; 
+  gameStatusDescription: string;
   activeGame: boolean;
 
   constructor(
     public auth: AuthService,
-	private router: Router,
-	private gameStatus : GameStatus
-  ) { 
+    private router: Router,
+    private gameStatus: GameStatus
+  ) {
 
-	  this.gameStatus.getGameStatus().subscribe( (status:boolean) => { 
-		  this.activeGame = status; 
-		  this.checkStatus(this.activeGame);
-	} )
+    this.gameStatus.getGameStatus().subscribe((status: boolean) => {
+      this.activeGame = status;
+      this.checkStatus(this.activeGame);
+    })
 
   }
 
   ngOnInit() {
-	this.navbarCollapsed = true;
+    this.navbarCollapsed = true;
 
   }
 
@@ -40,12 +40,12 @@ export class NavMenuComponent implements OnInit {
     return false;
   }
 
-  checkStatus(ActiveGameStatus: boolean){
-		if (ActiveGameStatus) {
-			this.gameStatusDescription = "Gerenciar Jogo"
-		} else {
-			this.gameStatusDescription = "Iniciar Jogo"
-		}
+  checkStatus(ActiveGameStatus: boolean) {
+    if (ActiveGameStatus) {
+      this.gameStatusDescription = "Gerenciar Jogo"
+    } else {
+      this.gameStatusDescription = "Iniciar Jogo"
+    }
   }
 
 

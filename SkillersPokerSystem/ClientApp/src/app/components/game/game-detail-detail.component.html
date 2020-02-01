@@ -8,16 +8,19 @@
         <th scope="col">Nome</th>
         <th scope="col">Rebuy</th>
         <th scope="col">Cash Out</th>
+        <th scope="col">Capilé</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let gameDetail of gameDetails">
-        <td *ngIf="auth.isLoggedIn() && gameStatus"><button class="btn btn-danger" (click)="onDelete(gameDetail)">X</button></td>
+        <td *ngIf="auth.isLoggedIn() && gameStatus"><button class="btn btn-danger"
+            (click)="onDelete(gameDetail)">X</button></td>
         <th>{{gameDetail.Id}}</th>
         <td>{{gameDetail.CreatedDate | date:'dd/MM/yy HH:mm:ss' : 'GMT-6'}}</td>
         <td>{{gameDetail.Name}}</td>
         <td>{{gameDetail.Value | currency:'BRL' }}</td>
         <td>{{gameDetail.ChipsTotal | currency:'BRL' }}</td>
+        <td>{{gameDetail.Tip | currency:'BRL' }}</td>
       </tr>
 
     </tbody>
@@ -26,4 +29,3 @@
   <button class="btn btn-info" (click)="onBack()">Voltar</button>
 
 </div>
-

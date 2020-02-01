@@ -39,25 +39,38 @@ and also iPads specifically.
     content: "Lucro/Perda";
   }
 
-  #no-more-tables tfoot td:nth-of-type(3):before {
+  #no-more-tables tfoot td:nth-of-type(1):before {
+    content: "";
+  }
+
+
+  #no-more-tables tfoot td:nth-of-type(2):before {
     content: "Totais";
     font-weight: bold;
   }
-
+  
+  #no-more-tables tfoot td:nth-of-type(3):before {
+    content: "Capilé";
+  }
   #no-more-tables tfoot td:nth-of-type(4):before {
     content: "Rebuys";
   }
-
+  
   #no-more-tables tfoot td:nth-of-type(5):before {
     content: "Total de Fichas";
   }
 
+  
   #no-more-tables tfoot td:nth-of-type(6):before {
-    content: "Fichas - Rebuy";
+    content: "Saidas - Rebuy";
   }
 
   #no-more-tables tfoot td:nth-of-type(7):before {
     content: "Rake";
+  }
+
+  #no-more-tables tfoot td:nth-of-type(8):before {
+    content: "";
   }
 }
 

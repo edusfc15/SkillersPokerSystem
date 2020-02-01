@@ -26,6 +26,9 @@ namespace SkillersPokerSystem.Data.Models
         public decimal ChipsTotal { get; set; }
 
         [Required]
+        public decimal Tip { get; set; }
+
+        [Required]
         public DateTime CreatedDate { get; set; }
 
         public DateTime LastModifiedDate { get; set; }

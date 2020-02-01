@@ -1,5 +1,5 @@
-import { Component, Inject, Input, OnChanges, SimpleChanges, Output, EventEmitter  } from "@angular/core";
-import {  Router } from "@angular/router";
+import { Component, Inject, Input, OnChanges, SimpleChanges, Output, EventEmitter } from "@angular/core";
+import { Router } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
 import { AuthService } from '../../services/auth.service';
 import { GameStatus } from "src/app/services/game.status.service";
@@ -7,10 +7,10 @@ import { GameStatus } from "src/app/services/game.status.service";
 @Component({
   selector: "game-detail-list",
   templateUrl: './game-detail-list.component.html',
-  styleUrls:['game-detail-list.component.css']
+  styleUrls: ['game-detail-list.component.css']
 })
 
-export class GameDetailListComponent implements OnChanges  {
+export class GameDetailListComponent implements OnChanges {
 
   @Input() game: Game;
   @Output() gameAtDetail = new EventEmitter();
@@ -24,8 +24,8 @@ export class GameDetailListComponent implements OnChanges  {
     private http: HttpClient,
     @Inject('BASE_URL') private baseUrl: string,
     private router: Router,
-	public auth: AuthService,
-	private navGameStatus : GameStatus
+    public auth: AuthService,
+    private navGameStatus: GameStatus
   ) {
 
     this.gameDetails = [];
@@ -64,8 +64,9 @@ export class GameDetailListComponent implements OnChanges  {
         var tempTotal = <TotalGameDetail>{};
         tempTotal.Rebuys = gd.Value
         tempTotal.CashOut = gd.ChipsTotal;
-        tempTotal.Integrity = gd.ChipsTotal - gd.Value;
+        tempTotal.Integrity = gd.Tip + gd.ChipsTotal - gd.Value;
         tempTotal.Rake = gd.Rake;
+        tempTotal.Tip = gd.Tip;
         this.totalOfGameDetail.push(tempTotal);
 
       });
@@ -74,10 +75,11 @@ export class GameDetailListComponent implements OnChanges  {
       this.tempTotalResult.Rebuys = this.totalOfGameDetail.reduce((sum, c) => sum + c.Rebuys, 0)
       this.tempTotalResult.Rake = this.totalOfGameDetail.reduce((sum, c) => sum + c.Rake, 0)
       this.tempTotalResult.Integrity = this.totalOfGameDetail.reduce((sum, c) => sum + c.Integrity, 0)
+      this.tempTotalResult.Tip = this.totalOfGameDetail.reduce((sum, c) => sum + c.Tip, 0)
 
       this.totalResult.push(this.tempTotalResult);
 
-     
+
 
     }, error => console.error(error));
   }
@@ -98,13 +100,13 @@ export class GameDetailListComponent implements OnChanges  {
           .subscribe(res => {
             this.game = res;
             this.gameAtDetail.emit(this.game);
-			this.loadData();
-			this.navGameStatus.setGameStatus(false);
+            this.loadData();
+            this.navGameStatus.setGameStatus(false);
           })
 
       }
-      
-      
+
+
     }
 
   }

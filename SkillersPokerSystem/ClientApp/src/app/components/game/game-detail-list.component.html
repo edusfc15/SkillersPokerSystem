@@ -1,8 +1,8 @@
-
 <div class="container">
   <hr />
   <button type="button" [routerLink]="['/home']" class="btn btn-info m-2">Voltar</button>
-  <button *ngIf="auth.isLoggedIn() && gameStatus" class="btn btn-info m-2" type="button" [routerLink]="['/gameDetail/create','buy-in', this.game.Id, 1]">Adicionar Buy in</button>
+  <button *ngIf="auth.isLoggedIn() && gameStatus" class="btn btn-info m-2" type="button"
+    [routerLink]="['/gameDetail/create','buy-in', this.game.Id, 1]">Adicionar Buy in</button>
 
   <table class="table" id="no-more-tables">
     <thead>
@@ -19,37 +19,52 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let gameDetail of gameDetails">
-        <td class="text-nowrap" *ngIf="auth.isLoggedIn()">
-          <button type="button" *ngIf="gameStatus" [routerLink]="['/gameDetail/create','buy-in', this.game.Id, gameDetail.PlayerId]" class="btn btn-success m-1"><i class="fas fa-hand-holding-usd"></i></button>
-          <button type="button" *ngIf="gameStatus " [routerLink]="['/gameDetail/create','cash-out', this.game.Id, gameDetail.PlayerId]" class="btn btn-info m-1"><i class="fas fa-money-check-alt"></i></button>
-        </td>
-        <td><img id="player-img" class="player-img" src="{{gameDetail.PlayerImgUrl}}" /></td>
-        <td class="text-nowrap">{{gameDetail.Name}}</td>
-        <td class="text-nowrap">{{gameDetail.Value | currency : 'BRL'}}</td>
-        <td class="text-nowrap">{{gameDetail.ChipsTotal | currency : 'BRL' }}</td>
-        <td class="text-nowrap">{{gameDetail.Result | currency : 'BRL' }} </td>
-        <td class="text-nowrap">{{gameDetail.Rake | currency : 'BRL'}}  <small *ngIf="gameDetail.Rake > 0" class="text-muted">({{gameDetail.RakePercent}}%)</small> </td>
-        <td class="text-nowrap">{{gameDetail.Total | currency : 'BRL'   }}</td>
-        <td class="text-nowrap">{{gameDetail.ProfitOrLoss | currency : 'BRL'  }}</td>
+      <ng-container *ngFor="let gameDetail of gameDetails">
+        <tr *ngIf="gameDetail.PlayerId !== 0 ">
+          <td class="text-nowrap" *ngIf="auth.isLoggedIn()">
+            <button type="button" *ngIf="gameStatus"
+              [routerLink]="['/gameDetail/create','buy-in', this.game.Id, gameDetail.PlayerId]"
+              class="btn btn-success m-1"><i class="fas fa-hand-holding-usd"></i></button>
+            <button type="button" *ngIf="gameStatus "
+              [routerLink]="['/gameDetail/create','cash-out', this.game.Id, gameDetail.PlayerId]"
+              class="btn btn-info m-1"><i class="fas fa-money-check-alt"></i></button>
+          </td>
+          <td><img id="player-img" class="player-img" src="{{gameDetail.PlayerImgUrl}}" /></td>
+          <td class="text-nowrap">{{gameDetail.Name}}</td>
+          <td class="text-nowrap">{{gameDetail.Value | currency : 'BRL'}}</td>
+          <td class="text-nowrap">{{gameDetail.ChipsTotal | currency : 'BRL' }}</td>
+          <td class="text-nowrap">{{gameDetail.Result | currency : 'BRL' }} </td>
+          <td class="text-nowrap">{{gameDetail.Rake | currency : 'BRL'}} <small *ngIf="gameDetail.Rake > 0"
+              class="text-muted">({{gameDetail.RakePercent}}%)</small> </td>
+          <td class="text-nowrap">{{gameDetail.Total | currency : 'BRL'   }}</td>
+          <td class="text-nowrap">{{gameDetail.ProfitOrLoss | currency : 'BRL'  }}</td>
 
-      </tr>
+        </tr>
+
+      </ng-container>
+
     </tbody>
     <tfoot>
       <tr *ngFor="let tr of totalResult">
         <td></td>
         <td></td>
-        <td></td>
+        <td class="text-nowrap">{{tr.Tip | currency : 'BRL'}}</td>
         <td class="text-nowrap">{{tr.Rebuys | currency : 'BRL'}}</td>
         <td class="text-nowrap">{{tr.CashOut | currency : 'BRL'}}</td>
         <td class="text-nowrap">{{tr.Integrity | currency : 'BRL'}}</td>
         <td class="text-nowrap">{{tr.Rake | currency : 'BRL'}}</td>
+        <td></td>
 
       </tr>
     </tfoot>
   </table>
   <button type="button" [routerLink]="['/home']" class="btn btn-info m-2">Voltar</button>
-  <button *ngIf="auth.isLoggedIn() && gameStatus" class="btn btn-info m-2" type="button" [routerLink]="['/gameDetail/create','buy-in', this.game.Id, 1]">Adicionar Buy in</button>
+  <button *ngIf="auth.isLoggedIn() && gameStatus" class="btn btn-info m-2" type="button"
+    [routerLink]="['/gameDetail/create','buy-in', this.game.Id, 1]">Adicionar Buy in</button>
   <button type="button" (click)="onSelect(game)" class="btn btn-info m-2">Detalhar Buy ins</button>
-  <button *ngIf="auth.isLoggedIn() && gameStatus" class="btn btn-danger m-2" type="button" [disabled]="tempTotalResult.Rebuys !=  tempTotalResult.CashOut" (click)="endGame(game)">Finalizar</button>
+  <button *ngIf="auth.isLoggedIn() && gameStatus" class="btn btn-warning m-2" type="button"
+    [routerLink]="['/gameDetail/tip', this.game.Id]">Adicionar Capilé</button>
+  <button *ngIf="auth.isLoggedIn() && gameStatus" class="btn btn-danger m-2" type="button"
+    [disabled]="tempTotalResult.Rebuys !=  tempTotalResult.CashOut+tempTotalResult.Tip"
+    (click)="endGame(game)">Finalizar</button>
 </div>

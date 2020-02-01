@@ -15,6 +15,7 @@ namespace SkillersPokerSystem.ViewModels
         public DateTime CreatedDate { get; set; }
         public decimal Value { get; set; }
         public decimal ChipsTotal { get; set; }
+        public decimal Tip { get; set; }
         public decimal Result { get; set; }
         public decimal Rake { get; set; }
         public decimal RakePercent { get; set; }

@@ -2,23 +2,21 @@ import { Component, Inject, OnInit } from "@angular/core";
 import { FormGroup, FormControl, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { ActivatedRoute, Router } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
-import { catchError } from 'rxjs/operators';
 
 @Component({
-  selector: "game-detail-edit",
-  templateUrl: './game-detail-edit.component.html'
+  selector: "game-detail-tip-edit",
+  templateUrl: './game-detail-tip-edit.component.html'
 })
 
-export class GameDetailEditComponent {
+export class GameDetailTipEditComponent {
 
   title: string;
   gameDetail: GameDetail;
   players: Player[];
-  chosenPlayer: Player;
   gameDetailForm: FormGroup;
   routePlayerId: number;
-  isBuyIn: boolean;
   routeGameId: number;
+  tipPlayer: Player;
 
   editMode: boolean;
 
@@ -29,41 +27,26 @@ export class GameDetailEditComponent {
 
     @Inject('BASE_URL') private baseUrl: string) {
 
-
     this.gameDetail = <GameDetail>{};
 
-    this.isBuyIn = this.activatedRoute.snapshot.params["action"] === 'buy-in';
-
-    //get active players from the server
-    this.http.get<Player[]>(this.baseUrl + "api/player/active")
-      .subscribe(
-        result => {
-          this.players = result;
-        }, error => console.log(error)
-      );
-
-    this.routePlayerId = +this.activatedRoute.snapshot.params["playerId"];
+    this.tipPlayer = <Player>{};
+    this.tipPlayer.Id = 0;
+    this.tipPlayer.Name = 'Capilé';
+    this.tipPlayer.IsActive = true;
 
     // initialize the form
     this.createForm();
 
     this.routeGameId = +this.activatedRoute.snapshot.params["gameId"];
 
+    this.gameDetail.GameId;
+    this.title = "Adicionando Capilé";
 
-    if (this.editMode) {
-
-    }
-    else {
-      this.gameDetail.GameId;
-      this.title = "Adicionando Buy in";
-    }
   }
-
 
   get gameDetails() {
     return this.gameDetailForm.get('gameDetailsArray') as FormArray;
   }
-
 
   createForm() {
 
@@ -73,20 +56,13 @@ export class GameDetailEditComponent {
           [
             this.fb.group(
               {
-                PlayerId: this.routePlayerId,
-                Value: [0, (this.isBuyIn) ? Validators.min(5) : 0],
-                ChipsTotal: [0, (this.isBuyIn) ? 0 : Validators.min(0.25)],
+                PlayerId: this.tipPlayer.Id,
+                Tip: [0, Validators.min(0.25)]
               }
             )
           ])
       }
     );
-  }
-
-
-
-  addGameDetails() {
-    this.gameDetails.push(this.fb.group({ PlayerId: '', ChipsTotal: 0, Value: 0 }));
   }
 
   onSubmit(gameDetails: FormArray) {
@@ -96,6 +72,8 @@ export class GameDetailEditComponent {
     var url = this.baseUrl + "api/gameDetail/addDetail/" + this.routeGameId;
 
     tempGameDetails = gameDetails.value;
+
+    console.log(tempGameDetails);
 
     this.http
       .put<GameDetail>(url, tempGameDetails)
@@ -109,19 +87,11 @@ export class GameDetailEditComponent {
   }
 
   onAddValue(value, index) {
-    if (this.isBuyIn) {
-      this.gameDetails.controls[index].value.Value += value;
-    } else {
-      this.gameDetails.controls[index].value.ChipsTotal += value;
-    }
+    this.gameDetails.controls[index].value.Tip += value;
   }
 
   onClear(value, index) {
-    if (this.isBuyIn) {
-      this.gameDetails.controls[index].value.Value = value;
-    } else {
-      this.gameDetails.controls[index].value.ChipsTotal = value;
-    }
+    this.gameDetails.controls[index].value.Tip = value;
   }
 
   onBack() {

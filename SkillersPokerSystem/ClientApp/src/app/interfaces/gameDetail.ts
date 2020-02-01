@@ -3,6 +3,7 @@ interface GameDetail {
   PlayerId: number;
   GameId: number;
   Value: number;
+  Tip: number;
   ChipsTotal: number;
   Result: number;
   Rake: number;
