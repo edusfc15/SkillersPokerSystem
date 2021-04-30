@@ -14,6 +14,7 @@ using SkillersPokerSystem.Data.Models;
 using StackExchange.Profiling;
 using System;
 using System.Text;
+using Microsoft.Extensions.Hosting;
 
 namespace SkillersPokerSystem
 {
@@ -94,7 +95,7 @@ namespace SkillersPokerSystem
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -132,13 +133,17 @@ namespace SkillersPokerSystem
 
             app.UseMiniProfiler();
 
+            app.UseRouting(); 
+
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                // endpoints.MapControllerRoute(
+                //     name: "default",
+                //     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-                endpoints.MapFallbackToController("Index", "Home");
+                // endpoints.MapFallbackToController("Index", "Home");
+
+                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
             });
 
             app.UseSpa(spa =>

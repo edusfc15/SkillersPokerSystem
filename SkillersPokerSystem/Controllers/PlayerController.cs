@@ -21,7 +21,7 @@ namespace SkillersPokerSystem.Controllers
     [Route("api/[controller]")]
     public class PlayerController : BaseApiController
     {
-        private IHostingEnvironment _environment;
+        private IWebHostEnvironment _environment;
 
         public PlayerController(
             ApplicationDbContext context,
@@ -29,7 +29,7 @@ namespace SkillersPokerSystem.Controllers
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IConfiguration configuration,
-            IHostingEnvironment environment
+            IWebHostEnvironment environment
             )
             : base(context, roleManager, userManager, configuration)
         {
@@ -107,12 +107,12 @@ namespace SkillersPokerSystem.Controllers
 			} )
             .OrderByDescending( x => x.ShowUpCount)
             .ThenBy( x=> x.IsActive)
-            .ToList()
+            .ToList();
 
-            ;
             return new JsonResult(
                 all.Adapt<PlayerViewModel[]>(),
                 JsonSettings);
+
         }
 
 
