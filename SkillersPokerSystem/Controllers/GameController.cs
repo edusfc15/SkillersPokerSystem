@@ -82,6 +82,7 @@ namespace SkillersPokerSystem.Controllers
 
             var latest = DbContext.GameDetails
                 .Include(g => g.Game)
+                .AsEnumerable()
                 .GroupBy(g => new { g.GameId, g.Game.CreatedDate, g.Game.Status })
                 .Select(a => new
                 {
@@ -125,6 +126,7 @@ namespace SkillersPokerSystem.Controllers
 
                 var a1 = DbContext.GameDetails
                 .Where(d => d.Game.CreatedDate.Year == yearForRanking && d.Game.CreatedDate.Month == monthForRanking && d.Game.Status == StatusEnum.Encerrado && d.PlayerId > 0)
+                .AsEnumerable()
                 .GroupBy(x => new { x.GameId, x.Game.RakeId, x.Player.Name, x.CreatedDate.Year }).ToList().AsQueryable()
                 .Select(x => new
                 {
@@ -167,6 +169,7 @@ namespace SkillersPokerSystem.Controllers
 
                 var a1 = DbContext.GameDetails
                 .Where(d => d.Game.CreatedDate.Year == yearForRanking && d.Player.IsActive == true && d.Game.Status == StatusEnum.Encerrado && d.PlayerId > 0)
+                .AsEnumerable()
                 .GroupBy(x => new { x.GameId, x.Game.RakeId, x.Player.Name, x.CreatedDate.Year }).ToList().AsQueryable()
                 .Select(x => new
                 {
@@ -203,6 +206,7 @@ namespace SkillersPokerSystem.Controllers
 
                 var b1 = DbContext.GameDetails
                .Where(d => d.Game.CreatedDate.Year == yearForRanking && d.Player.IsActive == true && d.Game.Status == StatusEnum.Encerrado && d.PlayerId > 0)
+               .AsEnumerable()
                .GroupBy(x => new { x.GameId, x.Game.RakeId, x.Player.Name, x.CreatedDate.Year, x.Game.CreatedDate.Month }).ToList().AsQueryable()
                .Select(x => new
                {
@@ -245,6 +249,7 @@ namespace SkillersPokerSystem.Controllers
 
                 var a1 = DbContext.GameDetails
                 .Where(d => d.Game.CreatedDate.Year == yearForRanking && d.PlayerId > 0)
+                .AsEnumerable()
                 .GroupBy(x => new { x.GameId, x.Game.RakeId, x.Player.Name, x.CreatedDate.Year }).ToList().AsQueryable()
                 .Select(x => new
                 {
@@ -281,6 +286,7 @@ namespace SkillersPokerSystem.Controllers
 
                 var b1 = DbContext.GameDetails
                .Where(d => d.Game.CreatedDate.Year == yearForRanking)
+               .AsEnumerable()
                .GroupBy(x => new { x.GameId, x.Game.RakeId, x.Player.Name, x.CreatedDate.Year, x.Game.CreatedDate.Month }).ToList().AsQueryable()
                .Select(x => new
                {

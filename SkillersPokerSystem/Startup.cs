@@ -14,6 +14,7 @@ using SkillersPokerSystem.Data.Models;
 using StackExchange.Profiling;
 using System;
 using System.Text;
+using Microsoft.Extensions.Hosting;
 
 namespace SkillersPokerSystem
 {
@@ -29,7 +30,7 @@ namespace SkillersPokerSystem
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc();
 
             // Add EntityFramework support for SqlServer.
             services.AddEntityFrameworkSqlServer();
@@ -94,7 +95,7 @@ namespace SkillersPokerSystem
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -132,15 +133,17 @@ namespace SkillersPokerSystem
 
             app.UseMiniProfiler();
 
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller}/{action=Index}/{id?}");
+            app.UseRouting(); 
 
-                routes.MapSpaFallbackRoute(
-                    name: "spa-fallback",
-                    defaults: new { controller = "Home", action = "Index" });
+            app.UseEndpoints(endpoints =>
+            {
+                // endpoints.MapControllerRoute(
+                //     name: "default",
+                //     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+                // endpoints.MapFallbackToController("Index", "Home");
+
+                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
             });
 
             app.UseSpa(spa =>

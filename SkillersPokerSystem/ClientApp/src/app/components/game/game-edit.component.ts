@@ -5,6 +5,9 @@ import { HttpClient } from "@angular/common/http";
 import { interval, Observable } from "rxjs";
 import { map, share } from "rxjs/operators";
 import { GameStatus } from "src/app/services/game.status.service";
+import { Player } from "src/app/interfaces/player";
+import { Game } from "src/app/interfaces/game";
+import { GameDetail } from "src/app/interfaces/gameDetail";
 
 @Component({
   selector: "game-edit",
@@ -64,8 +67,8 @@ export class GameEditComponent {
       second: "numeric"
     };
 
-    this.clock.subscribe(date => this.date = date.toLocaleString('pt-br', optionsDate));
-    this.clock.subscribe(time => this.time = time.toLocaleString('pt-br', optionsTime));
+    this.clock.subscribe(date => this.date = date.toLocaleString('pt-br'));
+    this.clock.subscribe(time => this.time = time.toLocaleString('pt-br'));
 
     //get active players from the server
     this.http.get<Player[]>(this.baseUrl + "api/player/active")

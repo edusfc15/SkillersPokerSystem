@@ -6,7 +6,6 @@ import ptBr from '@angular/common/locales/pt';
 import { AppComponent } from './components/app/app.component';
 import { CommonModule, registerLocaleData, TitleCasePipe } from '@angular/common';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { HttpModule } from '@angular/http';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -63,31 +62,30 @@ import { GameDetailTipEditComponent } from './components/game/game-detail-tip-ed
   imports: [
     BrowserModule,
     CommonModule,
-    HttpModule,
     HttpClientModule,
     FormsModule,
     NgbModule,
     ReactiveFormsModule,
     RouterModule.forRoot([
-      { path: '', redirectTo: 'home', pathMatch: 'full' },
-      { path: 'home', component: HomeComponent },
-      { path: 'login', component: LoginComponent },
-      { path: 'game', component: GameListComponent },
-      { path: 'player', component: PlayerListComponent },
-      { path: 'user', component: UserListComponent },
-      { path: 'change-password', component: ChangePasswordComponent },
-      { path: 'player/create', component: PlayerEditComponent },
-      { path: 'player/edit/:id', component: PlayerEditComponent },
-      { path: 'ranking', component: RankingComponent },
-      { path: 'game/create', component: GameEditComponent },
-      { path: 'game/:id', component: GameDetailComponent },
-      { path: 'game-detail-detail/:id', component: GameDetailDetailComponent },
-      { path: 'player-detail/:id', component: PlayerDetailComponent },
-      { path: 'gameDetail/create/:action/:gameId/:playerId', component: GameDetailEditComponent },
-      { path: 'gameDetail/tip/:gameId', component: GameDetailTipEditComponent },
-      { path: 'register', component: RegisterComponent },
-      { path: '**', component: PageNotFoundComponent }
-    ])
+    { path: '', redirectTo: 'home', pathMatch: 'full' },
+    { path: 'home', component: HomeComponent },
+    { path: 'login', component: LoginComponent },
+    { path: 'game', component: GameListComponent },
+    { path: 'player', component: PlayerListComponent },
+    { path: 'user', component: UserListComponent },
+    { path: 'change-password', component: ChangePasswordComponent },
+    { path: 'player/create', component: PlayerEditComponent },
+    { path: 'player/edit/:id', component: PlayerEditComponent },
+    { path: 'ranking', component: RankingComponent },
+    { path: 'game/create', component: GameEditComponent },
+    { path: 'game/:id', component: GameDetailComponent },
+    { path: 'game-detail-detail/:id', component: GameDetailDetailComponent },
+    { path: 'player-detail/:id', component: PlayerDetailComponent },
+    { path: 'gameDetail/create/:action/:gameId/:playerId', component: GameDetailEditComponent },
+    { path: 'gameDetail/tip/:gameId', component: GameDetailTipEditComponent },
+    { path: 'register', component: RegisterComponent },
+    { path: '**', component: PageNotFoundComponent }
+], { relativeLinkResolution: 'legacy' })
   ],
   providers: [
     GameStatus,

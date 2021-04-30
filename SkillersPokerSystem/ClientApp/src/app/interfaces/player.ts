@@ -1,4 +1,4 @@
-interface Player {
+export interface Player {
   Id: number;
   Name: string;
   CreatedDate: string;

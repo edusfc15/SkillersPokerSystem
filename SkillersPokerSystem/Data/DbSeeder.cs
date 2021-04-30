@@ -158,9 +158,9 @@ namespace SkillersPokerSystem.Data
                     dbContext.Games.Add(game);
                     dbContext.Database.OpenConnection();
 
-                    dbContext.Database.ExecuteSqlCommand("SET IDENTITY_INSERT Games ON");
+                    dbContext.Database.ExecuteSqlInterpolated($"SET IDENTITY_INSERT Games ON");
                     dbContext.SaveChanges();
-                    dbContext.Database.ExecuteSqlCommand("SET IDENTITY_INSERT Games OFF");
+                    dbContext.Database.ExecuteSqlInterpolated($"SET IDENTITY_INSERT Games OFF");
 
                     dbContext.Database.CloseConnection();
 
@@ -249,9 +249,9 @@ namespace SkillersPokerSystem.Data
 
                 dbContext.Database.OpenConnection();
                 dbContext.Add(thePlayer);
-                dbContext.Database.ExecuteSqlCommand("SET IDENTITY_INSERT Players ON");
+                dbContext.Database.ExecuteSqlInterpolated($"SET IDENTITY_INSERT Players ON");
                 dbContext.SaveChanges();
-                dbContext.Database.ExecuteSqlCommand("SET IDENTITY_INSERT Players OFF");
+                dbContext.Database.ExecuteSqlInterpolated($"SET IDENTITY_INSERT Players OFF");
                 dbContext.Database.CloseConnection();
 
             }

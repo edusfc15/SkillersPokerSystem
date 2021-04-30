@@ -2,6 +2,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { HttpClient } from '@angular/common/http';
+import { User } from 'src/app/interfaces/user';
 
 @Component({
   selector: 'user-list',

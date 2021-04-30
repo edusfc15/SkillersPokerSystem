@@ -1,4 +1,4 @@
-interface RankingTotal{
+export interface RankingTotal{
 
   Name: string;
   Janeiro: number;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -33,9 +34,9 @@ namespace SkillersPokerSystem.Controllers
 
             // Instantiate a single JsonSerializerSettings object
             // that can be reused multiple times.
-            JsonSettings = new JsonSerializerSettings()
+            JsonSettings = new JsonSerializerOptions()
             {
-                Formatting = Formatting.Indented
+                WriteIndented = true,
             };
 
         }
@@ -59,7 +60,7 @@ namespace SkillersPokerSystem.Controllers
                 .ToList()
                 ;
 
-            DbContext.Database.ExecuteSqlCommand("UPDATE Players SET IsActive = 0");
+            DbContext.Database.ExecuteSqlInterpolated($"UPDATE Players SET IsActive = 0");
 
             var random = new Random();
 
@@ -81,7 +82,7 @@ namespace SkillersPokerSystem.Controllers
         protected RoleManager<IdentityRole> RoleManager { get; private set; }
         protected UserManager<ApplicationUser> UserManager { get; private set; }
         protected IConfiguration Configuration { get; private set; }
-        protected JsonSerializerSettings JsonSettings { get; private set; }
+        protected JsonSerializerOptions JsonSettings { get; private set; }
         #endregion
     }
 }
