@@ -2,6 +2,8 @@ import { Component, Inject, Input } from "@angular/core";
 import { Router, ActivatedRoute } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
 import { AuthService } from '../../services/auth.service';
+import { Game } from "src/app/interfaces/game";
+import { GameDetail } from "src/app/interfaces/gameDetail";
 
 
 @Component({

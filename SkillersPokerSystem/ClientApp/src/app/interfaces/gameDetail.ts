@@ -1,4 +1,4 @@
-interface GameDetail {
+export interface GameDetail {
   Id: number;
   PlayerId: number;
   GameId: number;

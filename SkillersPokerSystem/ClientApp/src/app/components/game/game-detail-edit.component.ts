@@ -3,6 +3,8 @@ import { FormGroup, FormControl, FormBuilder, Validators, FormArray } from '@ang
 import { ActivatedRoute, Router } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
 import { catchError } from 'rxjs/operators';
+import { GameDetail } from "src/app/interfaces/gameDetail";
+import { Player } from "src/app/interfaces/player";
 
 @Component({
   selector: "game-detail-edit",

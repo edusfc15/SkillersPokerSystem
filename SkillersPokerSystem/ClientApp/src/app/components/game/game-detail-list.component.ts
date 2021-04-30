@@ -3,6 +3,9 @@ import { Router } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
 import { AuthService } from '../../services/auth.service';
 import { GameStatus } from "src/app/services/game.status.service";
+import { Game } from "src/app/interfaces/game";
+import { TotalGameDetail } from "src/app/interfaces/totalGameDetail";
+import { GameDetail } from "src/app/interfaces/gameDetail";
 
 @Component({
   selector: "game-detail-list",

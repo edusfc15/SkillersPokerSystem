@@ -2,6 +2,8 @@ import { Component, Inject, OnInit } from "@angular/core";
 import { FormGroup, FormControl, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { ActivatedRoute, Router } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
+import { GameDetail } from "src/app/interfaces/gameDetail";
+import { Player } from "src/app/interfaces/player";
 
 @Component({
   selector: "game-detail-tip-edit",

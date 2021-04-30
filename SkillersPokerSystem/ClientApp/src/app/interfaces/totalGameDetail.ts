@@ -1,4 +1,4 @@
-interface TotalGameDetail {
+export interface TotalGameDetail {
 
   Rebuys: number;
   CashOut: number;

@@ -3,6 +3,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { catchError, map } from 'rxjs/operators';
+import { TokenResponse } from "../interfaces/token";
 
 @Injectable()
 export class AuthService {

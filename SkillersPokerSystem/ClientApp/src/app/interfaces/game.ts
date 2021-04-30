@@ -1,4 +1,6 @@
-interface Game {
+import { GameDetail } from "./gameDetail";
+
+export interface Game {
   Id: number;
   GameId: number;
   CreatedDate: string;

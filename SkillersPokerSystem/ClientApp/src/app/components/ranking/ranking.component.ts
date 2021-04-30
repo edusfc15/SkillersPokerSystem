@@ -3,6 +3,8 @@ import { Component, Inject, Input, OnInit } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { TitleCasePipe } from '@angular/common';
 import { FormBuilder, Form, FormGroup } from '@angular/forms';
+import { RankingTotal } from 'src/app/interfaces/rankingTotal';
+import { Ranking } from 'src/app/interfaces/ranking';
 
 @Component({
   selector: 'ranking',
