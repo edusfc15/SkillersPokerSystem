@@ -59,7 +59,7 @@ namespace SkillersPokerSystem.Controllers
                 .ToList()
                 ;
 
-            DbContext.Database.ExecuteSqlCommand("UPDATE Players SET IsActive = 0");
+            DbContext.Database.ExecuteSqlInterpolated($"UPDATE Players SET IsActive = 0");
 
             var random = new Random();
 

@@ -29,7 +29,7 @@ namespace SkillersPokerSystem
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc();
 
             // Add EntityFramework support for SqlServer.
             services.AddEntityFrameworkSqlServer();
@@ -132,15 +132,13 @@ namespace SkillersPokerSystem
 
             app.UseMiniProfiler();
 
-            app.UseMvc(routes =>
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "default",
-                    template: "{controller}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
 
-                routes.MapSpaFallbackRoute(
-                    name: "spa-fallback",
-                    defaults: new { controller = "Home", action = "Index" });
+                endpoints.MapFallbackToController("Index", "Home");
             });
 
             app.UseSpa(spa =>
