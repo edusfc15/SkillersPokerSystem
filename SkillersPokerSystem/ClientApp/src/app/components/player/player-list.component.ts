@@ -31,6 +31,9 @@ export class PlayerListComponent {
 
     var url = this.baseUrl + 'api/player/all'
 
+    console.log(url);
+    
+
     this.http.get<Player[]>(url).subscribe(
       res => {
         this.players = res;
