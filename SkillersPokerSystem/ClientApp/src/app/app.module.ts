@@ -5,8 +5,7 @@ import ptBr from '@angular/common/locales/pt';
 
 import { AppComponent } from './components/app/app.component';
 import { CommonModule, registerLocaleData, TitleCasePipe } from '@angular/common';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { HttpModule } from '@angular/http';
+import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -63,7 +62,7 @@ import { GameDetailTipEditComponent } from './components/game/game-detail-tip-ed
   imports: [
     BrowserModule,
     CommonModule,
-    HttpModule,
+    HttpClient,
     HttpClientModule,
     FormsModule,
     NgbModule,
