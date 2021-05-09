@@ -66,48 +66,60 @@ namespace SkillersPokerSystem.Controllers
 
         }
 
-        [HttpGet("Latest/{num:int?}")]
-        public IActionResult Latest(int num = 10)
+       
+        [HttpGet("GetGames")]
+        public async Task<ActionResult<ApiResult<GameDTO>>> GetGames(
+                int pageIndex = 0,
+                int pageSize = 10,
+                string sortColumn = null,
+                string sortOrder = null,
+                string filterColumn = null,
+                string filterQuery = null)
         {
 
+            var gameDetails = DbContext.GameDetails.FromSqlRaw(@"
+            SELECT gd.GameId GameId, g.CreatedDate CreatedDate, g.Status Status, Count(Distinct gd.PlayerId) Id , vencedor.PlayerId PlayerId, Sum(gd.Value) Value 
+            FROM GameDetails gd
+            INNER JOIN Games g ON g.Id = gd.GameId 
+            INNER JOIN (
+                    SELECT MaxValueByGame.GameId, PlayerId FROM (
+                    SELECT GameId, MAX(total) maior FROM (
+                        SELECT GameId ,p.Id PlayerId, SUM(gd2.ChipsTotal) - SUM(gd2.Value) total 
+                        FROM GameDetails gd2
+                        INNER JOIN Players p ON p.Id = gd2.PlayerId
+                        GROUP BY p.Id, gd2.GameId 
+                    ) totalOfWinner
+                    Group by GameId 
+                    ) MaxValueByGame 
+                    
+                    INNER JOIN 
+                    (
+                        SELECT GameId ,p.Id PlayerId, SUM(gd2.ChipsTotal) - SUM(gd2.Value) total FROM GameDetails gd2
+                        INNER JOIN Players p ON p.Id = gd2.PlayerId
+                        GROUP BY p.Id, gd2.GameId
+                    ) totalByPlayer ON total = maior AND MaxValueByGame.GameId = totalByPlayer.GameId
+            ) vencedor ON vencedor.GameId = gd.GameId
+            GROUP BY gd.GameId, g.CreatedDate, g.Status, vencedor.PlayerId
 
-            /* var winnerQuery = "WITH winner AS(" +
-                 "                                   SELECT  gd.GameId, p.Id, SUM(gd.ChipsTotal) - SUM(gd.Value) TOTAL," +
-                 "                                         ROW_NUMBER() OVER(PARTITION BY GameId ORDER BY gd.GameId DESC, SUM(gd.ChipsTotal) - SUM(gd.Value) DESC) AS rn" +
-                 "                                    FROM GameDetails gd" +
-                 "                                    INNER JOIN Players p ON p.Id = gd.PlayerId" +
-                 "                                    GROUP BY gd.GameId, p.Id" +
-                 "                                ) SELECT * FROM winner WHERE rn = 1";*/
+            ").Select(         
+                    x => new GameDTO(){
+                        Id = x.GameId,
+                        CreatedDate = x.CreatedDate,
+                        Winner = x.Player.Name,
+                        Status = x.Game.Status.ToString(),
+                        NumberOfPlayers = x.Id,
+                        Total = x.Value
+                    } 
+            );
 
-
-            var latest = DbContext.GameDetails
-                .Include(g => g.Game)
-                .AsEnumerable()
-                .GroupBy(g => new { g.GameId, g.Game.CreatedDate, g.Game.Status })
-                .Select(a => new
-                {
-                    a.Key.GameId,
-                    a.Key.CreatedDate,
-                    a.Key.Status,
-                    NumberOfPlayers = a.GroupBy(s => s.PlayerId).Count(),
-                    Total = a.Sum(i => i.Value),
-                    Winner =
-                       a.GroupBy(t => t.Player.Name)
-                       .Select(n => new { Name = n.Key, Vencedor = (n.Sum(y => y.ChipsTotal) - n.Sum(y => y.Value)) })
-                       .OrderByDescending(u => u.Vencedor)
-                       .Take(1).ElementAt(0).Name
-                }
-
-
-                )
-                .OrderByDescending(x => x.CreatedDate)
-                .Take(num)
-                .ToArray();
-
-
-            return new JsonResult(
-                latest.Adapt<GameViewModel[]>(),
-                JsonSettings);
+            return await ApiResult<GameDTO>.CreateAsync(
+                    gameDetails,
+                    pageIndex,
+                    pageSize,
+                    sortColumn,
+                    sortOrder,
+                    filterColumn,
+                    filterQuery);
         }
 
 
@@ -334,7 +346,7 @@ namespace SkillersPokerSystem.Controllers
         [HttpPost]
         [Route("EndGame")]
         [Authorize]
-        public IActionResult EndGame([FromBody]GameViewModel model)
+        public IActionResult EndGame([FromBody] GameViewModel model)
         {
             var game = DbContext.Games.Where(i => i.Id == model.Id)
                 .First();

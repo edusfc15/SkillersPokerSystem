@@ -86,36 +86,6 @@ namespace SkillersPokerSystem.Controllers
         }
 
         [HttpGet("All/")]
-        public IActionResult All()
-        {
-
-            var all = DbContext.Players
-                .Include(gd => gd.GameDetails)
-            .Select(x => new
-            {
-                x.Id,
-                x.ImageUrl,
-                x.Name,
-                x.IsActive,
-                ShowUpCount = x.GameDetails.GroupBy(a => a.GameId).Count(),
-                FirstGameDate = x.GameDetails.OrderBy(a => a.Game.CreatedDate).FirstOrDefault().Game.CreatedDate == null
-                    ? (DateTime?)null
-                    : x.GameDetails.OrderBy(a => a.Game.CreatedDate).FirstOrDefault().Game.CreatedDate,
-                LastGameDate = x.GameDetails.OrderByDescending(a => a.Game.CreatedDate).FirstOrDefault().Game.CreatedDate == null
-                    ? (DateTime?)null
-                    : x.GameDetails.OrderByDescending(a => a.Game.CreatedDate).FirstOrDefault().Game.CreatedDate
-            })
-            .OrderByDescending(x => x.ShowUpCount)
-            .ThenBy(x => x.IsActive)
-            .ToList();
-
-            return new JsonResult(
-                all.Adapt<PlayerViewModel[]>(),
-                JsonSettings);
-
-        }
-
-        [HttpGet("NewAll/")]
         public async Task<ActionResult<ApiResult<PlayerDTO>>> NewAll(
                 int pageIndex = 0,
                 int pageSize = 10,

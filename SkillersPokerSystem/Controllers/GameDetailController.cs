@@ -36,6 +36,7 @@ namespace SkillersPokerSystem.Controllers
                 .Where(q => q.GameId == gameId)
                 .Include(p => p.Player)
                 .Include(g => g.Game.Rake.RakeDetails)
+                .AsEnumerable()
                 .GroupBy(p => p.Player.Name)
                 .Select(p => new
                 {
@@ -79,7 +80,7 @@ namespace SkillersPokerSystem.Controllers
             {
                 UserId = authorId,
                 CreatedDate = DateTime.UtcNow,
-                RakeId = DbContext.Rakes.LastOrDefault().Id,
+                RakeId = DbContext.Rakes.OrderBy( x => x.Id).LastOrDefault().Id,
                 ViewCount = 0,
                 Status = StatusEnum.Aberto
             };

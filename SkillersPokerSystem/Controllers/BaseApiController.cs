@@ -47,22 +47,21 @@ namespace SkillersPokerSystem.Controllers
         {
             var lastGames = DbContext
                 .GameDetails
-                .GroupBy(g => new { g.GameId })
-                .OrderByDescending(s => s.Max().CreatedDate)
+                .Select( g => new { g.GameId})
+                .Distinct()
+                .OrderByDescending( g => g.GameId)
                 .Take(5)
-                .Select(x => x.Key.GameId)
+                .Select( g => g.GameId)
                 .ToList();
 
             var activePlayers = DbContext.GameDetails
-                .Where(a => lastGames.Contains(a.GameId))
+                .Where(a => lastGames.Contains( a.GameId))
                 .GroupBy(a => a.PlayerId)
                 .Select(a => a.Key)
                 .ToList()
                 ;
 
             DbContext.Database.ExecuteSqlInterpolated($"UPDATE Players SET IsActive = 0");
-
-            var random = new Random();
 
             foreach (var player in activePlayers)
             {

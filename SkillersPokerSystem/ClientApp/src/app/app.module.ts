@@ -1,14 +1,13 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, LOCALE_ID } from '@angular/core';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import ptBr from '@angular/common/locales/pt';
 
-import { AppComponent } from './components/app/app.component';
 import { CommonModule, registerLocaleData, TitleCasePipe } from '@angular/common';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
 import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/user/register.component';
@@ -36,10 +35,47 @@ import { LoaderComponent } from './components/loader/loader.component';
 import { GameStatus } from './services/game.status.service';
 import { GameDetailTipEditComponent } from './components/game/game-detail-tip-edit.component';
 
+import {DataViewModule} from 'primeng/dataview';
+import {ButtonModule} from 'primeng/button';
+import {PanelModule} from 'primeng/panel';
+import {DropdownModule} from 'primeng/dropdown';
+import {DialogModule} from 'primeng/dialog';
+import {InputTextModule} from 'primeng/inputtext';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { ChartModule } from 'primeng/chart';
+import { TableModule } from 'primeng/table';
+import { MenuModule } from 'primeng/menu';
+
+import { AppRoutingModule } from './app-routing.module';
+import { AppMainComponent } from './app.main.component';
+import { AppMenuComponent } from './app.menu.component';
+import { AppMenuitemComponent } from './app.menuitem.component';
+import { AppComponent } from './app.component';
+import { AppTopBarComponent } from './app.topbar.component';
+import { AppFooterComponent } from './app.footer.component';
+import { AppConfigComponent } from './app.config.component';
+import { AppRightmenuComponent } from './app.rightmenu.component';
+import { AppSearchComponent } from './app.search.component';
+import { MenuService } from './app.menu.service';
+import { BreadcrumbService } from './app.breadcrumb.service';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { DashboardDemoComponent } from './components/dashboard/dashboarddemo.component';
+import { ProductService } from './components/dashboard/productservice';
+
+
 @NgModule({
   declarations: [
+    AppMainComponent,
+    AppTopBarComponent,
+    AppMenuComponent,
+    AppMenuitemComponent,
+    AppFooterComponent,
+    AppConfigComponent,
+    AppRightmenuComponent,
+    AppSearchComponent,
     AppComponent,
     HomeComponent,
+    DashboardDemoComponent,
     LoginComponent,
     RegisterComponent,
     PageNotFoundComponent,
@@ -61,33 +97,29 @@ import { GameDetailTipEditComponent } from './components/game/game-detail-tip-ed
   ],
   imports: [
     BrowserModule,
-    CommonModule,
-    HttpClientModule,
     FormsModule,
+    AppRoutingModule,
+    HttpClientModule,
+    BrowserAnimationsModule,
+    ButtonModule,
+    ChartModule,
+    DataViewModule,
+    DialogModule,
+    DropdownModule,
+    PanelModule,
+    InputTextModule,
+    InputSwitchModule,
+    MenuModule,
+    TableModule,
+    RadioButtonModule,
+    CommonModule,
     NgbModule,
     ReactiveFormsModule,
-    RouterModule.forRoot([
-    { path: '', redirectTo: 'home', pathMatch: 'full' },
-    { path: 'home', component: HomeComponent },
-    { path: 'login', component: LoginComponent },
-    { path: 'game', component: GameListComponent },
-    { path: 'player', component: PlayerListComponent },
-    { path: 'user', component: UserListComponent },
-    { path: 'change-password', component: ChangePasswordComponent },
-    { path: 'player/create', component: PlayerEditComponent },
-    { path: 'player/edit/:id', component: PlayerEditComponent },
-    { path: 'ranking', component: RankingComponent },
-    { path: 'game/create', component: GameEditComponent },
-    { path: 'game/:id', component: GameDetailComponent },
-    { path: 'game-detail-detail/:id', component: GameDetailDetailComponent },
-    { path: 'player-detail/:id', component: PlayerDetailComponent },
-    { path: 'gameDetail/create/:action/:gameId/:playerId', component: GameDetailEditComponent },
-    { path: 'gameDetail/tip/:gameId', component: GameDetailTipEditComponent },
-    { path: 'register', component: RegisterComponent },
-    { path: '**', component: PageNotFoundComponent }
-], { relativeLinkResolution: 'legacy' })
   ],
   providers: [
+    MenuService,
+    BreadcrumbService,
+    ProductService,
     GameStatus,
     {
       provide: HTTP_INTERCEPTORS,

@@ -4,39 +4,63 @@ import { HttpClient } from "@angular/common/http";
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { Game } from 'src/app/interfaces/game';
+import { LazyLoadEvent } from 'primeng/api';
+import { ApiResult } from 'src/app/services/base.service';
+import { GameService } from 'src/app/services/game.service';
 
 @Component({
   selector: 'game-list',
   templateUrl: 'game-list.component.html',
-  styleUrls: ['game-list.component.css']
+  styleUrls: ['game-list.component.css','../../../assets/layout/css/tabledemo.scss']
 })
 export class GameListComponent {
 
   games: Game[];
   selectedGame: Game;
-  diaDaSemana: string;
+  totalRecords: number;
+  loading: boolean;
+  public defaultSortColumn: string = "Id";
+  public defaultSortOrder: string = "DESC";
 
   constructor(
-    private http: HttpClient,
-    @Inject('BASE_URL') private baseUrl: string,
     private router: Router,
     public auth: AuthService,
+    private gameService: GameService
   ) { }
 
   ngOnInit() {
+  }
 
-    var url = this.baseUrl + "api/game/latest";
+  onRowSelect(game) {   
+    this.router.navigate(["/game", game.id]);
+  }
 
-    this.http.get<Game[]>(url).subscribe(result => {
-      this.games = result;
-    }, error => console.error(error));
+  loadGames(event: LazyLoadEvent) {
+
+    var sortColumn = (event.sortField)
+      ? event.sortField
+      : this.defaultSortColumn;
+
+      var stringOrder = event.sortOrder == -1 ? "ASC" : "DESC"
+
+      var sortOrder = (event.sortOrder)
+      ? stringOrder
+      : this.defaultSortOrder;
+    
+    this.gameService.getData<ApiResult<Game>>(
+      (event.first/event.rows),
+      event.rows,
+      sortColumn ,
+      sortOrder,
+      "",
+      "")
+      .subscribe(result => {
+        this.games = result.data;
+        this.totalRecords = result.totalCount;
+      }, error => console.error(error));
 
   }
 
-  onSelect(game: Game) {
-    this.selectedGame = game;
-    this.router.navigate(["/game", this.selectedGame.GameId]);
-  }
 
 
 }

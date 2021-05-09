@@ -39,7 +39,7 @@ export class LoginComponent {
     this.authService.login(username, password)
       .subscribe(res => {
         // login successful
-        this.router.navigate(["home"]);
+        this.router.navigate(["/"]);
       },
         err => {
           // login failed
@@ -51,7 +51,7 @@ export class LoginComponent {
   }
 
   onBack() {
-    this.router.navigate(["home"]);
+    this.router.navigate(["/"]);
   }
 
   // retrieve a FormControl

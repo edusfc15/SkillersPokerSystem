@@ -1,38 +1,32 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <div class="form-group">
-    <label for="PlayerName">Nome do Jogador:</label>
-    <input type="text" class="form-control" id="PlayerName" formControlName="Name">
-  </div>
+    <div class="form-group">
+        <label for="PlayerName">Nome do Jogador:</label>
+        <input type="text" class="form-control" id="PlayerName" formControlName="Name">
+    </div>
 
-  <div class="form-group">
-    <span class="switch switch-sm">
+    <div class="form-group">
+        <span class="switch switch-sm">
       <label for="playerActive">Ativo:</label>
       <input [ngModel]="player.IsActive" formControlName="IsActive" type="checkbox" class="switch form-control" id="playerActive">
       <label for="playerActive"></label>
     </span>
-  </div>
+    </div>
 
-  <div class="form-group">
-      <label for="playerImageUrl">Url Perfil:</label>
-      <input type="text"  formControlName="ImageUrl"  class="switch form-control" id="playerImageUrl">
-  </div>
+    <div class="form-group">
+        <label for="playerImageUrl">Url Perfil:</label>
+        <input type="text" formControlName="ImageUrl" class="switch form-control" id="playerImageUrl">
+    </div>
 
-  <div class="form-group">
-    <button *ngIf="editMode" type="submit"
-            [disabled]="form.invalid"
-            class="btn btn-success">
+    <div class="form-group">
+        <button *ngIf="editMode" type="submit" [disabled]="form.invalid" class="btn btn-success">
       Salvar
     </button>
-    <button *ngIf="!editMode" type="submit"
-            [disabled]="form.invalid"
-            class="btn btn-success">
+        <button *ngIf="!editMode" type="submit" [disabled]="form.invalid" class="btn btn-success">
       Incluir
     </button>
-    <button *ngIf="!editMode" type="submit"
-            (click)="onBack()"
-            class="btn btn-default">
+        <button *ngIf="!editMode" type="submit" (click)="onBack()" class="btn btn-default">
       Cancelar
     </button>
-  </div>
+    </div>
 
 </form>
