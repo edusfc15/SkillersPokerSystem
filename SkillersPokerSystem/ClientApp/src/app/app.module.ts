@@ -4,7 +4,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import ptBr from '@angular/common/locales/pt';
 
-import { CommonModule, registerLocaleData, TitleCasePipe } from '@angular/common';
+import { CommonModule, HashLocationStrategy, LocationStrategy,  registerLocaleData, TitleCasePipe } from '@angular/common';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -61,6 +61,9 @@ import { BreadcrumbService } from './app.breadcrumb.service';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { DashboardDemoComponent } from './components/dashboard/dashboarddemo.component';
 import { ProductService } from './components/dashboard/productservice';
+import { RankingListComponent } from './components/ranking-list/ranking-list.component';
+import { InputNumberModule } from 'primeng/inputnumber';
+import {SliderModule} from 'primeng/slider';
 
 
 @NgModule({
@@ -93,7 +96,8 @@ import { ProductService } from './components/dashboard/productservice';
     PlayerDetailComponent,
     UserListComponent,
     ChangePasswordComponent,
-    LoaderComponent
+    LoaderComponent,
+    RankingListComponent
   ],
   imports: [
     BrowserModule,
@@ -108,6 +112,8 @@ import { ProductService } from './components/dashboard/productservice';
     DropdownModule,
     PanelModule,
     InputTextModule,
+    InputNumberModule,
+    SliderModule,
     InputSwitchModule,
     MenuModule,
     TableModule,
@@ -139,7 +145,8 @@ import { ProductService } from './components/dashboard/productservice';
       useClass: AuthResponseInterceptor,
       multi: true
     },
-    { provide: LOCALE_ID, useValue: 'pt' }
+    { provide: LOCALE_ID, useValue: 'pt' },
+    { provide: LocationStrategy, useClass: HashLocationStrategy}
   ],
   bootstrap: [AppComponent]
 })

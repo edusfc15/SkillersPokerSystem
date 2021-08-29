@@ -18,12 +18,11 @@ export class GameEditComponent {
   title: string;
   game: Game;
   gameForm: FormGroup;
-  clock:  Observable<Date>;
+  clock: Observable<Date>;
   players: Player[];
   activeGame: Game;
-  date: string;
-  time: string;
-  now;
+  now : Date;
+  sliderValue: number = 0;
 
   editMode: boolean;
 
@@ -31,7 +30,7 @@ export class GameEditComponent {
     private router: Router,
     private http: HttpClient,
     private fb: FormBuilder,
-	private gameStatus: GameStatus,
+    private gameStatus: GameStatus,
     @Inject('BASE_URL') private baseUrl: string) {
 
     this.game = <Game>{};
@@ -40,35 +39,22 @@ export class GameEditComponent {
       .subscribe(res => {
         this.activeGame = res;
         if (this.activeGame) {
-		  this.router.navigate(['game/' + this.activeGame.Id]);
-		  this.gameStatus.setGameStatus(true);
-        } else{
-			this.gameStatus.setGameStatus(false);
-		}
+          this.router.navigate(['game/' + this.activeGame.Id]);
+          this.gameStatus.setGameStatus(true);
+        } else {
+          this.gameStatus.setGameStatus(false);
+        }
       }
-    );
-
+      );
 
     this.clock = interval(1000).pipe(
-      map(tick => new Date() ),
+      map(tick => new Date()),
       share()
     )
-    this.now = Date.now();
 
-    var optionsDate = {
-      year: "numeric",
-      month: "2-digit",
-      day: "numeric"
-    };
 
-    var optionsTime = {
-      hour: "numeric",
-      minute: "numeric",
-      second: "numeric"
-    };
+    this.clock.subscribe(now => this.now = now);
 
-    this.clock.subscribe(date => this.date = date.toLocaleString('pt-br'));
-    this.clock.subscribe(time => this.time = time.toLocaleString('pt-br'));
 
     //get active players from the server
     this.http.get<Player[]>(this.baseUrl + "api/player/active")
@@ -81,13 +67,11 @@ export class GameEditComponent {
     // initialize the form
     this.createForm();
 
-
   }
 
   get gameDetails() {
     return this.gameForm.get('gameDetailsArray') as FormArray;
   }
-
 
   createForm() {
     this.gameForm = this.fb.group(
@@ -97,7 +81,7 @@ export class GameEditComponent {
             this.fb.group(
               {
                 PlayerId: ['', Validators.required],
-                Value: [5, Validators.min(5) ]
+                Value: [5, Validators.min(5)]
               }
             )
           ])
@@ -105,9 +89,8 @@ export class GameEditComponent {
     );
   }
 
-
   addGameDetails() {
-    this.gameDetails.push(this.fb.group({ PlayerId: '', Value: [5, Validators.min(5) ] }));
+    this.gameDetails.push(this.fb.group({ PlayerId: '', Value: [5, Validators.min(5)] }));
 
   }
 
@@ -125,22 +108,20 @@ export class GameEditComponent {
 
   startGame(gameDetails: FormArray) {
 
-   var url = this.baseUrl + "api/gameDetail"
-
+    var url = this.baseUrl + "api/gameDetail"
     var tempGameDetails = <GameDetail>{};
+    tempGameDetails = <GameDetail>gameDetails.value;
 
-    tempGameDetails = gameDetails.value;
-    
-   this.http
-       .put<Game>(url, tempGameDetails)
-     .subscribe(res => {
-		 var v = res;
-		 
-		 this.router.navigate(["game/" + v.Id]);
-		 this.gameStatus.setGameStatus(true);
-       }, error => console.log(error)
-       
-     );
+    this.http
+      .put<GameDetail>(url, tempGameDetails)
+      .subscribe(res => {
+        var v = res;
+
+        this.router.navigate(["game/" + v.Id]);
+        this.gameStatus.setGameStatus(true);
+      }, error => console.log(error)
+
+      );
 
   }
 
@@ -148,9 +129,14 @@ export class GameEditComponent {
     this.router.navigate(["home"]);
   }
 
+  sliderChange(index, event) {
+    //    this.gameDetails.controls[index].value.Value = event.value;
+
+  }
+
   // retrieve a FormControl
-    getFormControl(name: string) {
-      return this.gameForm.get(name);
+  getFormControl(name: string) {
+    return this.gameForm.get(name);
   }
 
   // returns TRUE if the FormControl is valid

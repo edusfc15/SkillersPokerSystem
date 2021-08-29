@@ -2,20 +2,24 @@
     <div class="p-col-12">
         <div class="card">
             <h4>Partida</h4>
-
-            <div class="p-fluid">
-                <div class="p-field">
-                    <label for="id">Id</label>
-                    <input id="id" type="text" value="{{game.Id}}" pInputText>
+            <div class="p-fluid ">
+                <div class="p-field p-col-12 p-md-4">
+                    <span class="p-float-label">
+                        <input disabled="true" id="id" type="text" value="{{game.Id}}" pInputText>
+                        <label for="id">Id</label>
+                    </span>
                 </div>
-                <div class="p-field">
-                    <label for="lastname1">Data</label>
-
-                    <input id="id" type="text" value="{{game.CreatedDate | date:'dd/MM/yyy' : 'GMT-6'}}" pInputText>
+                <div class="p-field p-col-12 p-md-4">
+                    <span class="p-float-label">
+                        <input disabled="true" id="data" type="text" value="{{game.CreatedDate | date:'dd/MM/yyy' : 'GMT-6'}}" pInputText>
+                        <label for="data">Data</label>
+                    </span>
                 </div>
-                <div class="p-field">
-                    <label for="age1">Status</label>
-                    <input id="id" type="text" value="{{game.Status}}" pInputText>
+                <div class="p-field p-col-12 p-md-4">
+                    <span class="p-float-label">
+                        <input disabled="true" id="status" type="text" value="{{game.Status}}" pInputText>
+                        <label for="status">Status</label>
+                    </span>
                 </div>
             </div>
             <game-detail-list [game]="game" (gameAtDetail)="updateGame($event)"></game-detail-list>

@@ -1,0 +1,49 @@
+<div class="p-grid">
+    <div class="p-col-12">
+        <div class="card">
+            <h5>Ranking</h5>
+            <div class="p-col-12">
+
+            </div>
+            <div class="p-col-12">
+                <div class="card">
+                    <p-table [value]="rankingTotal">
+                        <ng-template pTemplate="caption">
+                            <div class="p-d-flex p-ai-center p-jc-between">
+                                <form [formGroup]="form">
+                                    <div class="p-field p-col-12 p-md-6">
+                                        <h5>Lucro real?</h5>
+                                        <p-inputSwitch formControlName="RealProfit1" (change)="onChangeYear(selectedYear)"></p-inputSwitch>
+                                    </div>
+                                </form>
+                                <div class="p-field p-col-12 p-md-6">
+                                    <h5>Escolha o ano:</h5>
+                                    <p-dropdown inputId="year" [options]="years" (change)="onChangeYear($event.target.value)" [(ngModel)]="selectedYear" placeholder="Selecione o Ano" optionLabel="number"></p-dropdown>
+                                </div>
+
+                                <div class="p-field p-col-12 p-md-6">
+                                    <h5>Escolha o mês</h5>
+                                    <p-dropdown [(ngModel)]="selectedMonth" inputId="monthDesc" [options]="monthsDescriptions" (change)="onChangeMonth($event.target.value)" placeholder="Selecione o Mês" optionLabel="description"></p-dropdown>
+                                </div>
+                            </div>
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr>
+                                <th>#</th>
+                                <th>Nome</th>
+                                <th>Total</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-ranking let-columns="columns" let-rowIndex="rowIndex">
+                            <tr>
+                                <td>{{rowIndex+1}}</td>
+                                <td>{{ranking.Name}}</td>
+                                <td>{{ranking.Total | currency:'BRL'}}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

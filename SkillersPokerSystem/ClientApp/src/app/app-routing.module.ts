@@ -18,6 +18,7 @@ import { RegisterComponent } from './components/user/register.component';
 import { PageNotFoundComponent } from './components/pagenotfound/page-not-found.component';
 import { AppMainComponent } from './app.main.component';
 import { DashboardDemoComponent } from './components/dashboard/dashboarddemo.component';
+import { RankingListComponent } from './components/ranking-list/ranking-list.component';
 
 
 @NgModule({
@@ -36,6 +37,7 @@ import { DashboardDemoComponent } from './components/dashboard/dashboarddemo.com
                     { path: 'player/create', component: PlayerEditComponent },
                     { path: 'player/edit/:id', component: PlayerEditComponent },
                     { path: 'ranking', component: RankingComponent },
+                    { path: 'new-ranking', component: RankingListComponent },
                     { path: 'game/create', component: GameEditComponent },
                     { path: 'game/:id', component: GameDetailComponent },
                     { path: 'game-detail-detail/:id', component: GameDetailDetailComponent },
@@ -46,7 +48,7 @@ import { DashboardDemoComponent } from './components/dashboard/dashboarddemo.com
             },
             { path: 'register', component: RegisterComponent },
             { path: '**', component: PageNotFoundComponent }]
-            , { scrollPositionRestoration: 'enabled' })
+            , { scrollPositionRestoration: 'enabled', useHash: true })
     ],
     exports: [RouterModule]
 })

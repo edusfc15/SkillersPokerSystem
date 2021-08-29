@@ -67,14 +67,11 @@ namespace SkillersPokerSystem.Controllers
         [Authorize]
         public IActionResult Put([FromBody]List<GameDetailViewModel> model)
         {
-
-            //if (model == null) return new StatusCodeResult(500);
-
+            if (model == null) return new StatusCodeResult(500);
 
             var authorId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
             base.SetActive();
-
 
             var game = new Game()
             {

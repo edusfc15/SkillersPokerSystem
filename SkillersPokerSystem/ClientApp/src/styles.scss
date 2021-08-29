@@ -6,3 +6,525 @@ $gutter: 1rem; //for primeflex grid system
 @import "../node_modules/@fullcalendar/core/main.min.css";
 @import "../node_modules/@fullcalendar/daygrid/main.min.css";
 @import "../node_modules/@fullcalendar/timegrid/main.min.css";
+
+/* You can add global styles to this file, and also import other style files */
+
+@media only screen and (max-width: 800px) {
+    #flip-scroll .cf:after {
+        visibility: hidden;
+        display: block;
+        font-size: 0;
+        content: " ";
+        clear: both;
+        height: 0;
+    }
+    #flip-scroll * html .cf {
+        zoom: 1;
+    }
+    #flip-scroll *:first-child+html .cf {
+        zoom: 1;
+    }
+    #flip-scroll table {
+        width: 100%;
+        border-collapse: collapse;
+        border-spacing: 0;
+    }
+    #flip-scroll th,
+    #flip-scroll td {
+        margin: 0;
+        vertical-align: top;
+    }
+    #flip-scroll th {
+        text-align: left;
+    }
+    #flip-scroll table {
+        display: block;
+        position: relative;
+        width: 100%;
+    }
+    #flip-scroll thead {
+        display: block;
+        float: left;
+    }
+    #flip-scroll tbody {
+        display: block;
+        width: auto;
+        position: relative;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    #flip-scroll thead tr {
+        display: block;
+    }
+    #flip-scroll th {
+        display: block;
+        text-align: right;
+    }
+    #flip-scroll tbody tr {
+        display: inline-block;
+        vertical-align: top;
+    }
+    #flip-scroll td {
+        display: block;
+        min-height: 1.25em;
+        text-align: left;
+    }
+    /* sort out borders */
+    #flip-scroll th {
+        border-bottom: 0;
+        border-left: 0;
+    }
+    #flip-scroll td {
+        border-left: 0;
+        border-right: 0;
+        border-bottom: 0;
+    }
+    #flip-scroll tbody tr {
+        border-left: 1px solid #babcbf;
+    }
+    #flip-scroll th:last-child,
+    #flip-scroll td:last-child {
+        border-bottom: 1px solid #babcbf;
+    }
+}
+
+@media only screen and (max-width: 800px) {
+    /* Force table to not be like tables anymore */
+    #no-more-tables table,
+    #no-more-tables thead,
+    #no-more-tables tbody,
+    #no-more-tables th,
+    #no-more-tables td,
+    #no-more-tables tr {
+        display: block;
+    }
+    /* Hide table headers (but not display: none;, for accessibility) */
+    #no-more-tables thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+    #no-more-tables tr {
+        border: 1px solid #ccc;
+        margin-top: 25px;
+        margin-bottom: 25px;
+    }
+    #no-more-tables td {
+        /* Behave  like a "row" */
+        border: none;
+        border-bottom: 1px solid #eee;
+        position: relative;
+        padding-left: 50%;
+        white-space: normal;
+        text-align: left;
+    }
+    #no-more-tables td:before {
+        /* Now like a table header */
+        position: absolute;
+        /* Top/left values mimic padding */
+        top: 6px;
+        left: 6px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        text-align: left;
+        font-weight: bold;
+    }
+    /*
+	Label the data
+	*/
+    #no-more-tables td:before {
+        content: attr(data-title);
+    }
+}
+
+.pokerchip {
+    margin: .4em;
+    font-size: 1.0em;
+    position: relative;
+    display: inline-block;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    width: 4em;
+    height: 4em;
+    background: #555;
+    border-radius: 50%;
+    position: relative;
+    transition: all .5s ease;
+    backface-visibility: hidden;
+}
+
+.pokerchip.purple {
+    background: #7164a6;
+    background-image: url('../src/assets/FichasCopag5.png');
+    background-size: contain;
+}
+
+.pokerchip.red {
+    background: #a80057;
+    background-image: url('./assets/FichasCopag1k.png');
+    background-size: contain;
+}
+
+.pokerchip.blue {
+    background: #008b9c;
+    background-image: url('./assets/FichasCopag10k.png');
+    background-size: contain;
+}
+
+.pokerchip.green {
+    background: #15d000;
+    background-image: url('./assets/FichasCopag025.png');
+    background-size: contain;
+}
+
+.pokerchip.black {
+    background: #000;
+    background-image: url('./assets/FichasCopag100.png');
+    background-size: contain;
+}
+
+.pokerchip.iso {
+    transform: perspective(3000px) rotateX(55deg) rotateZ(-40deg);
+    box-shadow: -1px 1px 0px #555, -2px 2px 0px #555, -3px 3px 0px #555, -4px 4px 0px #555, -5px 5px 0px #555, -6px 6px 10px #555;
+}
+
+.pokerchip.flat:hover {
+    transform: rotate(90deg);
+}
+
+.pokerchip.iso:hover {
+    transform: perspective(3000px) rotateX(55deg) rotateZ(-40deg) translateZ(.4em);
+}
+
+.spacer {
+    padding-top: 40px;
+    padding-bottom: 40px
+}
+
+@media screen and (max-width: 600px) {
+    #hideRange {
+        visibility: hidden;
+        clear: both;
+        float: left;
+        margin: 10px auto 5px 20px;
+        width: 28%;
+        display: none;
+    }
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+.gooey {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 142px;
+    height: 40px;
+    margin: -20px 0 0 -71px;
+    background: #fff;
+    filter: contrast(20);
+}
+
+.gooey .dot {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 12px;
+    left: 15px;
+    filter: blur(4px);
+    background: #000;
+    border-radius: 50%;
+    transform: translateX(0);
+    animation: dot 2.8s infinite;
+}
+
+.gooey .dots {
+    transform: translateX(0);
+    margin-top: 12px;
+    margin-left: 31px;
+    animation: dots 2.8s infinite;
+}
+
+.gooey .dots span {
+    display: block;
+    float: left;
+    width: 16px;
+    height: 16px;
+    margin-left: 16px;
+    filter: blur(4px);
+    background: #000;
+    border-radius: 50%;
+}
+
+@-moz-keyframes dot {
+    50% {
+        transform: translateX(96px);
+    }
+}
+
+@-webkit-keyframes dot {
+    50% {
+        transform: translateX(96px);
+    }
+}
+
+@-o-keyframes dot {
+    50% {
+        transform: translateX(96px);
+    }
+}
+
+@keyframes dot {
+    50% {
+        transform: translateX(96px);
+    }
+}
+
+@-moz-keyframes dots {
+    50% {
+        transform: translateX(-31px);
+    }
+}
+
+@-webkit-keyframes dots {
+    50% {
+        transform: translateX(-31px);
+    }
+}
+
+@-o-keyframes dots {
+    50% {
+        transform: translateX(-31px);
+    }
+}
+
+@keyframes dots {
+    50% {
+        transform: translateX(-31px);
+    }
+}
+
+.switch {
+    font-size: 1rem;
+    position: relative;
+}
+
+.switch input {
+    position: absolute;
+    height: 1px;
+    width: 1px;
+    background: none;
+    border: 0;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    overflow: hidden;
+    padding: 0;
+}
+
+.switch input+label {
+    position: relative;
+    min-width: calc(calc(2.375rem * .8) * 2);
+    border-radius: calc(2.375rem * .8);
+    height: calc(2.375rem * .8);
+    line-height: calc(2.375rem * .8);
+    display: inline-block;
+    cursor: pointer;
+    outline: none;
+    user-select: none;
+    vertical-align: middle;
+    text-indent: calc(calc(calc(2.375rem * .8) * 2) + .5rem);
+}
+
+.switch input+label::before,
+.switch input+label::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(calc(2.375rem * .8) * 2);
+    bottom: 0;
+    display: block;
+}
+
+.switch input+label::before {
+    right: 0;
+    background-color: #dee2e6;
+    border-radius: calc(2.375rem * .8);
+    transition: 0.2s all;
+}
+
+.switch input+label::after {
+    top: 2px;
+    left: 2px;
+    width: calc(calc(2.375rem * .8) - calc(2px * 2));
+    height: calc(calc(2.375rem * .8) - calc(2px * 2));
+    border-radius: 50%;
+    background-color: white;
+    transition: 0.2s all;
+}
+
+.switch input:checked+label::before {
+    background-color: #08d;
+}
+
+.switch input:checked+label::after {
+    margin-left: calc(2.375rem * .8);
+}
+
+.switch input:focus+label::before {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(0, 136, 221, 0.25);
+}
+
+.switch input:disabled+label {
+    color: #868e96;
+    cursor: not-allowed;
+}
+
+.switch input:disabled+label::before {
+    background-color: #e9ecef;
+}
+
+.switch.switch-sm {
+    font-size: 0.875rem;
+}
+
+.switch.switch-sm input+label {
+    min-width: calc(calc(1.9375rem * .8) * 2);
+    height: calc(1.9375rem * .8);
+    line-height: calc(1.9375rem * .8);
+    text-indent: calc(calc(calc(1.9375rem * .8) * 2) + .5rem);
+}
+
+.switch.switch-sm input+label::before {
+    width: calc(calc(1.9375rem * .8) * 2);
+}
+
+.switch.switch-sm input+label::after {
+    width: calc(calc(1.9375rem * .8) - calc(2px * 2));
+    height: calc(calc(1.9375rem * .8) - calc(2px * 2));
+}
+
+.switch.switch-sm input:checked+label::after {
+    margin-left: calc(1.9375rem * .8);
+}
+
+.switch.switch-lg {
+    font-size: 1.25rem;
+}
+
+.switch.switch-lg input+label {
+    min-width: calc(calc(3rem * .8) * 2);
+    height: calc(3rem * .8);
+    line-height: calc(3rem * .8);
+    text-indent: calc(calc(calc(3rem * .8) * 2) + .5rem);
+}
+
+.switch.switch-lg input+label::before {
+    width: calc(calc(3rem * .8) * 2);
+}
+
+.switch.switch-lg input+label::after {
+    width: calc(calc(3rem * .8) - calc(2px * 2));
+    height: calc(calc(3rem * .8) - calc(2px * 2));
+}
+
+.switch.switch-lg input:checked+label::after {
+    margin-left: calc(3rem * .8);
+}
+
+.switch+.switch {
+    margin-left: 1rem;
+}
+
+input[type="text"]:disabled {
+    color: #000;
+    font-weight: bold;
+}
+
+:host ::ng-deep {
+    .p-paginator {
+        .p-paginator-current {
+            margin-left: auto;
+        }
+    }
+    .p-progressbar {
+        height: .5rem;
+        background-color: #D8DADC;
+        .p-progressbar-value {
+            background-color: #607D8B;
+        }
+    }
+    .table-header {
+        display: flex;
+        justify-content: space-between;
+    }
+    .p-calendar .p-datepicker {
+        min-width: 25rem;
+        td {
+            font-weight: 400;
+        }
+    }
+    .p-datatable.p-datatable-customers {
+        .p-datatable-header {
+            padding: 1rem;
+            text-align: left;
+            font-size: 1.5rem;
+        }
+        .p-paginator {
+            padding: 1rem;
+        }
+        .p-datatable-thead>tr>th {
+            text-align: left;
+        }
+        .p-datatable-tbody>tr>td {
+            cursor: auto;
+        }
+        .p-dropdown-label:not(.p-placeholder) {
+            text-transform: uppercase;
+        }
+    }
+    /* Responsive */
+    .p-datatable-customers .p-datatable-tbody>tr>td .p-column-title {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 960px) {
+     :host ::ng-deep {
+        .p-datatable {
+            &.p-datatable-customers {
+                .p-datatable-thead>tr>th,
+                .p-datatable-tfoot>tr>td {
+                    display: none !important;
+                }
+                .p-datatable-tbody>tr {
+                    border-bottom: 1px solid var(--layer-2);
+                    >td {
+                        text-align: left;
+                        display: block;
+                        border: 0 none !important;
+                        width: 100% !important;
+                        float: left;
+                        clear: left;
+                        border: 0 none;
+                        .p-column-title {
+                            padding: .4rem;
+                            min-width: 30%;
+                            display: inline-block;
+                            margin: -.4rem 1rem -.4rem -.4rem;
+                            font-weight: bold;
+                        }
+                        .p-progressbar {
+                            margin-top: .5rem;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

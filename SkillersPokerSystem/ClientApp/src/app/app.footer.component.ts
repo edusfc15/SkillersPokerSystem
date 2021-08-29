@@ -6,5 +6,7 @@ import {AppComponent} from './app.component';
   templateUrl: './app.footer.component.html'
 })
 export class AppFooterComponent {
+  today : Date = new Date();
   constructor(public app: AppComponent) {}
+
 }

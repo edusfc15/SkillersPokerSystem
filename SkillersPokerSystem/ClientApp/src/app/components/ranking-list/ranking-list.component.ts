@@ -1,32 +1,28 @@
-
-import { Component, Inject, Input, OnInit } from '@angular/core';
-import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { TitleCasePipe } from '@angular/common';
-import { FormBuilder, Form, FormGroup } from '@angular/forms';
-import { RankingTotal } from 'src/app/interfaces/rankingTotal';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Component, Inject, Input, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Ranking } from 'src/app/interfaces/ranking';
+import { RankingTotal } from 'src/app/interfaces/rankingTotal';
 
 @Component({
-  selector: 'ranking',
-  templateUrl: 'ranking.component.html',
-  styleUrls: ['ranking.component.css']
+  selector: 'app-ranking-list',
+  templateUrl: './ranking-list.component.html',
+  styleUrls: ['./ranking-list.component.scss']
 })
-export class RankingComponent implements OnInit {
+export class RankingListComponent implements OnInit {
 
   @Input() type: string;
   ranking: Ranking[];
-  rankingTotal: RankingTotal[];
-  distinctPlayers;
-  months;
-  years;
-  showMonths;
-  monthsDescriptions;
-  showLastMonths: boolean;
-  title: string;
-  mensal: boolean;
+  rankingTotal: any[];
   form: FormGroup;
+  distinctPlayers;
+  title: string;
+  years;
   selectedMonth: number;
   selectedYear: number;
+  monthsDescriptions;
+  months;
 
   constructor(
     private http: HttpClient,
@@ -46,28 +42,21 @@ export class RankingComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
 
+    this.rankingTotal = [];
+    this.years = [];
+    this.months = [];
+    this.monthsDescriptions = [];
 
     const formatter = new Intl.DateTimeFormat('pt', { month: 'long' });
 
-    this.mensal = this.type === 'mes';
-
-    this.rankingTotal = [];
-    this.months = [];
-    this.monthsDescriptions = [];
-    this.showLastMonths = true;
-
     const today = new Date();
+    const monthDesc = this.titlecasePipe.transform(today.toLocaleString('pt-br', { month: 'long' }));
+
 
     const currentMonth = today.getMonth() + 1;
     var currentYear = new Date().getFullYear();
-
-    this.selectedYear = currentYear;
-    this.selectedMonth = currentMonth;
-
-    const monthDesc = this.titlecasePipe.transform(today.toLocaleString('pt-br', { month: 'long' }));
-
 
     for (let i = 0; i <= currentMonth; i++) {
       if (i > 1) {
@@ -79,31 +68,13 @@ export class RankingComponent implements OnInit {
 
     }
 
-    this.years = [];
+    this.selectedYear = currentYear;
+    this.selectedMonth = currentMonth;
 
     var startYear = 2015;
     while (currentYear >= startYear) {
       this.years.push({ "number": currentYear-- });
     }
-
-    this.showMonths =
-    {
-      "Show1": false,
-      "Show2": false,
-      "Show3": false,
-      "Show4": false,
-      "Show5": false,
-      "Show6": false,
-      "Show7": false,
-      "Show8": false,
-      "Show9": false,
-      "Show10": false,
-      "Show11": false,
-      "Show12": false
-    }
-      ;
-
-    this.showMonths['Show' + currentMonth] = true;
 
     let realprofit = false;
     switch (this.type) {
@@ -122,8 +93,6 @@ export class RankingComponent implements OnInit {
 
   }
 
-  
-
   loadData(year?: number, month?: number, realProfit?: boolean) {
 
     const url = this.baseUrl + 'api/game/ranking';
@@ -133,8 +102,6 @@ export class RankingComponent implements OnInit {
 
     var thisYear = new Date().getFullYear();
     var thisMonth = new Date().getMonth();
-
-    this.rankingTotal = [];
 
     var yearForParam = thisYear.toString();
     var monthForParam = "0";
@@ -165,70 +132,21 @@ export class RankingComponent implements OnInit {
         }
 
         this.distinctPlayers = rankingPlayers.filter(distinct);
-
+      
         for (var i = 0; i < this.distinctPlayers.length; i++) {
           var filter = [];
           filter = this.ranking.filter(x => x.Name === this.distinctPlayers[i]);
-          var tmp = { "Name": '', "Janeiro": 0, "Fevereiro": 0, "Marco": 0, "Abril": 0, "Maio": 0, "Junho": 0, "Julho": 0, "Agosto": 0, "Setembro": 0, "Outubro": 0, "Novembro": 0, "Dezembro": 0, "Total": 0 };
+          var tmp = {"Posicao" : 0, "Name": '', "Total": 0 };
           for (var j = 0; j < filter.length; j++) {
 
             tmp.Name = filter[j].Name;
 
             switch (filter[j].Month) {
 
-              case (1): {
-                tmp.Janeiro = filter[j].Total;
-                break;
-              }
-              case (2): {
-                tmp.Fevereiro = filter[j].Total;
-                break;
-              }
-              case (3): {
-                tmp.Marco = filter[j].Total;
-                break;
-              }
-              case (4): {
-                tmp.Abril = filter[j].Total;
-                break;
-              }
-              case (5): {
-                tmp.Maio = filter[j].Total;
-                break;
-              }
-              case (6): {
-                tmp.Junho = filter[j].Total;
-                break;
-              }
-              case (7): {
-                tmp.Julho = filter[j].Total;
-                break;
-              }
-              case (8): {
-                tmp.Agosto = filter[j].Total;
-                break;
-              }
-              case (9): {
-                tmp.Setembro = filter[j].Total;
-                break;
-              }
-              case (10): {
-                tmp.Outubro = filter[j].Total;
-                break;
-              }
-              case (11): {
-                tmp.Novembro = filter[j].Total;
-                break;
-              }
-              case (12): {
-                tmp.Dezembro = filter[j].Total;
-                break;
-              }
               case (13): {
                 tmp.Total = filter[j].Total;
                 break;
               }
-
 
 
             }
@@ -250,6 +168,13 @@ export class RankingComponent implements OnInit {
           return comparison;
         });
 
+        this.rankingTotal.forEach( (x) => {
+          
+        });
+
+        console.log(this.rankingTotal);
+        
+
       }
 
     );
@@ -257,23 +182,14 @@ export class RankingComponent implements OnInit {
 
   }
 
+  
   onChangeMonths(selectedOptions) {
-
-
 
     var monthIndex = selectedOptions[0].index;
     monthIndex++;
     var monthToStart = new Date().getMonth();
     monthToStart++;
 
-    for (var i = 0; i < Object.keys(this.showMonths).length; i++) {
-      this.showMonths["Show" + i] = false;
-    }
-
-    for (monthToStart; monthIndex > 0; monthIndex--) {
-      this.showMonths["Show" + monthToStart] = true;
-      monthToStart--;
-    }
 
   }
 
@@ -283,26 +199,6 @@ export class RankingComponent implements OnInit {
 
     var now = new Date();
     var thisYear = now.getFullYear()
-
-    if (year < thisYear) {
-      this.showLastMonths = false;
-
-      for (var i = 0; i < Object.keys(this.showMonths).length; i++) {
-        this.showMonths["Show" + i] = true;
-      }
-
-    } else {
-
-      for (var i = 0; i < Object.keys(this.showMonths).length; i++) {
-        this.showMonths["Show" + i] = false;
-      }
-
-
-      this.showLastMonths = true;
-      this.showMonths["Show" + (now.getMonth() + 1)] = true;
-
-    }
-
 
   }
 

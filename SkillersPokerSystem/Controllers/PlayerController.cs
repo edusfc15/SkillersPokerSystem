@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Mapster;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -115,7 +116,7 @@ namespace SkillersPokerSystem.Controllers
         }
 
 
-
+        [Authorize]
         public IActionResult Put([FromBody] PlayerViewModel model)
         {
 
@@ -139,6 +140,7 @@ namespace SkillersPokerSystem.Controllers
         }
 
         [HttpPost]
+        [Authorize]
 
         public IActionResult Post([FromBody] PlayerViewModel model)
         {

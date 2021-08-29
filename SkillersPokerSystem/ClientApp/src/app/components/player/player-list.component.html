@@ -1,6 +1,8 @@
 <div class="p-grid list-demo">
     <div class="p-col-12">
         <div class="card">
+            <button pButton class="p-mr-2 p-mb-2 p-button-success" *ngIf="auth.isLoggedIn()" [routerLink]="['/player/create']"> Adicionar Jogador</button>
+            <button pButton class="p-mr-2 p-mb-2" *ngIf="auth.isLoggedIn()" (click)="onActive()"> Ativar Jogadores Frequentes</button>
             <h5>Jogadores</h5>
             <p-dataView #dv [value]="players" [paginator]="true" [rows]="10" filterBy="name" [sortField]="sortField" [sortOrder]="sortOrder" layout="grid">
                 <ng-template pTemplate="header">
