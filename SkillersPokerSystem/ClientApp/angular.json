@@ -7,48 +7,67 @@
     "newProjectRoot": "projects",
     "projects": {
         "ClientApp": {
-            "root": "",
-            "sourceRoot": "src",
             "projectType": "application",
-            "prefix": "app",
             "schematics": {
                 "@schematics/angular:component": {
                     "style": "scss"
                 }
             },
+            "root": "",
+            "sourceRoot": "src",
+            "prefix": "app",
             "architect": {
                 "build": {
                     "builder": "@angular-devkit/build-angular:browser",
                     "options": {
-                        "aot": true,
+                        "aot": false,
                         "outputPath": "dist/ClientApp",
                         "index": "src/index.html",
                         "main": "src/main.ts",
-                        "polyfills": "src/polyfills.ts",
+                        "polyfills": [
+                            "zone.js"
+                        ],
                         "tsConfig": "src/tsconfig.app.json",
+                        "inlineStyleLanguage": "scss",
                         "assets": [
                             "src/favicon.ico",
                             "src/assets"
                         ],
                         "styles": [
-                            "src/styles.scss",
-                            "node_modules/primeng/resources/themes/saga-blue/theme.css",
-                            "node_modules/primeng/resources/primeng.min.css",
-                            "node_modules/primeicons/primeicons.css"
+                            "src/styles.scss"
                         ],
                         "scripts": [
-                            "node_modules/prismjs/prism.js",
-                            "node_modules/prismjs/components/prism-typescript.js"
-                        ],
-                        "allowedCommonJsDependencies": [
-                            "@fullcalendar/daygrid",
-                            "@fullcalendar/timegrid",
-                            "@fullcalendar/interaction",
-                            "chart.js"
                         ]
                     },
                     "configurations": {
+                        "development": {
+                            "optimization": false,
+                            "outputHashing": "all",
+                            "sourceMap": true,
+                            "namedChunks": false,
+                            "aot": true,
+                            "extractLicenses": true,
+                            "vendorChunk": false,
+                            "buildOptimizer": false,
+                            "fileReplacements": [
+                              {
+                                "replace": "src/environments/environment.ts",
+                                "with": "src/environments/environment.dev.ts"
+                              }
+                            ]
+                          },
                         "production": {
+                            "budgets": [
+                                {
+                                "type": "initial",
+                                "maximumWarning": "2mb",
+                                "maximumError": "5mb"
+                            },
+                            {
+                                "type": "anyComponentStyle",
+                                "maximumWarning": "6kb"
+                            }
+                        ],
                             "fileReplacements": [{
                                 "replace": "src/environments/environment.ts",
                                 "with": "src/environments/environment.prod.ts"
@@ -60,17 +79,7 @@
                             "aot": true,
                             "extractLicenses": true,
                             "vendorChunk": false,
-                            "buildOptimizer": true,
-                            "budgets": [{
-                                    "type": "initial",
-                                    "maximumWarning": "2mb",
-                                    "maximumError": "5mb"
-                                },
-                                {
-                                    "type": "anyComponentStyle",
-                                    "maximumWarning": "6kb"
-                                }
-                            ]
+                            "buildOptimizer": true
                         }
                     }
                 },
@@ -80,10 +89,14 @@
                         "browserTarget": "ClientApp:build"
                     },
                     "configurations": {
+                        "development": {
+                            "browserTarget": "ClientApp:build:development"
+                        },
                         "production": {
                             "browserTarget": "ClientApp:build:production"
                         }
-                    }
+                    }, 
+                    "defaultConfiguration": "development"
                 },
                 "extract-i18n": {
                     "builder": "@angular-devkit/build-angular:extract-i18n",
@@ -134,6 +147,9 @@
                         "devServerTarget": "ClientApp:serve"
                     },
                     "configurations": {
+                        "dev": {
+                            "devServerTarget": "ClientApp:serve:development"
+                        },
                         "production": {
                             "devServerTarget": "ClientApp:serve:production"
                         }
@@ -150,6 +166,5 @@
                 }
             }
         }
-    },
-    "defaultProject": "ClientApp"
+    }
 }

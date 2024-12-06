@@ -1,4 +1,5 @@
 export interface Player {
+  id: number;
   Id: number;
   Name: string;
   CreatedDate: string;

@@ -39,17 +39,17 @@ export class GameService
         return this.http.get<ApiResult>(url, { params });
     }
 
-    get<Game>(id): Observable<Game> {
+    get<Game>(id: any): Observable<Game> {
         var url = this.baseUrl + "api/Games/" + id;
         return this.http.get<Game>(url);
     }
 
-    put<Game>(item): Observable<Game> {
+    put<Game>(item: any): Observable<Game> {
         var url = this.baseUrl + "api/Games/" + item.id;
         return this.http.put<Game>(url, item);
     }
 
-    post<Game>(item): Observable<Game> {
+    post<Game>(item: any): Observable<Game> {
         var url = this.baseUrl + "api/Games";
         return this.http.post<Game>(url, item);
     }

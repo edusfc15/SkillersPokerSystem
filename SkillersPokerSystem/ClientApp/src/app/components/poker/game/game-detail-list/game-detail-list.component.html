@@ -1,0 +1,56 @@
+<p-table responsiveLayout="stack" [value]="gameDetails" [responsive]="true">
+    <ng-template pTemplate="caption">
+        <div class="p-d-flex p-ai-center p-jc-between">
+            <p-button [routerLink]="['/']" icon="pi pi-refresh"></p-button>
+            <p-button *ngIf="auth.isLoggedIn() && gameStatus" [routerLink]="['/gameDetail/create','buy-in', this.game.Id, 1]">Adicionar Buy in</p-button>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+        <tr>
+            <th *ngIf="auth.isLoggedIn()"></th>
+            <th> </th>
+            <th>Nome</th>
+            <th>Rebuys</th>
+            <th>Total de Fichas</th>
+            <th>Fichas - Rebuy</th>
+            <th>Rake</th>
+            <th>Total</th>
+            <th>Lucro/Perda</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-gameDetail>
+        <tr>
+            <td class="p-text-right" *ngIf="auth.isLoggedIn()">
+                <button pButton type="button" *ngIf="gameStatus" [routerLink]="['/gameDetail/create','buy-in', this.game.Id, gameDetail.PlayerId]" class="p-button-success p-m-1"><i class="fas fa-hand-holding-usd"></i></button>
+                <button pButton type="button" *ngIf="gameStatus " [routerLink]="['/gameDetail/create','cash-out', this.game.Id, gameDetail.PlayerId]" class="p-button-success-info p-m-1"><i class="fas fa-money-check-alt"></i></button>
+            </td>
+            <td><img alt="" id="player-img" class="player-img" [src]="'assets//images//' + gameDetail.PlayerImgUrl" /></td>
+            <td><span class="p-column-title">Nome</span>{{gameDetail.Name}}</td>
+            <td><span class="p-column-title">Rebuys</span>{{gameDetail.Value | currency : 'BRL'}}</td>
+            <td><span class="p-column-title">Total de Fichas</span>{{gameDetail.ChipsTotal | currency : 'BRL' }}</td>
+            <td><span class="p-column-title">Fichas - Rebuy</span>{{gameDetail.Result | currency : 'BRL' }} </td>
+            <td><span class="p-column-title">Rake</span>{{gameDetail.Rake | currency : 'BRL'}} <small *ngIf="gameDetail.Rake > 0" class="text-muted">({{gameDetail.RakePercent}}%)</small></td>
+            <td><span class="p-column-title">Total</span>{{gameDetail.Total | currency : 'BRL' }}</td>
+            <td><span class="p-column-title">Lucro/Perda</span>{{gameDetail.ProfitOrLoss | currency : 'BRL' }}</td>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <tr>
+            <td colspan="2" class="p-text-right"></td>
+            <td>Capilé : {{totalResult[0]?.Tip | currency : 'BRL'}}</td>
+            <td>{{totalResult[0]?.Rebuys | currency : 'BRL'}}</td>
+            <td>{{totalResult[0]?.CashOut | currency : 'BRL'}}</td>
+            <td>{{totalResult[0]?.Integrity | currency : 'BRL'}}</td>
+            <td>{{totalResult[0]?.Rake | currency : 'BRL'}}</td>
+            <td colspan="2" class="p-text-right"></td>
+        </tr>
+    </ng-template>
+</p-table>
+
+
+
+<button pButton [routerLink]="['/']" icon="pi pi-refresh" class="p-button-info p-m-2"></button>
+<button pButton *ngIf="auth.isLoggedIn() && gameStatus" class="p-button-info p-m-2" type="button" [routerLink]="['/gameDetail/create','buy-in', this.game.Id, 1]">Adicionar Buy in</button>
+<button pButton type="button" (click)="onSelect(game)" class="p-button-info p-m-2">Detalhar Buy ins</button>
+<button pButton *ngIf="auth.isLoggedIn() && gameStatus" class="p-button-warning p-m-2" type="button" [routerLink]="['/gameDetail/tip', this.game.Id]">Adicionar Capilé</button>
+<button pButton *ngIf="auth.isLoggedIn() && gameStatus" class="p-button-danger p-m-2" type="button" [disabled]="tempTotalResult.Rebuys !=  tempTotalResult.CashOut+tempTotalResult.Tip" (click)="endGame(game)">Finalizar</button>

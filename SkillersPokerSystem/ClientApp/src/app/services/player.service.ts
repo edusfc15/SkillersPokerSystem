@@ -38,17 +38,40 @@ export class PlayerService
         return this.http.get<ApiResult>(url, { params });
     }
 
-    get<Player>(id): Observable<Player> {
+    getActivePlayers<ApiResult>(
+        pageIndex: number,
+        pageSize: number,
+        sortColumn: string,
+        sortOrder: string,
+        filterColumn: string,
+        filterQuery: string
+    ): Observable<ApiResult> {
+        var url = this.baseUrl + 'api/player/active';
+        var params = new HttpParams()
+            .set("pageIndex", pageIndex.toString())
+            .set("pageSize", pageSize.toString())
+            .set("sortColumn", sortColumn)
+            .set("sortOrder", sortOrder);
+
+        if (filterQuery) {
+            params = params
+                .set("filterColumn", filterColumn)
+                .set("filterQuery", filterQuery);
+        }
+
+        return this.http.get<ApiResult>(url, { params });
+    }
+    get<Player>(id:any): Observable<Player> {
         var url = this.baseUrl + "api/player/" + id;
         return this.http.get<Player>(url);
     }
 
-    put<Player>(item): Observable<Player> {
+    put<Player>(item:any): Observable<Player> {
         var url = this.baseUrl + "api/player/" + item.id;
         return this.http.put<Player>(url, item);
     }
 
-    post<City>(item): Observable<City> {
+    post<City>(item:any): Observable<City> {
         var url = this.baseUrl + "api/player";
         return this.http.post<City>(url, item);
     }

@@ -12,4 +12,6 @@ export interface GameDetail {
   ProfitOrLoss: number;
   CreatedDate: string;
   PlayerImgUrl: string;
+  EventIcon: string;
+  Type: string;
 }

@@ -1,0 +1,108 @@
+<div class="layout-dashboard">
+    <div class="grid">
+        <div class="col-12 md:col-6 xl:col-3" *ngFor="let metric of metrics">
+            <div class="card shadow-1 flex flex-column" [style.borderColor]="metric.color_light"
+                [style]="{'border-color': metric.color_light, 'border-left': '4px solid'}">
+                <div class="flex align-items-center">
+                    <div class="flex justify-content-center align-items-center p-2 border-round"
+                        [style.backgroundColor]="metric.color_light">
+                        <i [class]="metric.icon" [style.color]="metric.color_dark"></i>
+                    </div>
+                    <span class="text-xl ml-2 font-semibold" [style.color]="metric.color_light">{{metric.title}}</span>
+                </div>
+
+                <div class="grid mt-3">
+                    <div class="col-6 flex flex-column p-3 text-center"
+                        *ngFor="let content of metric.textContent; let i = index"
+                        [class]="i === 0 ? 'border-right-1 surface-border' : '' ">
+                        <span class="text-color text-2xl font-semibold">{{content.amount}}</span>
+                        <span class="text-color font-semibold">{{content.text}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 xl:col-6">
+            <div class="card">
+                <div class="flex w-full justify-content-between align-items-center">
+                    <h4>Desempenho por jogador</h4>
+                    <button type="button" pButton class="p-button-text p-button-secondary" icon="pi pi-search"
+                        label="Show" (click)="menu.toggle($event)"></button>
+                </div>
+                <p-menu #menu [popup]="true" [model]="items"></p-menu>
+
+                <div class="grid mt-3">
+                    <div class="col-6 md:col-3 relative transition-all transition-duration-300 hover:shadow-3 cursor-pointer h-5rem"
+                        (click)="changeDataset($event); chart.reinit()" data-label="Dudu" data-index="0"
+                        data-fill="rgba(100, 181, 246, 0.2)" data-stroke="#BBDEFB">
+                        <span class="flex align-items-center"><i class="pi pi-plus-circle mr-1"></i> Dudu</span>
+                        <img src="assets/demo/images/dashboard/graph-new.svg" class="absolute w-11"
+                            style="left: 5%; bottom: 0">
+                    </div>
+                    <div class="col-6 md:col-3  relative transition-all transition-duration-300 hover:shadow-3 cursor-pointer h-5rem"
+                        (click)="changeDataset($event); chart.reinit()" data-label="Laila" data-index="1"
+                        data-stroke="#C5CAE9" data-fill="rgba(121, 134, 203, 0.2)">
+                        <span class="flex align-items-center"><i class="pi pi-check-circle mr-1"></i> Laila</span>
+                        <img src="assets/demo/images/dashboard/graph-completed.svg" class="absolute w-11"
+                            style="left: 5%; bottom: 0">
+                    </div>
+                    <div class="col-6 md:col-3  relative transition-all transition-duration-300 hover:shadow-3 cursor-pointer h-5rem"
+                        (click)="changeDataset($event); chart.reinit()" data-label="Paulo" data-index="2"
+                        data-stroke="#B2DFDB" data-fill="rgba(224, 242, 241, 0.5)">
+                        <span class="flex align-items-center"><i class="pi pi-refresh mr-1"></i> Paulo</span>
+                        <img src="assets/demo/images/dashboard/graph-refunded.svg" class="absolute w-11"
+                            style="left: 5%; bottom: 0">
+                    </div>
+                    <div class="col-6 md:col-3  relative transition-all transition-duration-300 hover:shadow-3 cursor-pointer h-5rem"
+                        (click)="changeDataset($event); chart.reinit()" data-label="Vinicius" data-index="3"
+                        data-stroke="#B2EBF2" data-fill="rgba(224, 247, 250, 0.5)">
+                        <span class="flex align-items-center"><i class="pi pi-times-circle mr-1"></i> Vinicius</span>
+                        <img src="assets/demo/images/dashboard/graph-cancelled.svg" class="absolute w-11"
+                            style="left: 5%; bottom: 0">
+                    </div>
+
+                    <div class="col-12 mt-5">
+                        <p-chart #chart type="line" [data]="ordersChart" [options]="ordersChartOptions"
+                            id="order-chart"></p-chart>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 lg:col-6">
+
+            <div class="card">
+                <h4>Jogadores</h4>
+                <ul class="list-none p-0 m-0">
+                    <li *ngFor="let player of players; let i = index;" class="p-3 surface-border"
+                        [ngClass]="{'border-bottom-1': i !== 4}">
+                        <div class="flex justify-content-between align-items-center">
+                            <div class="flex gap-2 align-items-center">
+                                <img [src]="'assets//images//' + player.imageUrl"
+                                    class="w-4rem h-4rem border-circle" alt="player.name">
+                                <div>
+                                    <span class="block text-xl font-bold">{{player.name}}</span>
+                                    <span class="block">{{player.desc}}</span>
+                                </div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button pButton class="p-button-icon-only p-button-rounded p-button-success"
+                                    icon="pi pi-envelope"></button>
+                                <button pButton class="p-button-icon-only p-button-rounded p-button-warning"
+                                    icon="pi pi-cog"></button>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+
+        <div class="col-12 xl:col-6">
+            <ranking></ranking>
+        </div>
+
+    
+    </div>
+
+</div>

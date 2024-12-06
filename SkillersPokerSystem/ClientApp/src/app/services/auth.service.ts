@@ -1,9 +1,10 @@
-import { EventEmitter, Inject, Injectable, PLATFORM_ID } from "@angular/core";
+import { Inject, Injectable, PLATFORM_ID } from "@angular/core";
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { catchError, map } from 'rxjs/operators';
 import { TokenResponse } from "../interfaces/token";
+import { throwError } from 'rxjs';
 
 @Injectable()
 export class AuthService {
@@ -59,7 +60,7 @@ export class AuthService {
         }
 
         // failed login
-        return Observable.throw('Unauthorized');
+        return throwError(() => new Error('Unauthorized')) 
       })
       ,catchError(error => {
         return new Observable<any>(error);

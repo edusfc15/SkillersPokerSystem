@@ -1,0 +1,55 @@
+<div class="p-grid">
+
+    <div class="p-col-12">
+        <div class="card">
+
+            <h2>Caixa - Capilé</h2>
+
+            <h4>Jogadores</h4>
+            <form [formGroup]="gameDetailForm" class="form">
+                <div formArrayName="gameDetailsArray">
+                    <div *ngFor="let item of gameDetails.controls; let gdIndex=index" [formGroupName]="gdIndex" class="">
+                        <hr />
+                        <div class="p-fluid">
+                            <div class="p-field">
+                                <label>Jogador:</label> {{ tipPlayer.Name}}
+                            </div>
+                        </div>
+                        <div class="p-fluid">
+
+                            <div class="p-field">
+                                <label>Valor:</label>
+                                <p-slider formControlName="Tip" [step]="5"></p-slider>
+                            </div>
+
+                            <div class="p-grid">
+                                <div class="p-col-1">
+                                    <label>R$</label>
+                                </div>
+                                <div class="p-col-1">
+                                    <!-- <input formControlName="Tip" value="{{ this.gameDetails.controls[gdIndex].value.Tip}}" class="form-control" type="number" min="0" max="5000" step="0.25"> -->
+                                    <input pInputText formControlName="Tip" value="{{ this.gameDetails.controls[gdIndex].value.Tip}}" class="form-control" type="number" min="0" max="5000" step="0.25">
+                                </div>
+
+                                <div class="p-col-1">
+                                    <button pButton type="button" class="btn btn-dark m-2" (click)="onClear(0, gdIndex)"><i
+                                        class="fas fa-broom"></i></button>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div (click)="onAddValue(0.25, gdIndex)" class="pokerchip flat green"></div>
+                        <div (click)="onAddValue(1, gdIndex)" class="pokerchip flat black"></div>
+                        <div (click)="onAddValue(5, gdIndex)" class="pokerchip flat purple"></div>
+
+                    </div>
+
+                </div>
+                <button pButton type="button" class="p-m-2 p-button-success" (click)="onSubmit(this.gameDetails)">Confirmar</button>
+                <button pButton type="button" class=" p-m-2 p-button-danger" [routerLink]="['/game', this.routeGameId ]">Cancelar</button>
+
+            </form>
+        </div>
+    </div>
+</div>

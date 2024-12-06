@@ -1,0 +1,59 @@
+<div class="card">
+    <div class="flex justify-content-between">
+        <h4>Ranking</h4>
+        <span class="p-float-label">
+            <p-dropdown inputId="year" [options]="years" (onChange)="onChangeYear($event.value.number)"
+                [(ngModel)]="selectedYear" placeholder="Selecione o Ano" optionLabel="number"
+                styleClass="w-9rem"></p-dropdown>
+            <label for="year">Ano</label>
+        </span>
+        <span class="p-float-label">
+            <p-dropdown [(ngModel)]="selectedMonth" inputId="monthDesc" [options]="monthsDescriptions"
+                (onChange)="onChangeMonth($event.value.index)" placeholder="Selecione o Mês" optionLabel="description"
+                styleClass="w-9rem"></p-dropdown>
+            <label for="monthDesc">Mês</label>
+        </span>
+
+        <span class="p-float-label">
+            <div class="toggle-btn toggle-inline">
+                <p-inputSwitch formControlName="RealProfit1" (change)="onChangeYear(selectedYear)"></p-inputSwitch>
+            </div>
+            <label for="RealProfit1">Lucro Real</label>
+        </span>
+    </div>
+    <p>Confira sua posição</p>
+    <p-table [value]="rankingTotal" responsiveLayout="scroll">
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th style="width:10%;min-width:6rem;">#
+                </th>
+                <th style="width:10%;min-width:6rem;">Nome
+                </th>
+                <th style="width:10%;min-width:6rem;">Variação
+                </th>                
+                <th style="width:10%;min-width:6rem;">Variação Posição
+                </th>
+                <th style="width:10%;min-width:6rem;">Total
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-ranking let-columns="columns" let-rowIndex="rowIndex">
+            <tr>
+                <td>
+                    <span class="p-column-title">#</span>
+                    {{rowIndex+1}}
+                </td>
+                <td>
+                    <span class="p-column-title">Nome'</span>
+                    {{ranking.Name}}
+                </td>
+                <td>+ R$ 100</td>
+                <td> </td>
+                <td>
+                    <span class="p-column-title">Total</span>
+                    {{ranking.Total | currency:'BRL'}}
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>

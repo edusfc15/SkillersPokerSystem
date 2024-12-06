@@ -8,6 +8,7 @@ import {
 import { AuthService } from "./auth.service";
 import { Observable } from "rxjs";
 import { tap, mergeMap, catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 
 
 @Injectable()
@@ -75,6 +76,6 @@ export class AuthResponseInterceptor implements HttpInterceptor {
           }));
       }
     }
-    return Observable.throw(err);
+    return throwError(() => new Error(err));
   }
 }

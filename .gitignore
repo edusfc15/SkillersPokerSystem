@@ -262,3 +262,7 @@ __pycache__/
 
 SkillersPokerSystem/appsettings.json
 /SkillersPokerSystem/ClientApp/package-lock.json_
+
+
+# Angular cache
+SkillersPokerSystem/ClientApp/.angular/cache/

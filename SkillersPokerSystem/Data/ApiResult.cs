@@ -63,8 +63,14 @@ namespace SkillersPokerSystem.Data
                 && !String.IsNullOrEmpty(filterQuery)
                 && IsValidProperty(filterColumn))
             {
+
+                var filter = typeof(T).GetProperty(filterColumn,BindingFlags.IgnoreCase |
+                BindingFlags.Public |
+                BindingFlags.Static |
+                BindingFlags.Instance).PropertyType == typeof(bool) ? "{0} == @0" : "{0}.Contains(@0)";
+
                 source = source.Where(
-                    String.Format("{0}.Contains(@0)",
+                    String.Format(filter,
                     filterColumn),
                     filterQuery);
             }

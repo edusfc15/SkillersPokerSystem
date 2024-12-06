@@ -1,0 +1,22 @@
+<div class="p-grid">
+    <div class="p-col-12">
+        <div class="card">
+            <div class="card" style="width: 18rem;">
+                <img class="card-img-top player-img" [src]="'assets//images//' + player.ImageUrl" alt="Foto do jogador" />
+                <div class="card-body">
+                    <h5 class="card-title">{{player.Name}}({{player.id}})</h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><b>Primeira partida:</b> {{player.FirstGameDate| date:'dd/MM/yyyy' : 'GMT-6'}}
+                    </li>
+                    <li class="list-group-item"><b>Ultima partida:</b> {{player.LastGameDate| date:'dd/MM/yyyy' : 'GMT-6'}}</li>
+                    <li class="list-group-item"><b>Quantidade de partidas:</b> {{player.ShowUpCount}}</li>
+                </ul>
+                <div class="card-body">
+                    <button pButton *ngIf="auth.isLoggedIn()" class="p-mr-2 p-mb-2" pRipple label="Editar" icon="pi pi-check" (click)="onEdit()"></button>
+                    <button pButton pRipple label="Voltar" class="p-mr-2 p-mb-2" icon="pi pi-times" (click)="onBack()"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

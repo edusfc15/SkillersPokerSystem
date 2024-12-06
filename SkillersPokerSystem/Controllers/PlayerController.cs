@@ -50,10 +50,10 @@ namespace SkillersPokerSystem.Controllers
                     x.Name,
                     x.IsActive,
                     ShowUpCount = x.GameDetails.GroupBy(a => a.GameId).Count(),
-                    FirstGameDate = x.GameDetails.OrderBy(a => a.Game.CreatedDate).FirstOrDefault().Game.CreatedDate == null
+                    FirstGameDate = x.GameDetails.OrderBy(a => a.Game.CreatedDate).FirstOrDefault().Game.CreatedDate == default
                     ? (DateTime?)null
                     : x.GameDetails.OrderBy(a => a.Game.CreatedDate).FirstOrDefault().Game.CreatedDate,
-                    LastGameDate = x.GameDetails.OrderByDescending(a => a.Game.CreatedDate).FirstOrDefault().Game.CreatedDate == null
+                    LastGameDate = x.GameDetails.OrderByDescending(a => a.Game.CreatedDate).FirstOrDefault().Game.CreatedDate == default(DateTime)
                     ? (DateTime?)null
                     : x.GameDetails.OrderByDescending(a => a.Game.CreatedDate).FirstOrDefault().Game.CreatedDate,
 

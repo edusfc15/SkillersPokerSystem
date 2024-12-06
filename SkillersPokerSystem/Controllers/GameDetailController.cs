@@ -52,7 +52,7 @@ namespace SkillersPokerSystem.Controllers
                     PlayerId = p.Max(x => x.PlayerId),
                     PlayerImgUrl = p.Max(x => x.Player.ImageUrl)
                 })
-                .OrderByDescending(x => x.ProfitOrLoss)
+                .OrderBy(x => x.ProfitOrLoss)
                 .ToArray();
 
 

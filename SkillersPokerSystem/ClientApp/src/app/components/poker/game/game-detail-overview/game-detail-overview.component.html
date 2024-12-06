@@ -1,0 +1,23 @@
+<div class="card">
+
+    <p-timeline [value]="gameDetails" align="alternate">
+        <ng-template pTemplate="marker" let-event>
+            <span class="custom-marker p-shadow-2" [ngStyle]=" { 'background-color' : event.Value ? '#0d943a' : '#0d6594'} ">
+                <i [ngClass]="{'pi' : true, 'pi-money-bill' : event.Value, 'pi-sign-out': event.ChipsTotal }"></i>
+            </span>
+        </ng-template>
+        <ng-template pTemplate="content" let-event>
+
+            <p-card class="p-m-3" [header]="event.CreatedDate !== null ? event.CreatedDate : ''  | date:'shortTime' " subheader="">
+                <p>{{ event.Name }}</p>
+                <p *ngIf="event.Value">Buy in - {{event.Value | currency:'BRL' }}</p>
+                <p *ngIf="event.ChipsTotal">Cash-Out - {{event.ChipsTotal | currency:'BRL' }}</p>
+                <p *ngIf="event.Tip">Capilé - {{event.Tip | currency:'BRL' }}</p>
+                <span *ngIf="auth.isLoggedIn() && event"><button pButton class="p-button-danger"
+                        (click)="onDelete(event)">X</button></span>
+            </p-card>
+
+        </ng-template>
+    </p-timeline>
+
+</div>

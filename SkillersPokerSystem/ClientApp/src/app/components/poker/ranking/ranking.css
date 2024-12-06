@@ -1,0 +1,85 @@
+.layout-dashboard .orders h4 {
+  margin-bottom: 20px;
+}
+
+.layout-dashboard .orders .p-button {
+  margin-top: -20px;
+}
+
+.layout-dashboard .orders .order-tabs {
+  margin-bottom: 1rem;
+}
+
+.layout-dashboard .orders .order-tabs .order-tab {
+  padding: 1rem 2rem 2rem 1rem;
+  position: relative;
+  -webkit-transition: -webkit-box-shadow .2s;
+  transition: -webkit-box-shadow .2s;
+  transition: box-shadow .2s;
+  transition: box-shadow .2s, -webkit-box-shadow .2s;
+}
+
+.layout-dashboard .orders .order-tabs .order-tab:hover {
+  -webkit-box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.15);
+          box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+}
+
+.layout-dashboard .orders .order-tabs .order-tab i {
+  font-size: 1rem;
+  vertical-align: middle;
+}
+
+.layout-dashboard .orders .order-tabs .order-tab .order-label {
+  margin-left: .25rem;
+  vertical-align: middle;
+}
+
+.layout-dashboard .orders .order-tabs .order-tab .stat-detail-icon {
+  position: absolute;
+  right: 1rem;
+  top: 2.25rem;
+  height: 1rem;
+  width: 1rem;
+}
+
+.layout-dashboard .orders .order-tabs .order-tab img {
+  position: absolute;
+  bottom: 0;
+  left: 5%;
+  width: 90%;
+}
+
+.layout-dashboard .overview-chart {
+  overflow: auto;
+}
+
+.layout-dashboard .dashbard-demo-dropdown {
+  width: 8rem;
+  margin-left: auto;
+}
+
+.layout-dashboard .product-badge {
+  border-radius: 2px;
+  padding: .25em .5rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: .3px;
+}
+
+.layout-dashboard .product-badge.status-instock {
+  background: #C8E6C9;
+  color: #256029;
+}
+
+.layout-dashboard .product-badge.status-outofstock {
+  background: #FFCDD2;
+  color: #C63737;
+}
+
+.layout-dashboard .product-badge.status-lowstock {
+  background: #FEEDAF;
+  color: #8A5340;
+}
+/*# sourceMappingURL=home.css.map */
