@@ -238,4 +238,4 @@ _Pvt_Extensions
 
 **/connectionstrings.production.json
 
-ClientApp/.angular
+.angular
