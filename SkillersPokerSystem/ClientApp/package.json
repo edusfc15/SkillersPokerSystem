@@ -20,7 +20,7 @@
         "@angular/platform-browser-dynamic": "~11.2.12",
         "@angular/router": "~11.2.12",
         "@ng-bootstrap/ng-bootstrap": "9.1.0",
-        "bootstrap": "4.3.1",
+        "bootstrap": "5.0.0",
         "core-js": "^2.6.9",
         "jquery": ">=3.5.0",
         "popper": "^1.0.1",
