@@ -52,10 +52,6 @@ SkillersPokerSystem is a web application for managing poker club operations, inc
    ```
    - The Angular frontend will be served automatically in development mode.
 
-### Default Admin User
-- Username: `Admin`
-- Email: `admin@skillerspokerclub.com.br`
-- Password: `@SkillerS19`
 
 ## Project Structure
 - `Controllers/` - API controllers for users, games, players, etc.
