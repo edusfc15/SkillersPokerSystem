@@ -1,1 +1,0 @@
-//# sourceMappingURL=rankingTotal.js.map
