@@ -1,0 +1,138 @@
+### Variables
+@baseUrl = http://localhost:3001
+@token = 
+
+### Health Check
+GET {{baseUrl}}/health
+
+###
+
+### App Info
+GET {{baseUrl}}/
+
+###
+
+### Register User
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "email": "test@example.com",
+  "password": "password123",
+  "displayName": "Test User",
+  "phoneNumber": "+1234567890"
+}
+
+###
+
+### Register User 2
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "email": "admin@example.com",
+  "password": "admin123",
+  "displayName": "Administrator"
+}
+
+###
+
+### Login with Email
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "emailOrUsername": "eduardo",
+  "password": "Y!n291189"
+}
+
+###
+
+### Login with Username
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "emailOrUsername": "test@example.com",
+  "password": "password123"
+}
+
+###
+
+### Login with Admin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "emailOrUsername": "admin",
+  "password": "admin123"
+}
+
+###
+
+### Get Profile (Protected Route)
+# First login and copy the token to the @token variable above
+GET {{baseUrl}}/auth/profile
+Authorization: Bearer {{token}}
+
+###
+
+### Login and Get Profile (Complete Flow)
+# Step 1: Login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "emailOrUsername": "testuser",
+  "password": "password123"
+}
+
+###
+
+### Test Invalid Login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "emailOrUsername": "invalid@example.com",
+  "password": "wrongpassword"
+}
+
+###
+
+### Test Registration with Existing Email
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "newuser",
+  "email": "test@example.com",
+  "password": "password123",
+  "displayName": "New User"
+}
+
+###
+
+### Test Registration with Existing Username
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "email": "newuser@example.com",
+  "password": "password123",
+  "displayName": "New User"
+}
+
+###
+
+### Test Profile without Token
+GET {{baseUrl}}/auth/profile
+
+###
+
+### Test Profile with Invalid Token
+GET {{baseUrl}}/auth/profile
+Authorization: Bearer invalid.token.here

@@ -1,0 +1,5 @@
+{
+	"extends": "@skillers/tsconfig/ui.json",
+	"include": ["**/*.ts", "**/*.tsx", "tailwind.config.ts"],
+	"exclude": ["node_modules"]
+}

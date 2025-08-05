@@ -1,0 +1,152 @@
+@import "tailwindcss/preflight";
+@import "tailwindcss/utilities";
+@layer base {
+	:root {
+		/* Font configuration */
+		--font-sans: "Figtree", ui-sans-serif, system-ui, sans-serif;
+		
+		/* Poker theme - Light mode */
+		--background: 0 0% 100%; /* White background for light mode */
+		--foreground: 0 0% 0%; /* Black text */
+		--muted: 0 0% 96%; /* Light gray */
+		--muted-foreground: 0 0% 45%;
+		--popover: 0 0% 100%;
+		--popover-foreground: 0 0% 0%;
+		--border: 0 0% 90%;
+		--input: 0 0% 90%;
+		--card: 0 0% 100%; /* White cards */
+		--card-foreground: 0 0% 0%;
+		
+		/* Poker brand colors */
+		--primary: 20 89% 52%; /* Vibrant Orange #EC681B */
+		--primary-foreground: 0 0% 100%; /* White text on orange */
+		--secondary: 218 46% 47%; /* Blue #3B7EC1 */
+		--secondary-foreground: 0 0% 100%;
+		--accent: 20 89% 52%; /* Orange for highlights */
+		--accent-foreground: 0 0% 100%;
+		
+		/* Status colors */
+		--destructive: 0 84% 60%; /* Red for destructive actions */
+		--destructive-foreground: 0 0% 100%;
+		--success: 142 76% 36%; /* Green for success */
+		--success-foreground: 0 0% 100%;
+		--warning: 45 93% 47%; /* Yellow for warnings */
+		--warning-foreground: 0 0% 0%;
+		
+		--ring: 20 89% 52%; /* Orange ring */
+		--radius: 0.5rem;
+	}
+	.dark {
+		/* Poker theme - Dark mode */
+		--background: 0 0% 8%; /* Cinza bem escuro, quase preto */
+		--foreground: 0 0% 98%; /* Branco quase puro */
+		--muted: 0 0% 12%; /* Cinza escuro para elementos muted */
+		--muted-foreground: 0 0% 70%;
+		--popover: 0 0% 10%;
+		--popover-foreground: 0 0% 100%;
+		--border: 0 0% 20%; /* Bordas mais visíveis */
+		--input: 0 0% 15%;
+		--card: 0 0% 12%; /* Cards cinza escuro */
+		--card-foreground: 0 0% 95%;
+		
+		/* Poker brand colors - dark mode */
+		--primary: 20 89% 58%; /* Orange mais claro no escuro */
+		--primary-foreground: 0 0% 100%;
+		--secondary: 218 46% 55%; /* Blue mais claro */
+		--secondary-foreground: 0 0% 100%;
+		--accent: 20 89% 58%; /* Orange highlights */
+		--accent-foreground: 0 0% 100%;
+		
+		/* Status colors - dark mode */
+		--destructive: 0 75% 55%;
+		--destructive-foreground: 0 0% 100%;
+		--success: 142 76% 45%;
+		--success-foreground: 0 0% 100%;
+		--warning: 45 85% 55%;
+		--warning-foreground: 0 0% 0%;
+		
+		--ring: 20 89% 58%;
+		--radius: 0.5rem;
+	}
+}
+@layer base {
+	* {
+		@apply border-border;
+		transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+	}
+	
+	/* Força fundo escuro por padrão para evitar flash branco */
+	html {
+		background-color: hsl(0 0% 8%); /* Fundo escuro padrão */
+	}
+	
+	/* Fundo claro apenas quando explicitamente em light mode */
+	html:not(.dark) {
+		background-color: hsl(0 0% 100%); /* Fundo branco para light mode */
+	}
+	
+	body {
+		@apply bg-background text-foreground;
+		font-feature-settings:
+			"rlig" 1,
+			"calt" 1;
+		/* Remove qualquer fundo branco padrão */
+		background: transparent;
+	}
+	
+	/* Garante que o root div também não tenha fundo branco */
+	#root {
+		background: transparent;
+		min-height: 100vh;
+	}
+}
+
+@layer components {
+	/* Classe para transições suaves de página */
+	.page-transition {
+		transition: opacity 0.2s ease-in-out;
+	}
+	
+	/* Loader/Spinner para navegação (opcional) */
+	.route-loading {
+		opacity: 0.7;
+		pointer-events: none;
+	}
+
+	/* Blue gradient utility - agora responsivo ao tema */
+	.bg-blue-gradient {
+		background: linear-gradient(135deg, hsl(var(--secondary)) 0%, #292E6B 100%);
+		color: hsl(var(--secondary-foreground));
+	}
+	
+	/* Orange gradient for special elements */
+	.bg-orange-gradient {
+		background: linear-gradient(135deg, hsl(var(--primary)) 0%, #D45A15 100%);
+		color: hsl(var(--primary-foreground));
+	}
+	
+	/* Card with blue gradient background - tema responsivo */
+	.card-blue-gradient {
+		background: linear-gradient(135deg, hsl(var(--secondary)) 0%, #292E6B 100%);
+		color: hsl(var(--secondary-foreground));
+	}
+	
+	/* First place/winner styling - usa variáveis CSS */
+	.winner-highlight {
+		background: hsl(var(--primary));
+		color: hsl(var(--primary-foreground));
+		box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
+	}
+	
+	/* Poker table background - muda com o tema */
+	.poker-table {
+		background: hsl(var(--card));
+		border: 2px solid hsl(var(--border));
+		color: hsl(var(--card-foreground));
+	}
+	
+	.dark .poker-table {
+		background: linear-gradient(135deg, hsl(var(--secondary)) 0%, #292E6B 100%);
+		color: hsl(var(--secondary-foreground));
+	}
+}

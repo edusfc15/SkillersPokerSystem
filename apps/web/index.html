@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Skillers Poker System</title>
+    <!-- Script para aplicar tema imediatamente e evitar flash branco -->
+    <script>
+      (function() {
+        // Busca o tema salvo ou usa 'dark' como padrão
+        const savedTheme = localStorage.getItem('skillers-ui-theme') || 'dark';
+        const root = document.documentElement;
+        
+        // Remove classes existentes
+        root.classList.remove('light', 'dark');
+        
+        // Aplica o tema baseado na preferência salva
+        if (savedTheme === 'system') {
+          const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          root.classList.add(systemTheme);
+        } else {
+          root.classList.add(savedTheme);
+        }
+        
+        // Define atributo data-theme para CSS adicional se necessário
+        root.setAttribute('data-theme', savedTheme);
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

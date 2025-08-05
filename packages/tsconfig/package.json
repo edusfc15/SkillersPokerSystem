@@ -1,0 +1,17 @@
+{
+    "name": "@skillers/tsconfig",
+    "version": "0.0.0",
+    "private": true,
+    "license": "MIT",
+    "publishConfig": {
+        "access": "public"
+    },
+    "files": [
+        "base.json",
+        "nest.json",
+        "next.json",
+        "types.json",
+        "ui.json",
+        "utils.json"
+    ]
+}
