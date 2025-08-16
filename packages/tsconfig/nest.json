@@ -18,6 +18,7 @@
         "declaration": true,
         "removeComments": true,
         "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
         "sourceMap": true,
         "incremental": true,
         "skipLibCheck": true,

@@ -15,7 +15,7 @@ import {
 	NavigationMenuTrigger,
 	navigationMenuTriggerStyle,
 } from "@skillers/ui";
-import { Home, Info, LogOut, Menu, Settings, User } from "lucide-react";
+import { Gamepad2, Home, Info, LogOut, Menu, Settings, User } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/auth-context";
 import { ThemeSwitcher } from "./theme-switcher";
@@ -99,7 +99,10 @@ export function Header() {
 								</NavigationMenuItem>
 
 								<NavigationMenuItem>
-									<NavigationMenuTrigger>Jogos</NavigationMenuTrigger>
+									<NavigationMenuTrigger>
+										<Gamepad2 className="w-4 h-4 mr-2" />
+										Jogos
+									</NavigationMenuTrigger>
 									<NavigationMenuContent>
 										<div className="grid gap-3 p-4 w-[400px] lg:w-[500px] lg:grid-cols-2">
 											<div className="grid gap-1">
@@ -155,9 +158,7 @@ export function Header() {
 										</AvatarFallback>
 									</Avatar>
 									<div className="hidden lg:flex flex-col items-start">
-										<span className="text-sm font-medium">
-											{user.displayName || user.username}
-										</span>
+										<span className="text-sm font-medium">{user.displayName || user.username}</span>
 										<span className="text-xs text-muted-foreground">{user.email}</span>
 									</div>
 								</DropdownMenuTrigger>
@@ -280,6 +281,7 @@ export function Header() {
 									</DropdownMenuItem>
 									<DropdownMenuItem asChild>
 										<Link to="/games" className="flex items-center">
+											<Gamepad2 className="w-4 h-4 mr-2" />
 											Jogos
 										</Link>
 									</DropdownMenuItem>

@@ -1,25 +1,35 @@
 import { createBrowserRouter } from "react-router-dom";
 // Import pages directly for now
+import { GamesPage } from "../pages/GamesPage";
 import { LoginPage } from "../pages/login-page";
+import { PlayersPage } from "../pages/PlayersPage";
 import { ProfilePage } from "../pages/ProfilePage";
 import { RegisterPage } from "../pages/register-page";
 import { SettingsPage } from "../pages/SettingsPage";
-import { aboutRoute } from "./routes/about";
-import { homeRoute } from "./routes/home";
-import { rootRoute } from "./routes/root";
+import { About } from "../pages/About";
+import { Home } from "../pages/Home";
+import { RootLayout } from "../pages/RootLayout";
 
 export const router = createBrowserRouter([
 	{
 		path: "/",
-		element: rootRoute.element,
+		element: <RootLayout />,
 		children: [
 			{
 				index: true,
-				element: homeRoute.element,
+				element: <Home />,
 			},
 			{
 				path: "about",
-				element: aboutRoute.element,
+				element: <About />,
+			},
+			{
+				path: "games",
+				element: <GamesPage />,
+			},
+			{
+				path: "players",
+				element: <PlayersPage />,
 			},
 			{
 				path: "profile",
