@@ -108,6 +108,46 @@ export class AppController {
 		});
 	}
 
+	@Get("players/admins")
+	@UseGuards(JwtAuthGuard)
+	@ApiOperation({ summary: "Get all admin players" })
+	@ApiResponse({ status: 200, description: "Admin players list returned successfully" })
+	async getAdminPlayers(@CurrentUser() user: AuthenticatedUser) {
+		const isAdmin = await this.isPlayerAdmin(user.id);
+		if (!isAdmin) {
+			return { success: false, error: "Only administrators can view admin list" };
+		}
+
+		const adminUsers = await this.prisma.users.findMany({
+			where: { isadmin: true },
+			select: {
+				id: true,
+				username: true,
+				displayname: true,
+				isadmin: true,
+				players: {
+					select: {
+						id: true,
+						name: true,
+						imageurl: true,
+					},
+					take: 1,
+				},
+			},
+		});
+
+		return {
+			success: true,
+			data: adminUsers.map((u) => ({
+				userId: u.id,
+				username: u.username,
+				displayname: u.displayname,
+				isadmin: u.isadmin,
+				player: u.players[0] ?? null,
+			})),
+		};
+	}
+
 	@Get("players/:id")
 	@ApiOperation({ summary: "Get player details by ID" })
 	@ApiResponse({ status: 200, description: "Player details returned successfully" })
@@ -159,16 +199,8 @@ export class AppController {
 		// Conta games únicos agrupando por gameid
 		const uniqueGames = new Set(player.gamedetails.map(gd => gd.gameid.toString()));
 
-		return {
-			...player,
-			isadmin: player.users?.isadmin ?? false,
-			totalBuyIn,
-			totalCashout,
-			totalProfit,
-			totalTip,
-			gamesPlayed: uniqueGames.size,
-			viewCount: player.viewcount,
-		};
+		const { users: _users, ...playerData } = player;
+		return { ...playerData, isadmin: player.users?.isadmin ?? false, totalBuyIn, totalCashout, totalProfit, totalTip, gamesPlayed: uniqueGames.size, viewCount: player.viewcount };
 	}
 
 	@Put("players/:id")
@@ -249,46 +281,6 @@ export class AppController {
 		}
 	}
 
-	@Get("players/admins")
-	@UseGuards(JwtAuthGuard)
-	@ApiOperation({ summary: "Get all admin players" })
-	@ApiResponse({ status: 200, description: "Admin players list returned successfully" })
-	async getAdminPlayers(@CurrentUser() user: AuthenticatedUser) {
-		const isAdmin = await this.isPlayerAdmin(user.id);
-		if (!isAdmin) {
-			return { success: false, error: "Only administrators can view admin list" };
-		}
-
-		const adminUsers = await this.prisma.users.findMany({
-			where: { isadmin: true },
-			select: {
-				id: true,
-				username: true,
-				displayname: true,
-				isadmin: true,
-				players: {
-					select: {
-						id: true,
-						name: true,
-						imageurl: true,
-					},
-					take: 1,
-				},
-			},
-		});
-
-		return {
-			success: true,
-			data: adminUsers.map((u) => ({
-				userId: u.id,
-				username: u.username,
-				displayname: u.displayname,
-				isadmin: u.isadmin,
-				player: u.players[0] ?? null,
-			})),
-		};
-	}
-
 	@Post("players/:playerId/associate-user")
 	@UseGuards(JwtAuthGuard)
 	@HttpCode(HttpStatus.OK)
@@ -350,7 +342,8 @@ export class AppController {
 				},
 			});
 
-			return { success: true, data: { ...updatedPlayer, isadmin: updatedPlayer.users?.isadmin ?? false } };
+			const { users: _users, ...playerData } = updatedPlayer;
+			return { success: true, data: { ...playerData, isadmin: updatedPlayer.users?.isadmin ?? false } };
 		} catch (error) {
 			return { success: false, error: "Failed to associate user to player" };
 		}
