@@ -96,6 +96,7 @@ export class AuthService {
 				email: user.email,
 				displayName: user.displayname,
 				roles,
+				isadmin: false, // new users are never admin
 			},
 		};
 	}
@@ -163,6 +164,7 @@ export class AuthService {
 				email: user.email,
 				displayName: user.displayname,
 				roles,
+				isadmin: user.isadmin,
 			},
 		};
 	}

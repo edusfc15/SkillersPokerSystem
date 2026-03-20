@@ -18,6 +18,7 @@ export interface AuthUser {
   email: string;
   displayName: string;
   roles: string[];
+  isadmin: boolean;
   emailConfirmed?: boolean;
 }
 

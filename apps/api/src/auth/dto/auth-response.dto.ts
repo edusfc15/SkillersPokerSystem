@@ -16,5 +16,6 @@ export class AuthResponseDto {
     email: string;
     displayName: string;
     roles: string[];
+    isadmin: boolean;
   };
 }
