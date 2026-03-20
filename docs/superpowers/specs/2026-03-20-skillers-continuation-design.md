@@ -19,7 +19,7 @@ O sistema novo (turbo monorepo: NestJS + React) já tem auth e games funcionando
 | 2 | Analytics Backend — endpoint de ranking com filtro dinâmico | Feature mais valiosa | Médio |
 | 3 | Leaderboard com dados reais — substituir mock na Home | Visibilidade imediata | Baixo |
 | 4 | RankingPage completa — tabela mensal Jan-Dez | Feature completa | Médio |
-| 5 | Game status CONSOLIDATED | Completude do fluxo | Baixo |
+| 5 | Game status Consolidado | Completude do fluxo | Baixo |
 | 6 | Admin features | Gestão do sistema | Médio |
 
 ---
@@ -81,15 +81,17 @@ As stats de players (`gamesPlayed`, `totalBuyIn`, `totalCashout`, `totalProfit`)
 
 ## Item 2: Analytics Backend
 
-### Pré-requisito: normalização de dados históricos
+### Padronização de status
 
-O campo `status` de games é `String` no schema. Jogos migrados do ASP.NET Core podem ter o valor `'Encerrado'` (português). O service atual trata isso em memória via `normalizeGameStatus()`, mas o banco ainda contém os valores antigos.
+O status canônico para jogo finalizado é **`'Encerrado'`** — tanto dados históricos quanto novos jogos usam esse valor.
 
-**Antes de qualquer query analytics, executar uma migration de normalização:**
-```sql
-UPDATE games SET status = 'FINISHED' WHERE status = 'Encerrado';
-```
-Isso é feito como migration Prisma (usando `prisma migrate dev --name normalize_game_status`) com SQL raw. Garante que todas as queries futuras usem apenas `'FINISHED'` sem precisar de `IN ('FINISHED', 'Encerrado')` em cada lugar.
+Mudanças no código necessárias:
+- `games.service.ts` — `finishGame()`: alterar `status: 'FINISHED'` → `status: 'Encerrado'`
+- `games.service.ts` — `normalizeGameStatus()`: pode ser simplificado ou removido após essa mudança
+- `games.service.ts` — `finishGame()` query de busca: remover o filtro `NOT: { status: { in: ['FINISHED', 'Encerrado'] } }` e usar apenas `NOT: { status: 'Encerrado' }`
+- Todas as queries analytics filtram: `status: 'Encerrado'`
+
+O status `CONSOLIDATED` (Item 5) seguirá o mesmo padrão: valor em português → **`'Consolidado'`**.
 
 ### Módulo novo
 ```
@@ -164,9 +166,9 @@ O `tip` incluído no `value` do buy-in é contabilizado como custo do jogador (c
 
 ### Lógica de ranking
 
-1. Buscar `gamedetails` de jogos com `status = 'FINISHED'`, filtrando `playerid != 0`
+1. Buscar `gamedetails` de jogos com `status = 'Encerrado'`, filtrando `playerid != 0`
 2. Aplicar filtro de período conforme `filter`:
-   - `LAST_GAME`: apenas o jogo FINISHED mais recente (por `game.createddate` desc, limit 1)
+   - `LAST_GAME`: apenas o jogo Encerrado mais recente (por `game.createddate` desc, limit 1)
    - `CURRENT_MONTH`: `game.createddate` no mês/ano atual
    - `CURRENT_YEAR`: `game.createddate` no ano atual
    - `ALL_TIME`: sem filtro de data
@@ -177,7 +179,7 @@ O `tip` incluído no `value` do buy-in é contabilizado como custo do jogador (c
 
 ### Lógica mensal (RankingPage)
 
-1. Filtrar jogos `FINISHED` do ano especificado
+1. Filtrar jogos `Encerrado` do ano especificado
 2. Agrupar por `(playerId, month)`: somar profit
 3. Calcular `yearTotal` e `gamesPlayed` por jogador
 4. Ordenar por `yearTotal` desc
@@ -231,17 +233,17 @@ getAvailableYears(): Promise<AvailableYearsResponse>
 
 ---
 
-## Item 5: Game Status CONSOLIDATED
+## Item 5: Game Status Consolidado
 
 ### Backend
 
-**Sem migration de schema** — `status` já é `String`, aceita `'CONSOLIDATED'`.
+**Sem migration de schema** — `status` já é `String`, aceita `'Consolidado'`.
 
 Novo método em `apps/api/src/games/games.service.ts`:
 ```typescript
 async consolidateGame(gameId: string, userId: string): Promise<Game>
-// Verifica: jogo existe, status = 'FINISHED'
-// Atualiza: status → 'CONSOLIDATED'
+// Verifica: jogo existe, status = 'Encerrado'
+// Atualiza: status → 'Consolidado'
 ```
 
 Novos endpoints em `apps/api/src/games/games.controller.ts`:
@@ -256,8 +258,8 @@ Regra em `createGame`: verificar se já existe jogo com `status = 'ACTIVE'` ante
 
 ### Frontend
 
-- `apps/web/src/components/games-management.tsx`: badge distinto para status `CONSOLIDATED` (além de `ACTIVE` e `FINISHED` já existentes)
-- `apps/web/src/pages/GameDetailPage.tsx`: botão "Consolidar" visível apenas quando `status = 'FINISHED'` E usuário tem `isadmin = true` + campo `numberOfHands` editável
+- `apps/web/src/components/games-management.tsx`: badge distinto para status `Consolidado` (além de `ACTIVE` e `Encerrado` já existentes)
+- `apps/web/src/pages/GameDetailPage.tsx`: botão "Consolidar" visível apenas quando `status = 'Encerrado'` E usuário tem `isadmin = true` + campo `numberOfHands` editável
 
 ---
 
