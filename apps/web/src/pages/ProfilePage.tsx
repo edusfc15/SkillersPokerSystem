@@ -1,8 +1,38 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@skillers/ui";
 import { useAuth } from "../contexts/auth-context";
+import { authHttpService } from "../http/auth.service";
+import { useState } from "react";
 
 export function ProfilePage() {
 	const { user } = useAuth();
+	const [pwForm, setPwForm] = useState({ current: "", newPw: "", confirm: "" });
+	const [pwLoading, setPwLoading] = useState(false);
+	const [pwError, setPwError] = useState<string | null>(null);
+	const [pwSuccess, setPwSuccess] = useState(false);
+
+	const handleChangePassword = async (e: React.FormEvent) => {
+		e.preventDefault();
+		if (pwForm.newPw !== pwForm.confirm) {
+			setPwError("As senhas não coincidem");
+			return;
+		}
+		if (pwForm.newPw.length < 6) {
+			setPwError("Nova senha deve ter pelo menos 6 caracteres");
+			return;
+		}
+		try {
+			setPwLoading(true);
+			setPwError(null);
+			await authHttpService.changePassword(pwForm.current, pwForm.newPw);
+			setPwSuccess(true);
+			setPwForm({ current: "", newPw: "", confirm: "" });
+			setTimeout(() => setPwSuccess(false), 3000);
+		} catch (e) {
+			setPwError(e instanceof Error ? e.message : "Erro ao alterar senha");
+		} finally {
+			setPwLoading(false);
+		}
+	};
 
 	if (!user) {
 		return (
@@ -76,6 +106,55 @@ export function ProfilePage() {
 							)}
 						</div>
 					</div>
+				</CardContent>
+			</Card>
+
+			<Card>
+				<CardHeader>
+					<CardTitle>Alterar Senha</CardTitle>
+				</CardHeader>
+				<CardContent>
+					<form onSubmit={handleChangePassword} className="space-y-4">
+						<div className="space-y-2">
+							<label className="text-sm font-medium">Senha Atual</label>
+							<input
+								type="password"
+								value={pwForm.current}
+								onChange={(e) => setPwForm((f) => ({ ...f, current: e.target.value }))}
+								className="w-full px-3 py-2 border rounded-md text-sm bg-background"
+								required
+							/>
+						</div>
+						<div className="space-y-2">
+							<label className="text-sm font-medium">Nova Senha</label>
+							<input
+								type="password"
+								value={pwForm.newPw}
+								onChange={(e) => setPwForm((f) => ({ ...f, newPw: e.target.value }))}
+								className="w-full px-3 py-2 border rounded-md text-sm bg-background"
+								required
+							/>
+						</div>
+						<div className="space-y-2">
+							<label className="text-sm font-medium">Confirmar Nova Senha</label>
+							<input
+								type="password"
+								value={pwForm.confirm}
+								onChange={(e) => setPwForm((f) => ({ ...f, confirm: e.target.value }))}
+								className="w-full px-3 py-2 border rounded-md text-sm bg-background"
+								required
+							/>
+						</div>
+						{pwError && <p className="text-sm text-red-500">{pwError}</p>}
+						{pwSuccess && <p className="text-sm text-green-500">Senha alterada com sucesso!</p>}
+						<button
+							type="submit"
+							disabled={pwLoading}
+							className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-md text-sm font-medium transition-colors disabled:opacity-50"
+						>
+							{pwLoading ? "Salvando..." : "Alterar Senha"}
+						</button>
+					</form>
 				</CardContent>
 			</Card>
 		</div>
