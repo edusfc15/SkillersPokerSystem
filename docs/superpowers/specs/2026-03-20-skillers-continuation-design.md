@@ -19,8 +19,7 @@ O sistema novo (turbo monorepo: NestJS + React) já tem auth e games funcionando
 | 2 | Analytics Backend — endpoint de ranking com filtro dinâmico | Feature mais valiosa | Médio |
 | 3 | Leaderboard com dados reais — substituir mock na Home | Visibilidade imediata | Baixo |
 | 4 | RankingPage completa — tabela mensal Jan-Dez | Feature completa | Médio |
-| 5 | Game status Consolidado | Completude do fluxo | Baixo |
-| 6 | Admin features | Gestão do sistema | Médio |
+| 5 | Admin features | Gestão do sistema | Médio |
 
 ---
 
@@ -91,7 +90,6 @@ Mudanças no código necessárias:
 - `games.service.ts` — `finishGame()` query de busca: remover o filtro `NOT: { status: { in: ['FINISHED', 'Encerrado'] } }` e usar apenas `NOT: { status: 'Encerrado' }`
 - Todas as queries analytics filtram: `status: 'Encerrado'`
 
-O status `CONSOLIDATED` (Item 5) seguirá o mesmo padrão: valor em português → **`'Consolidado'`**.
 
 ### Módulo novo
 ```
@@ -233,37 +231,7 @@ getAvailableYears(): Promise<AvailableYearsResponse>
 
 ---
 
-## Item 5: Game Status Consolidado
-
-### Backend
-
-**Sem migration de schema** — `status` já é `String`, aceita `'Consolidado'`.
-
-Novo método em `apps/api/src/games/games.service.ts`:
-```typescript
-async consolidateGame(gameId: string, userId: string): Promise<Game>
-// Verifica: jogo existe, status = 'Encerrado'
-// Atualiza: status → 'Consolidado'
-```
-
-Novos endpoints em `apps/api/src/games/games.controller.ts`:
-```
-PUT /games/:id/consolidate
-PUT /games/:id/hands        // atualiza numberOfHands
-```
-
-**Verificação de admin em `consolidateGame`:** usar o mesmo padrão de DB lookup do `app.controller.ts` (não `RolesGuard` — o `RolesGuard` usa `user.roles` do JWT que reflete ASP.NET Identity roles, não `users.isadmin`). Chamar `prisma.users.findUnique({ where: { id: userId }, select: { isadmin: true } })` no service ou controller.
-
-Regra em `createGame`: verificar se já existe jogo com `status = 'ACTIVE'` antes de criar novo. Se sim, retornar 409 Conflict.
-
-### Frontend
-
-- `apps/web/src/components/games-management.tsx`: badge distinto para status `Consolidado` (além de `ACTIVE` e `Encerrado` já existentes)
-- `apps/web/src/pages/GameDetailPage.tsx`: botão "Consolidar" visível apenas quando `status = 'Encerrado'` E usuário tem `isadmin = true` + campo `numberOfHands` editável
-
----
-
-## Item 6: Admin Features
+## Item 5: Admin Features
 
 ### Backend — novos endpoints em `apps/api/src/auth/auth.controller.ts`
 
