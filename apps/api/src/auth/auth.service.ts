@@ -306,6 +306,10 @@ export class AuthService {
 			throw new BadRequestException('Senha atual incorreta');
 		}
 
+		if (!newPassword || newPassword.length < 6) {
+			throw new BadRequestException('Nova senha deve ter pelo menos 6 caracteres');
+		}
+
 		const newHash = await bcrypt.hash(newPassword, 12);
 		await this.prisma.users.update({
 			where: { id: userId },
