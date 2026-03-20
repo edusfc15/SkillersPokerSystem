@@ -15,7 +15,7 @@ O sistema novo (turbo monorepo: NestJS + React) já tem auth e games funcionando
 
 | # | Feature | Impacto | Esforço |
 |---|---------|---------|---------|
-| 1 | Fix Players API — corrigir isadmin para usar tabela `users` | Desbloqueia admin checks | Baixo |
+| 1 | Fix Players API — corrigir todos os call sites de isadmin para usar tabela `users` | Desbloqueia admin checks | Baixo |
 | 2 | Analytics Backend — endpoint de ranking com filtro dinâmico | Feature mais valiosa | Médio |
 | 3 | Leaderboard com dados reais — substituir mock na Home | Visibilidade imediata | Baixo |
 | 4 | RankingPage completa — tabela mensal Jan-Dez | Feature completa | Médio |
@@ -27,11 +27,21 @@ O sistema novo (turbo monorepo: NestJS + React) já tem auth e games funcionando
 ## Item 1: Fix Players API
 
 ### Problema
-O campo `isadmin` está na tabela `users` (já existe no schema Prisma), mas `app.controller.ts` consulta esse campo na tabela `players` (que não possui o campo).
+O campo `isadmin` está na tabela `users` (já existe no schema Prisma como `isadmin Boolean`), mas `apps/api/src/app.controller.ts` consulta e escreve esse campo na tabela `players` (que não possui o campo). Isso causa erros Prisma em runtime.
 
-### Fix
-Refatorar `isPlayerAdmin()` e `getAdminPlayers()` em `apps/api/src/app.controller.ts` para consultar `users.isadmin`:
+### Call sites quebrados — todos precisam ser corrigidos
 
+| Método | Linha aprox. | Problema |
+|--------|-------------|---------|
+| `isPlayerAdmin()` | ~35 | Lê `players.isadmin` — deve ler `users.isadmin` |
+| `getActivePlayers()` | ~69 | Seleciona `isadmin` do model `players` — remover do select ou buscar de `users` |
+| `getPlayerDetails()` | ~125 | Seleciona `isadmin` do model `players` — remover do select ou buscar de `users` |
+| `getAdminPlayers()` | ~259 | Filtra `players where isadmin=true` — deve filtrar `users where isadmin=true` |
+| `associateUserToPlayer()` | ~329 | Seleciona `isadmin` do model `players` no update — remover ou buscar de `users` |
+| `makePlayerAdmin()` | ~365 | Escreve `players.isadmin = true` — deve escrever `users.isadmin = true` |
+| `removePlayerAdmin()` | ~415 | Escreve `players.isadmin = false` — deve escrever `users.isadmin = false` |
+
+### Fix — `isPlayerAdmin()`
 ```typescript
 private async isPlayerAdmin(userId: string): Promise<boolean> {
   const user = await this.prisma.users.findUnique({
@@ -42,6 +52,27 @@ private async isPlayerAdmin(userId: string): Promise<boolean> {
 }
 ```
 
+### Fix — `getAdminPlayers()`
+Deve consultar `users where isadmin = true`, incluindo o `player` associado via `players` relation. **Nota:** a relação `users.players[]` pode retornar múltiplos registros — usar `players[0] ?? null` para o campo `player` no response. Response shape:
+```typescript
+{
+  success: true,
+  data: Array<{
+    userId: string;
+    username: string | null;
+    displayname: string | null;
+    isadmin: boolean;
+    player: { id: string; name: string; imageurl: string | null } | null;
+  }>
+}
+```
+
+### Fix — `makePlayerAdmin()` / `removePlayerAdmin()`
+Recebem `playerId` como parâmetro. Precisam:
+1. Buscar o `player` pelo `playerId` para obter o `userid` associado
+2. Atualizar `users.isadmin` usando esse `userid`
+3. Retornar erro 400 se o player não tiver `userid` associado (não está vinculado a nenhum usuário)
+
 **Nenhuma migration necessária** — o campo já existe na tabela `users`.
 
 As stats de players (`gamesPlayed`, `totalBuyIn`, `totalCashout`, `totalProfit`) já estão calculadas corretamente e não precisam de alteração.
@@ -49,6 +80,16 @@ As stats de players (`gamesPlayed`, `totalBuyIn`, `totalCashout`, `totalProfit`)
 ---
 
 ## Item 2: Analytics Backend
+
+### Pré-requisito: normalização de dados históricos
+
+O campo `status` de games é `String` no schema. Jogos migrados do ASP.NET Core podem ter o valor `'Encerrado'` (português). O service atual trata isso em memória via `normalizeGameStatus()`, mas o banco ainda contém os valores antigos.
+
+**Antes de qualquer query analytics, executar uma migration de normalização:**
+```sql
+UPDATE games SET status = 'FINISHED' WHERE status = 'Encerrado';
+```
+Isso é feito como migration Prisma (usando `prisma migrate dev --name normalize_game_status`) com SQL raw. Garante que todas as queries futuras usem apenas `'FINISHED'` sem precisar de `IN ('FINISHED', 'Encerrado')` em cada lugar.
 
 ### Módulo novo
 ```
@@ -75,10 +116,10 @@ interface RankingEntry {
   rank: number;
   playerId: string;
   playerName: string;
-  gamesPlayed: number;
-  gamesWithProfit: number;
-  winRate: number;        // % jogos com lucro positivo (gamesWithProfit / gamesPlayed * 100)
-  totalProfit: number;    // sum(chipstotal) - sum(value), excluindo playerid=0 (Capile)
+  gamesPlayed: number;       // jogos únicos com pelo menos 1 transação
+  gamesWithProfit: number;   // jogos onde profit per-game > 0
+  winRate: number;           // gamesWithProfit / gamesPlayed * 100
+  totalProfit: number;       // sum de profit por jogo (veja fórmula abaixo)
 }
 
 interface RankingResponse {
@@ -94,29 +135,52 @@ interface MonthlyRankingEntry {
   rank: number;
   playerId: string;
   playerName: string;
-  monthly: Record<number, number>; // 1-12 => profit
+  monthly: Record<number, number>; // 1-12 => profit (ausente se não jogou)
   yearTotal: number;
   gamesPlayed: number;
 }
+
+// GET /analytics/available-years
+interface AvailableYearsResponse {
+  years: number[]; // ex: [2026, 2025, 2024] — ordem desc
+}
 ```
+
+### Fórmula de profit
+
+Estrutura de dados em `gamedetails` (filtrado `playerid != 0`):
+- Buy-in row: `value = amount + tip`, `chipstotal = 0`
+- Cashout row: `value = 0`, `chipstotal = cashout_amount`
+
+**Por jogo, por jogador:**
+```
+profit_per_game = sum(chipstotal) - sum(value)
+```
+O `tip` incluído no `value` do buy-in é contabilizado como custo do jogador (correto — é parte do que ele colocou no pote). Isso é intencional.
+
+**Um jogo é "lucrativo" (`gamesWithProfit`) se `profit_per_game > 0`.**
+
+`totalProfit = sum(profit_per_game)` para todos os jogos do jogador no período.
 
 ### Lógica de ranking
 
-1. Buscar `gamedetails` de jogos com `status = 'FINISHED'`, filtrando `playerid != 0` (exclui Capile/rake)
-2. Aplicar filtro de período:
-   - `LAST_GAME`: apenas o jogo FINISHED mais recente (`createddate` desc, limit 1)
+1. Buscar `gamedetails` de jogos com `status = 'FINISHED'`, filtrando `playerid != 0`
+2. Aplicar filtro de período conforme `filter`:
+   - `LAST_GAME`: apenas o jogo FINISHED mais recente (por `game.createddate` desc, limit 1)
    - `CURRENT_MONTH`: `game.createddate` no mês/ano atual
    - `CURRENT_YEAR`: `game.createddate` no ano atual
    - `ALL_TIME`: sem filtro de data
-3. Agrupar por jogador: `profit = sum(chipstotal) - sum(value)` por jogo único
-4. Calcular `winRate`: contagem de jogos onde profit > 0 / total jogos únicos * 100
-5. Ordenar por `totalProfit` desc, atribuir rank
+3. Agrupar por `(playerId, gameId)`: calcular `profit_per_game`
+4. Agrupar por `playerId`: somar totalProfit, contar gamesPlayed e gamesWithProfit
+5. Calcular `winRate = gamesWithProfit / gamesPlayed * 100`
+6. Ordenar por `totalProfit` desc, atribuir rank sequencial
 
 ### Lógica mensal (RankingPage)
 
-1. Filtrar jogos FINISHED do ano especificado
+1. Filtrar jogos `FINISHED` do ano especificado
 2. Agrupar por `(playerId, month)`: somar profit
-3. Ordenar por `yearTotal` desc
+3. Calcular `yearTotal` e `gamesPlayed` por jogador
+4. Ordenar por `yearTotal` desc
 
 ---
 
@@ -124,15 +188,29 @@ interface MonthlyRankingEntry {
 
 ### Arquivo: `apps/web/src/components/leaderboard.tsx`
 
-- Remover todos os `mockData` e `currentUserData`
-- Remover card "Your Position" (requer lógica extra não planejada)
-- Filtros: `"Último Jogo" | "Mês Atual" | "Ano Atual" | "Sempre"` → mapeiam para `LAST_GAME | CURRENT_MONTH | CURRENT_YEAR | ALL_TIME`
-- Ao trocar filtro, faz nova requisição
-- Campos exibidos: rank, nome, jogos, lucro total, win rate
+**Substituição completa** — remover todo o mock data (`mockData`, `currentUserData`).
+
+Filtros existentes **são substituídos** (não estendidos) pelos novos:
+| Label UI | Query param |
+|----------|-------------|
+| "Último Jogo" | `LAST_GAME` |
+| "Mês Atual" | `CURRENT_MONTH` |
+| "Ano Atual" | `CURRENT_YEAR` |
+| "Sempre" | `ALL_TIME` |
+
+- Ao trocar filtro, faz nova requisição ao `GET /analytics/ranking?filter=...`
+- Loading state durante fetch
+- Campos exibidos na tabela: rank, nome, jogos, lucro total, win rate
+- Remover card "Your Position" (requer lógica extra fora do escopo)
 
 ### Novo cliente HTTP
 
-`apps/web/src/http/analytics.service.ts` — funções para chamar os endpoints de analytics.
+`apps/web/src/http/analytics.service.ts`:
+```typescript
+getRanking(filter: 'LAST_GAME' | 'CURRENT_MONTH' | 'CURRENT_YEAR' | 'ALL_TIME'): Promise<RankingResponse>
+getMonthlyRanking(year: number): Promise<MonthlyRankingEntry[]>
+getAvailableYears(): Promise<AvailableYearsResponse>
+```
 
 ---
 
@@ -140,18 +218,16 @@ interface MonthlyRankingEntry {
 
 ### Arquivo novo: `apps/web/src/pages/RankingPage.tsx`
 
-- Seletor de ano (carregado via `GET /analytics/available-years`)
-- Tabela: `Jogador | Jan | Fev | Mar | Abr | Mai | Jun | Jul | Ago | Set | Out | Nov | Dez | Total`
-- Célula colorida: verde se profit > 0, vermelho se < 0, vazio/cinza se não jogou
-- Ordenada por total anual desc
+- Seletor de ano (carregado via `GET /analytics/available-years`, default = ano mais recente)
+- Tabela: `Rank | Jogador | Jan | Fev | Mar | Abr | Mai | Jun | Jul | Ago | Set | Out | Nov | Dez | Total`
+- Célula colorida: verde se profit > 0, vermelho se < 0, vazio/cinza se não jogou no mês
+- Ordenada por `yearTotal` desc
 
-### Router: `apps/web/src/router/index.tsx`
+### Arquivos a alterar
 
-Adicionar rota `/app/ranking` apontando para `RankingPage`.
+`apps/web/src/router/index.tsx`: adicionar rota `/app/ranking` → `RankingPage`.
 
-### Header: `apps/web/src/components/header.tsx`
-
-Adicionar link "Ranking" no menu de navegação.
+`apps/web/src/components/header.tsx`: adicionar link "Ranking" no menu de navegação.
 
 ---
 
@@ -159,12 +235,14 @@ Adicionar link "Ranking" no menu de navegação.
 
 ### Backend
 
+**Sem migration de schema** — `status` já é `String`, aceita `'CONSOLIDATED'`.
+
 Novo método em `apps/api/src/games/games.service.ts`:
 ```typescript
 async consolidateGame(gameId: string, userId: string): Promise<Game>
+// Verifica: jogo existe, status = 'FINISHED'
+// Atualiza: status → 'CONSOLIDATED'
 ```
-- Verifica que o jogo existe e tem status `FINISHED`
-- Atualiza para `CONSOLIDATED`
 
 Novos endpoints em `apps/api/src/games/games.controller.ts`:
 ```
@@ -172,14 +250,14 @@ PUT /games/:id/consolidate
 PUT /games/:id/hands        // atualiza numberOfHands
 ```
 
-Regra em `createGame`: verificar se já existe jogo `ACTIVE` antes de criar novo (retornar 409 se sim).
+**Verificação de admin em `consolidateGame`:** usar o mesmo padrão de DB lookup do `app.controller.ts` (não `RolesGuard` — o `RolesGuard` usa `user.roles` do JWT que reflete ASP.NET Identity roles, não `users.isadmin`). Chamar `prisma.users.findUnique({ where: { id: userId }, select: { isadmin: true } })` no service ou controller.
 
-**Sem migration** — `status` já é `String` no schema, aceita qualquer valor.
+Regra em `createGame`: verificar se já existe jogo com `status = 'ACTIVE'` antes de criar novo. Se sim, retornar 409 Conflict.
 
 ### Frontend
 
-- `apps/web/src/components/games-management.tsx`: badge/tab para status `CONSOLIDATED`
-- `apps/web/src/pages/GameDetailPage.tsx`: botão "Consolidar" (visível para admin, só quando `status = FINISHED`) + campo `numberOfHands`
+- `apps/web/src/components/games-management.tsx`: badge distinto para status `CONSOLIDATED` (além de `ACTIVE` e `FINISHED` já existentes)
+- `apps/web/src/pages/GameDetailPage.tsx`: botão "Consolidar" visível apenas quando `status = 'FINISHED'` E usuário tem `isadmin = true` + campo `numberOfHands` editável
 
 ---
 
@@ -188,22 +266,29 @@ Regra em `createGame`: verificar se já existe jogo `ACTIVE` antes de criar novo
 ### Backend — novos endpoints em `apps/api/src/auth/auth.controller.ts`
 
 ```
-GET  /auth/users              // lista usuários (admin only)
-POST /auth/change-password     // troca própria senha
-PUT  /auth/users/:id/role      // atribui/revoga isadmin (admin only)
+GET  /auth/users                // lista usuários (requer isadmin=true via DB lookup)
+POST /auth/change-password      // troca própria senha (requer JwtAuthGuard)
+PUT  /auth/users/:id/role       // atribui/revoga isadmin (requer isadmin=true via DB lookup)
 ```
 
-Guards já existem: `JwtAuthGuard`, `RolesGuard`, `@Roles()` decorator.
+**Admin check:** usar DB lookup (`users.isadmin`) — não `RolesGuard`, pelo mesmo motivo do Item 5.
 
-**Nota:** `isadmin` em `users` é o campo de referência. Não usar `players.isadmin`.
+**DTO para troca de senha:**
+```typescript
+interface ChangePasswordDto {
+  currentPassword: string;
+  newPassword: string;
+}
+```
+O endpoint verifica a senha atual antes de atualizar (`passwordhash` na tabela `users`). Requer apenas `JwtAuthGuard` (o usuário troca a própria senha).
 
 ### Frontend
 
 - Nova página `apps/web/src/pages/AdminPage.tsx` com rota `/app/admin`
-  - Lista de usuários com toggle de role admin
-- `apps/web/src/pages/ProfilePage.tsx`: formulário de troca de senha
-- `apps/web/src/components/header.tsx`: link "Admin" condicional (só visível se `user.isadmin`)
-- Rota `/app/admin` no router
+  - Lista de usuários (nome, email, isadmin) com toggle para conceder/revogar admin
+- `apps/web/src/pages/ProfilePage.tsx`: formulário de troca de senha (campos: senha atual, nova senha, confirmar)
+- `apps/web/src/components/header.tsx`: link "Admin" condicional — visível só se `user.isadmin = true` (vem do contexto de auth)
+- Rota `/app/admin` no router (protegida — redirecionar para `/app` se não for admin)
 
 ---
 
@@ -222,5 +307,6 @@ Guards já existem: `JwtAuthGuard`, `RolesGuard`, `@Roles()` decorator.
 
 - **Nunca executar `prisma migrate reset`** — banco populado com dados reais
 - **Filtrar `playerid != 0`** em todas as queries de ranking (Capile = rake)
-- **`isadmin` está em `users`**, não em `players`
+- **`isadmin` está em `users`**, não em `players` — usar DB lookup, não `RolesGuard`
 - Novas colunas devem ser nullable ou ter default para não quebrar dados existentes
+- **Admin check pattern**: `prisma.users.findUnique({ where: { id: userId }, select: { isadmin: true } })` — usado em todos os endpoints que exigem admin
