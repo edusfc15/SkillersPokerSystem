@@ -15,7 +15,7 @@ import {
 	NavigationMenuTrigger,
 	navigationMenuTriggerStyle,
 } from "@skillers/ui";
-import { Gamepad2, Home, Info, LogOut, Menu, Settings, Trophy, User } from "lucide-react";
+import { Gamepad2, Home, Info, LogOut, Menu, Settings, ShieldCheck, Trophy, User } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/auth-context";
 import { ThemeSwitcher } from "./theme-switcher";
@@ -146,6 +146,17 @@ export function Header() {
 										</Link>
 									</NavigationMenuLink>
 								</NavigationMenuItem>
+
+								{user?.isadmin && (
+									<NavigationMenuItem>
+										<NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+											<Link to="/app/admin">
+												<ShieldCheck className="w-4 h-4 mr-2" />
+												Admin
+											</Link>
+										</NavigationMenuLink>
+									</NavigationMenuItem>
+								)}
 							</NavigationMenuList>
 						</NavigationMenu>
 					</div>
@@ -306,6 +317,14 @@ export function Header() {
 											Ranking
 										</Link>
 									</DropdownMenuItem>
+									{user?.isadmin && (
+										<DropdownMenuItem asChild>
+											<Link to="/app/admin" className="flex items-center">
+												<ShieldCheck className="w-4 h-4 mr-2" />
+												Admin
+											</Link>
+										</DropdownMenuItem>
+									)}
 									<DropdownMenuSeparator />
 									<DropdownMenuItem asChild>
 										<Link to="/app/profile" className="flex items-center">

@@ -14,6 +14,7 @@ import { LandingPage } from "../pages/LandingPage";
 import { CreateGamePage } from "../pages/CreateGamePage";
 import { GameDetailPage } from "../pages/GameDetailPage";
 import { RankingPage } from "../pages/RankingPage";
+import { AdminPage } from "../pages/AdminPage";
 
 export const router = createBrowserRouter([
 	{
@@ -73,6 +74,10 @@ export const router = createBrowserRouter([
 			{
 				path: "ranking",
 				element: <RankingPage />,
+			},
+			{
+				path: "admin",
+				element: <AdminPage />,
 			},
 		],
 	},
