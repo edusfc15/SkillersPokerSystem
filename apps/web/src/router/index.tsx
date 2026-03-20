@@ -13,6 +13,7 @@ import { ProtectedLayout } from "../pages/ProtectedLayout";
 import { LandingPage } from "../pages/LandingPage";
 import { CreateGamePage } from "../pages/CreateGamePage";
 import { GameDetailPage } from "../pages/GameDetailPage";
+import { RankingPage } from "../pages/RankingPage";
 
 export const router = createBrowserRouter([
 	{
@@ -68,6 +69,10 @@ export const router = createBrowserRouter([
 			{
 				path: "settings",
 				element: <SettingsPage />,
+			},
+			{
+				path: "ranking",
+				element: <RankingPage />,
 			},
 		],
 	},
