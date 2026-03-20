@@ -32,17 +32,15 @@ export class AppController {
 	}
 
 	private async isPlayerAdmin(userId: string): Promise<boolean> {
-		const player = await this.prisma.player.findFirst({
-			where: {
-				userid: userId,
-				isadmin: true,
-			},
+		const user = await this.prisma.users.findUnique({
+			where: { id: userId },
+			select: { isadmin: true },
 		});
-		return !!player;
+		return user?.isadmin ?? false;
 	}
 
 	private async getUserPlayer(userId: string) {
-		return this.prisma.player.findFirst({
+		return this.prisma.players.findFirst({
 			where: { userid: userId },
 		});
 	}
@@ -60,16 +58,18 @@ export class AppController {
 	@ApiOperation({ summary: "Get all players" })
 	@ApiResponse({ status: 200, description: "Players list returned successfully" })
 	async getActivePlayers() {
-		const players = await this.prisma.player.findMany({
+		const players = await this.prisma.players.findMany({
 			select: {
 				id: true,
 				name: true,
 				imageurl: true,
 				isactive: true,
-				isadmin: true,
 				createddate: true,
 				lastmodifieddate: true,
 				viewcount: true,
+				users: {
+					select: { isadmin: true },
+				},
 				gamedetails: {
 					select: {
 						gameid: true,
@@ -93,7 +93,7 @@ export class AppController {
 				name: player.name,
 				imageurl: player.imageurl,
 				isactive: player.isactive,
-				isadmin: player.isadmin,
+				isadmin: player.users?.isadmin ?? false,
 				registrationDate: player.createddate.toISOString(),
 				registrationDateFormatted: this.formatDateToBrazilian(player.createddate),
 				lastActivity: player.lastmodifieddate.toISOString(),
@@ -113,7 +113,7 @@ export class AppController {
 	@ApiResponse({ status: 200, description: "Player details returned successfully" })
 	@ApiResponse({ status: 404, description: "Player not found" })
 	async getPlayerDetails(@Param("id") id: string) {
-		const player = await this.prisma.player.findUnique({
+		const player = await this.prisma.players.findUnique({
 			where: {
 				id: BigInt(id),
 			},
@@ -122,11 +122,13 @@ export class AppController {
 				name: true,
 				imageurl: true,
 				isactive: true,
-				isadmin: true,
 				userid: true,
 				createddate: true,
 				lastmodifieddate: true,
 				viewcount: true,
+				users: {
+					select: { isadmin: true },
+				},
 				gamedetails: {
 					select: {
 						gameid: true,
@@ -153,12 +155,13 @@ export class AppController {
 		const totalCashout = player.gamedetails.reduce((sum, gd) => sum + parseFloat(gd.chipstotal.toString()), 0);
 		const totalProfit = totalCashout - totalBuyIn;
 		const totalTip = player.gamedetails.reduce((sum, gd) => sum + parseFloat(gd.tip.toString()), 0);
-		
+
 		// Conta games únicos agrupando por gameid
 		const uniqueGames = new Set(player.gamedetails.map(gd => gd.gameid.toString()));
 
 		return {
 			...player,
+			isadmin: player.users?.isadmin ?? false,
 			totalBuyIn,
 			totalCashout,
 			totalProfit,
@@ -174,7 +177,7 @@ export class AppController {
 	@ApiResponse({ status: 404, description: "Player not found" })
 	async updatePlayer(@Param("id") id: string, @Body() updateData: { name?: string; imageurl?: string; isactive?: boolean }) {
 		try {
-			const player = await this.prisma.player.update({
+			const player = await this.prisma.players.update({
 				where: {
 					id: BigInt(id),
 				},
@@ -208,7 +211,7 @@ export class AppController {
 				return { success: false, error: "Name is required" };
 			}
 
-			const player = await this.prisma.player.create({
+			const player = await this.prisma.players.create({
 				data: {
 					name: createData.name,
 					imageurl: createData.imageurl || null,
@@ -256,19 +259,34 @@ export class AppController {
 			return { success: false, error: "Only administrators can view admin list" };
 		}
 
-		const admins = await this.prisma.player.findMany({
+		const adminUsers = await this.prisma.users.findMany({
 			where: { isadmin: true },
 			select: {
 				id: true,
-				name: true,
-				imageurl: true,
-				isactive: true,
-				userid: true,
-				createddate: true,
+				username: true,
+				displayname: true,
+				isadmin: true,
+				players: {
+					select: {
+						id: true,
+						name: true,
+						imageurl: true,
+					},
+					take: 1,
+				},
 			},
 		});
 
-		return { success: true, data: admins };
+		return {
+			success: true,
+			data: adminUsers.map((u) => ({
+				userId: u.id,
+				username: u.username,
+				displayname: u.displayname,
+				isadmin: u.isadmin,
+				player: u.players[0] ?? null,
+			})),
+		};
 	}
 
 	@Post("players/:playerId/associate-user")
@@ -289,7 +307,7 @@ export class AppController {
 		}
 
 		try {
-			const player = await this.prisma.player.findUnique({
+			const player = await this.prisma.players.findUnique({
 				where: { id: BigInt(playerId) },
 			});
 
@@ -297,7 +315,7 @@ export class AppController {
 				return { success: false, error: "Player not found" };
 			}
 
-			const targetUser = await this.prisma.user.findUnique({
+			const targetUser = await this.prisma.users.findUnique({
 				where: { id: data.userId },
 			});
 
@@ -306,7 +324,7 @@ export class AppController {
 			}
 
 			// Check if user is already associated with another player
-			const existingAssociation = await this.prisma.player.findFirst({
+			const existingAssociation = await this.prisma.players.findFirst({
 				where: { userid: data.userId },
 			});
 
@@ -314,7 +332,7 @@ export class AppController {
 				return { success: false, error: "User is already associated with another player" };
 			}
 
-			const updatedPlayer = await this.prisma.player.update({
+			const updatedPlayer = await this.prisma.players.update({
 				where: { id: BigInt(playerId) },
 				data: {
 					userid: data.userId,
@@ -326,11 +344,13 @@ export class AppController {
 					imageurl: true,
 					userid: true,
 					isactive: true,
-					isadmin: true,
+					users: {
+						select: { isadmin: true },
+					},
 				},
 			});
 
-			return { success: true, data: updatedPlayer };
+			return { success: true, data: { ...updatedPlayer, isadmin: updatedPlayer.users?.isadmin ?? false } };
 		} catch (error) {
 			return { success: false, error: "Failed to associate user to player" };
 		}
@@ -353,30 +373,22 @@ export class AppController {
 		}
 
 		try {
-			const player = await this.prisma.player.findUnique({
+			// 1. Get player to find userid
+			const player = await this.prisma.players.findUnique({
 				where: { id: BigInt(playerId) },
+				select: { userid: true, name: true, imageurl: true, isactive: true },
 			});
 
-			if (!player) {
-				return { success: false, error: "Player not found" };
-			}
+			if (!player) return { success: false, error: 'Player not found' };
+			if (!player.userid) return { success: false, error: 'Player has no associated user' };
 
-			const updatedPlayer = await this.prisma.player.update({
-				where: { id: BigInt(playerId) },
-				data: {
-					isadmin: true,
-					lastmodifieddate: new Date(),
-				},
-				select: {
-					id: true,
-					name: true,
-					imageurl: true,
-					isactive: true,
-					isadmin: true,
-				},
+			// 2. Update users.isadmin
+			await this.prisma.users.update({
+				where: { id: player.userid },
+				data: { isadmin: true, lastmodifieddate: new Date() },
 			});
 
-			return { success: true, data: updatedPlayer };
+			return { success: true, data: { id: BigInt(playerId), name: player.name, imageurl: player.imageurl, isactive: player.isactive, isadmin: true } };
 		} catch (error) {
 			return { success: false, error: "Failed to promote player to admin" };
 		}
@@ -404,30 +416,22 @@ export class AppController {
 				return { success: false, error: "Cannot remove admin status from the system administrator" };
 			}
 
-			const player = await this.prisma.player.findUnique({
+			// 1. Get player to find userid
+			const player = await this.prisma.players.findUnique({
 				where: { id: BigInt(playerId) },
+				select: { userid: true, name: true, imageurl: true, isactive: true },
 			});
 
-			if (!player) {
-				return { success: false, error: "Player not found" };
-			}
+			if (!player) return { success: false, error: 'Player not found' };
+			if (!player.userid) return { success: false, error: 'Player has no associated user' };
 
-			const updatedPlayer = await this.prisma.player.update({
-				where: { id: BigInt(playerId) },
-				data: {
-					isadmin: false,
-					lastmodifieddate: new Date(),
-				},
-				select: {
-					id: true,
-					name: true,
-					imageurl: true,
-					isactive: true,
-					isadmin: true,
-				},
+			// 2. Update users.isadmin
+			await this.prisma.users.update({
+				where: { id: player.userid },
+				data: { isadmin: false, lastmodifieddate: new Date() },
 			});
 
-			return { success: true, data: updatedPlayer };
+			return { success: true, data: { id: BigInt(playerId), name: player.name, imageurl: player.imageurl, isactive: player.isactive, isadmin: false } };
 		} catch (error) {
 			return { success: false, error: "Failed to remove admin status" };
 		}
