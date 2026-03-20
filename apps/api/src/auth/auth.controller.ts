@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, HttpStatus, Param, Post, Put, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { ZodValidationPipe } from "../common/pipes";
 import { AuthService } from "./auth.service";
@@ -49,5 +49,36 @@ export class AuthController {
 			roles: user.roles,
 			emailConfirmed: user.emailConfirmed,
 		};
+	}
+
+	@Get('users')
+	@UseGuards(JwtAuthGuard)
+	@ApiBearerAuth()
+	@ApiOperation({ summary: 'List all users (admin only)' })
+	async listUsers(@CurrentUser() user: AuthenticatedUser) {
+		return this.authService.listUsers(user.id);
+	}
+
+	@Post('change-password')
+	@UseGuards(JwtAuthGuard)
+	@ApiBearerAuth()
+	@ApiOperation({ summary: 'Change current user password' })
+	async changePassword(
+		@CurrentUser() user: AuthenticatedUser,
+		@Body() body: { currentPassword: string; newPassword: string },
+	) {
+		return this.authService.changePassword(user.id, body.currentPassword, body.newPassword);
+	}
+
+	@Put('users/:id/role')
+	@UseGuards(JwtAuthGuard)
+	@ApiBearerAuth()
+	@ApiOperation({ summary: 'Set admin role for a user (admin only)' })
+	async setUserRole(
+		@CurrentUser() user: AuthenticatedUser,
+		@Param('id') targetId: string,
+		@Body() body: { isadmin: boolean },
+	) {
+		return this.authService.setUserRole(user.id, targetId, body.isadmin);
 	}
 }

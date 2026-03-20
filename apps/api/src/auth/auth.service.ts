@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { ForbiddenException, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcryptjs";
 import { BadRequestException, ConflictException, UnauthorizedException } from "../common/exceptions";
@@ -253,6 +253,92 @@ export class AuthService {
 
 	private generateConcurrencyStamp(): string {
 		return Math.random().toString(36).substring(2, 15);
+	}
+
+	async listUsers(requestingUserId: string) {
+		const requester = await this.prisma.users.findUnique({
+			where: { id: requestingUserId },
+			select: { isadmin: true },
+		});
+		if (!requester?.isadmin) {
+			throw new ForbiddenException('Admin access required');
+		}
+
+		const users = await this.prisma.users.findMany({
+			select: {
+				id: true,
+				username: true,
+				email: true,
+				displayname: true,
+				isadmin: true,
+				createddate: true,
+				players: {
+					select: { id: true, name: true },
+					take: 1,
+				},
+			},
+			orderBy: { createddate: 'desc' },
+		});
+
+		return users.map((u) => ({
+			id: u.id,
+			username: u.username,
+			email: u.email,
+			displayName: u.displayname,
+			isadmin: u.isadmin,
+			createddate: u.createddate,
+			player: u.players[0] ?? null,
+		}));
+	}
+
+	async changePassword(userId: string, currentPassword: string, newPassword: string) {
+		const user = await this.prisma.users.findUnique({
+			where: { id: userId },
+			select: { passwordhash: true },
+		});
+
+		if (!user?.passwordhash) {
+			throw new BadRequestException('User not found');
+		}
+
+		const isValid = await bcrypt.compare(currentPassword, user.passwordhash);
+		if (!isValid) {
+			throw new BadRequestException('Senha atual incorreta');
+		}
+
+		const newHash = await bcrypt.hash(newPassword, 12);
+		await this.prisma.users.update({
+			where: { id: userId },
+			data: {
+				passwordhash: newHash,
+				securitystamp: this.generateSecurityStamp(),
+				lastmodifieddate: new Date(),
+			},
+		});
+
+		return { success: true };
+	}
+
+	async setUserRole(requestingUserId: string, targetUserId: string, isadmin: boolean) {
+		const requester = await this.prisma.users.findUnique({
+			where: { id: requestingUserId },
+			select: { isadmin: true },
+		});
+		if (!requester?.isadmin) {
+			throw new ForbiddenException('Admin access required');
+		}
+
+		if (requestingUserId === targetUserId && !isadmin) {
+			throw new BadRequestException('Cannot remove your own admin status');
+		}
+
+		const updated = await this.prisma.users.update({
+			where: { id: targetUserId },
+			data: { isadmin, lastmodifieddate: new Date() },
+			select: { id: true, username: true, isadmin: true },
+		});
+
+		return { success: true, data: updated };
 	}
 
 	async onModuleDestroy() {
