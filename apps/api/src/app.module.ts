@@ -4,12 +4,13 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { GamesModule } from './games/games.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 import { PrismaService } from './prisma.service';
 import { GlobalExceptionFilter } from './common/filters';
 import { BigIntSerializerInterceptor } from './common/interceptors';
 
 @Module({
-  imports: [AuthModule, GamesModule],
+  imports: [AuthModule, GamesModule, AnalyticsModule],
   controllers: [AppController],
   providers: [
     AppService,
