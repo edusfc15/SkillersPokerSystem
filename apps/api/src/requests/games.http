@@ -1,0 +1,114 @@
+### Poker Game Management API Examples
+@baseUrl = http://localhost:3001
+# First, you need to authenticate and get a JWT token
+# @name auth
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "emailOrUsername": "admin",
+  "password": "admin123"
+}
+
+###
+
+# Set the token for subsequent requests (replace with actual token)
+@token = {{auth.response.body.accessToken}}
+
+###
+
+# Create a new game
+# @name create_game
+POST {{baseUrl}}/games
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "rakeId": 1
+}
+
+###
+
+# Get all active games
+GET {{baseUrl}}/games
+Authorization: Bearer {{token}}
+
+###
+
+# Get game summary with player performance
+GET {{baseUrl}}/games/1/summary
+Authorization: Bearer {{token}}
+
+###
+
+# Get specific game details
+GET {{baseUrl}}/games/1
+Authorization: Bearer {{token}}
+
+###
+
+# Register a buy-in for a player
+POST {{baseUrl}}/games/1/buy-in
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "playerId": 1,
+  "amount": 100.00,
+  "tip": 5.00
+}
+
+###
+
+# Register another buy-in for a different player
+POST {{baseUrl}}/games/1/buy-in
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "playerId": 2,
+  "amount": 150.00,
+  "tip": 0
+}
+
+###
+
+# Register a cashout for a player
+POST {{baseUrl}}/games/1/cashout
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "playerId": 1,
+  "amount": 120.00,
+  "description": "Player 1 cashout"
+}
+
+###
+
+# Register another cashout
+POST {{baseUrl}}/games/1/cashout
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "playerId": 2,
+  "amount": 135.00
+}
+
+###
+
+# Finish the game (will check if buy-ins + rake = cashouts)
+PUT {{baseUrl}}/games/1/finish
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "notes": "Good game, everyone had fun!"
+}
+
+###
+
+# Delete a game (only works if no transactions exist)
+DELETE {{baseUrl}}/games/2
+Authorization: Bearer {{token}}

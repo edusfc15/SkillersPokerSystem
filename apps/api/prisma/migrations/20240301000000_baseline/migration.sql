@@ -1,0 +1,1 @@
+-- Baseline - database structure already exists

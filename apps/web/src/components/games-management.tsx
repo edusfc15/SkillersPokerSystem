@@ -1,9 +1,8 @@
-import { Avatar, AvatarFallback, AvatarImage, Card, CardContent } from "@skillers/ui";
+import { Card, CardContent } from "@skillers/ui";
 import {
 	ChevronLeft,
 	ChevronRight,
 	DollarSign,
-	Edit,
 	Eye,
 	Filter,
 	Gamepad2,
@@ -12,200 +11,91 @@ import {
 	Plus,
 	Search,
 	Trophy,
-	Users,
+	Loader2,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { gameService } from "../services/game.service";
+import type { GameListItem } from "../types/game";
 
-interface Game {
-	id: string;
-	name: string;
-	type: "Cash Game" | "Tournament" | "Sit & Go" | "Freeroll";
-	status: "Active" | "Completed" | "Scheduled" | "Cancelled";
-	startTime: string;
-	endTime?: string;
-	players: GamePlayer[];
-	maxPlayers: number;
-	buyIn: number;
-	prizePool: number;
-	blindStructure: string;
-	duration?: string;
-	winner?: string;
-}
-
-interface GamePlayer {
-	id: string;
-	name: string;
-	email: string;
-	position?: number;
-	earnings: number;
-	joinTime: string;
-	status: "Playing" | "Eliminated" | "Left" | "Waiting";
-}
-
-const mockGames: Game[] = [
-	{
-		id: "1",
-		name: "High Stakes Cash Game",
-		type: "Cash Game",
-		status: "Active",
-		startTime: "2025-08-05 20:00",
-		players: [
-			{
-				id: "1",
-				name: "PokerKing",
-				email: "david.chen@email.com",
-				earnings: 1250,
-				joinTime: "20:00",
-				status: "Playing",
-			},
-			{
-				id: "2",
-				name: "JackAce",
-				email: "mike.johnson@email.com",
-				earnings: -450,
-				joinTime: "20:15",
-				status: "Playing",
-			},
-			{
-				id: "3",
-				name: "CardShark",
-				email: "sarah.williams@email.com",
-				earnings: 890,
-				joinTime: "20:30",
-				status: "Playing",
-			},
-		],
-		maxPlayers: 9,
-		buyIn: 1000,
-		prizePool: 8500,
-		blindStructure: "25/50",
-	},
-	{
-		id: "2",
-		name: "Sunday Tournament",
-		type: "Tournament",
-		status: "Completed",
-		startTime: "2025-08-04 18:00",
-		endTime: "2025-08-04 23:45",
-		duration: "5h 45m",
-		players: [
-			{
-				id: "4",
-				name: "RiverRunner",
-				email: "alex.tran@email.com",
-				position: 1,
-				earnings: 2500,
-				joinTime: "18:00",
-				status: "Eliminated",
-			},
-			{
-				id: "5",
-				name: "BluffMaster",
-				email: "james.wilson@email.com",
-				position: 2,
-				earnings: 1500,
-				joinTime: "18:00",
-				status: "Eliminated",
-			},
-			{
-				id: "1",
-				name: "PokerKing",
-				email: "david.chen@email.com",
-				position: 3,
-				earnings: 750,
-				joinTime: "18:00",
-				status: "Eliminated",
-			},
-		],
-		maxPlayers: 50,
-		buyIn: 100,
-		prizePool: 4500,
-		blindStructure: "Progressive",
-		winner: "RiverRunner",
-	},
-	{
-		id: "3",
-		name: "Beginner Friendly",
-		type: "Sit & Go",
-		status: "Scheduled",
-		startTime: "2025-08-05 22:00",
-		players: [
-			{
-				id: "6",
-				name: "NewPlayer",
-				email: "new.player@email.com",
-				earnings: 0,
-				joinTime: "21:45",
-				status: "Waiting",
-			},
-		],
-		maxPlayers: 6,
-		buyIn: 25,
-		prizePool: 135,
-		blindStructure: "10/20",
-	},
-	{
-		id: "4",
-		name: "Friday Freeroll",
-		type: "Freeroll",
-		status: "Active",
-		startTime: "2025-08-05 19:00",
-		players: [
-			{
-				id: "2",
-				name: "JackAce",
-				email: "mike.johnson@email.com",
-				earnings: 0,
-				joinTime: "19:00",
-				status: "Playing",
-			},
-			{
-				id: "7",
-				name: "LuckyPlayer",
-				email: "lucky@email.com",
-				earnings: 0,
-				joinTime: "19:10",
-				status: "Playing",
-			},
-		],
-		maxPlayers: 100,
-		buyIn: 0,
-		prizePool: 500,
-		blindStructure: "5/10",
-	},
-];
-
-type GameFilter = "All Games" | "Active" | "Completed" | "Scheduled";
-type GameTypeFilter = "All Types" | "Cash Game" | "Tournament" | "Sit & Go" | "Freeroll";
+type GameFilter = "All Games" | "Active" | "Completed" | "Finished";
 type SortOption = "Start Time" | "Prize Pool" | "Players" | "Buy-in";
 
 export function GamesManagement() {
+	const navigate = useNavigate();
 	const [selectedFilter, setSelectedFilter] = useState<GameFilter>("All Games");
-	const [selectedType, setSelectedType] = useState<GameTypeFilter>("All Types");
 	const [searchQuery, setSearchQuery] = useState("");
 	const [sortBy, setSortBy] = useState<SortOption>("Start Time");
 	const [selectedGames, setSelectedGames] = useState<string[]>([]);
+	const [games, setGames] = useState<GameListItem[]>([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
+	const [currentPage, setCurrentPage] = useState(1);
+	const [totalPages, setTotalPages] = useState(1);
+	const [pageSize] = useState(10);
 
-	const filters: GameFilter[] = ["All Games", "Active", "Completed", "Scheduled"];
-	const gameTypes: GameTypeFilter[] = ["All Types", "Cash Game", "Tournament", "Sit & Go", "Freeroll"];
+	const filters: GameFilter[] = ["All Games", "Active", "Finished"];
+
+	const handleStartNewGame = async () => {
+		try {
+			setLoading(true);
+			// Check if there's already an active game
+			const activeGames = await gameService.getActiveGames();
+			const activeGame = activeGames.find(g => g.status === 'ACTIVE');
+			
+			if (activeGame) {
+				// If there's an active game, redirect to it
+				navigate(`/games/${activeGame.id}`);
+			} else {
+				// Otherwise, go to create game page
+				navigate('/games/create');
+			}
+		} catch (err) {
+			console.error('Error checking active games:', err);
+			// If there's an error, allow navigation to create page
+			navigate('/games/create');
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	useEffect(() => {
+		const loadGames = async () => {
+			try {
+				setLoading(true);
+				setError(null);
+				const response = await gameService.getAllGames(currentPage, pageSize);
+				setGames(response.data);
+				setTotalPages(response.pagination.totalPages);
+			} catch (err) {
+				const errorMessage = err instanceof Error ? err.message : "Failed to load games";
+				setError(errorMessage);
+				console.error(errorMessage);
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		loadGames();
+	}, [currentPage, pageSize]);
 
 	const getFilteredGames = () => {
-		let filtered = mockGames;
+		let filtered = games;
 
 		// Filter by status
 		if (selectedFilter !== "All Games") {
-			filtered = filtered.filter((game) => game.status === selectedFilter);
-		}
-
-		// Filter by type
-		if (selectedType !== "All Types") {
-			filtered = filtered.filter((game) => game.type === selectedType);
+			filtered = filtered.filter((game) => {
+				const normalizedStatus = game.status.toUpperCase();
+				const isActive = normalizedStatus === "ACTIVE";
+				const gameStatus = isActive ? "Active" : "Finished";
+				return gameStatus === selectedFilter;
+			});
 		}
 
 		// Filter by search
 		if (searchQuery) {
 			filtered = filtered.filter((game) =>
-				game.name.toLowerCase().includes(searchQuery.toLowerCase()),
+				game.id.toLowerCase().includes(searchQuery.toLowerCase()),
 			);
 		}
 
@@ -213,17 +103,14 @@ export function GamesManagement() {
 	};
 
 	const getStats = () => {
-		const totalGames = mockGames.length;
-		const activeGames = mockGames.filter((g) => g.status === "Active").length;
-		const completedToday = mockGames.filter((g) => 
-			g.status === "Completed" && g.endTime?.includes("2025-08-05")
-		).length;
-		const totalPrizePool = mockGames.reduce((sum, game) => sum + game.prizePool, 0);
+		const totalGames = games.length;
+		const activeGames = games.filter((g) => g.status === "ACTIVE").length;
+		const totalPrizePool = games.reduce((sum, game) => sum + game.balance, 0);
 
 		return {
 			total: totalGames,
 			active: activeGames,
-			completedToday,
+			completedToday: totalGames - activeGames,
 			totalPrizePool,
 		};
 	};
@@ -233,31 +120,12 @@ export function GamesManagement() {
 
 	const getStatusIcon = (status: string) => {
 		switch (status) {
-			case "Active":
+			case "ACTIVE":
 				return <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />;
-			case "Completed":
+			case "FINISHED":
 				return <div className="w-2 h-2 bg-blue-500 rounded-full" />;
-			case "Scheduled":
-				return <div className="w-2 h-2 bg-yellow-500 rounded-full" />;
-			case "Cancelled":
-				return <div className="w-2 h-2 bg-red-500 rounded-full" />;
 			default:
 				return null;
-		}
-	};
-
-	const getTypeIcon = (type: string) => {
-		switch (type) {
-			case "Cash Game":
-				return <DollarSign className="w-4 h-4 text-green-500" />;
-			case "Tournament":
-				return <Trophy className="w-4 h-4 text-yellow-500" />;
-			case "Sit & Go":
-				return <Users className="w-4 h-4 text-blue-500" />;
-			case "Freeroll":
-				return <Play className="w-4 h-4 text-purple-500" />;
-			default:
-				return <Gamepad2 className="w-4 h-4" />;
 		}
 	};
 
@@ -266,27 +134,13 @@ export function GamesManagement() {
 		return `$${amount.toLocaleString()}`;
 	};
 
-	const formatEarnings = (earnings: number) => {
-		const isPositive = earnings >= 0;
+	const formatBalance = (balance: number) => {
+		const isPositive = balance >= 0;
 		const sign = isPositive ? "+" : "";
 		return (
 			<span className={isPositive ? "text-green-500" : "text-red-500"}>
-				{sign}${Math.abs(earnings).toLocaleString()}
+				{sign}${Math.abs(balance).toLocaleString()}
 			</span>
-		);
-	};
-
-	const getUserInitials = (name: string) => {
-		return name
-			.split(" ")
-			.map((n) => n[0])
-			.join("")
-			.toUpperCase();
-	};
-
-	const toggleGameSelection = (gameId: string) => {
-		setSelectedGames((prev) =>
-			prev.includes(gameId) ? prev.filter((id) => id !== gameId) : [...prev, gameId],
 		);
 	};
 
@@ -310,10 +164,12 @@ export function GamesManagement() {
 				</div>
 				<button
 					type="button"
-					className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-md text-sm font-medium transition-colors flex items-center space-x-2"
+					onClick={handleStartNewGame}
+					disabled={loading}
+					className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-md text-sm font-medium transition-colors flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
 				>
 					<Plus className="w-4 h-4" />
-					<span>Create Game</span>
+					<span>{loading ? 'Carregando...' : 'Iniciar novo jogo'}</span>
 				</button>
 			</div>
 
@@ -411,19 +267,8 @@ export function GamesManagement() {
 						</div>
 
 						<div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
-							<select
-								value={selectedType}
-								onChange={(e) => setSelectedType(e.target.value as GameTypeFilter)}
-								className="px-3 py-2 border border-input bg-background rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-							>
-								{gameTypes.map((type) => (
-									<option key={type} value={type}>
-										{type}
-									</option>
-								))}
-							</select>
 							<div className="flex items-center space-x-2">
-								<span className="text-sm text-muted-foreground whitespace-nowrap">Sort by:</span>
+								<span className="text-sm text-muted-foreground whitespace-nowrap">Ordenar por:</span>
 								<select
 									value={sortBy}
 									onChange={(e) => setSortBy(e.target.value as SortOption)}
@@ -443,267 +288,272 @@ export function GamesManagement() {
 			{/* Games Table */}
 			<Card>
 				<CardContent className="p-0">
-					{/* Desktop Table View */}
-					<div className="hidden lg:block space-y-0">
-						{/* Table Header */}
-						<div className="grid grid-cols-9 gap-4 p-4 text-sm font-medium text-muted-foreground border-b">
-							<div className="flex items-center space-x-2">
-								<input
-									type="checkbox"
-									checked={
-										selectedGames.length === filteredGames.length && filteredGames.length > 0
-									}
-									onChange={toggleSelectAll}
-									className="rounded border-gray-300"
-								/>
-							</div>
-							<div>Game</div>
-							<div>Type</div>
-							<div>Status</div>
-							<div>Players</div>
-							<div>Buy-in</div>
-							<div>Prize Pool</div>
-							<div>Time</div>
-							<div>Actions</div>
+					{loading ? (
+						<div className="flex items-center justify-center p-12">
+							<Loader2 className="w-8 h-8 animate-spin text-orange-500" />
 						</div>
-
-						{/* Table Rows */}
-						{filteredGames.map((game) => (
-							<div
-								key={game.id}
-								className="grid grid-cols-9 gap-4 p-4 hover:bg-muted/50 transition-colors border-b last:border-b-0"
-							>
-								<div className="flex items-center">
-									<input
-										type="checkbox"
-										checked={selectedGames.includes(game.id)}
-										onChange={() => toggleGameSelection(game.id)}
-										className="rounded border-gray-300"
-									/>
-								</div>
-
-								<div>
-									<div className="font-medium text-sm">{game.name}</div>
-									<div className="text-xs text-muted-foreground">{game.blindStructure}</div>
-								</div>
-
-								<div className="flex items-center space-x-2">
-									{getTypeIcon(game.type)}
-									<span className="text-sm">{game.type}</span>
-								</div>
-
-								<div className="flex items-center space-x-2">
-									{getStatusIcon(game.status)}
-									<span className="text-sm">{game.status}</span>
-								</div>
-
-								<div className="text-sm">
-									{game.players.length}/{game.maxPlayers}
-								</div>
-
-								<div className="text-sm font-medium">{formatCurrency(game.buyIn)}</div>
-								<div className="text-sm font-medium">{formatCurrency(game.prizePool)}</div>
-
-								<div className="text-sm">
-									<div>{game.startTime.split(" ")[1]}</div>
-									{game.duration && (
-										<div className="text-xs text-muted-foreground">{game.duration}</div>
-									)}
-								</div>
-
-								<div className="flex items-center space-x-1">
-									<button
-										type="button"
-										className="p-1 hover:bg-accent rounded transition-colors"
-										title="View Details"
-									>
-										<Eye className="w-4 h-4" />
-									</button>
-									<button
-										type="button"
-										className="p-1 hover:bg-accent rounded transition-colors"
-										title="Edit Game"
-									>
-										<Edit className="w-4 h-4" />
-									</button>
-									<button
-										type="button"
-										className="p-1 hover:bg-accent rounded transition-colors"
-										title="More Options"
-									>
-										<MoreVertical className="w-4 h-4" />
-									</button>
-								</div>
+					) : error ? (
+						<div className="p-12">
+							<div className="text-center">
+								<p className="text-red-500 font-medium">{error}</p>
+								<button
+									type="button"
+									onClick={() => window.location.reload()}
+									className="mt-4 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-md text-sm font-medium transition-colors"
+								>
+									Retry
+								</button>
 							</div>
-						))}
-					</div>
-
-					{/* Mobile Card View */}
-					<div className="lg:hidden space-y-3 p-4">
-						{/* Select All Button for Mobile */}
-						<div className="flex items-center justify-between pb-2">
-							<button
-								type="button"
-								onClick={toggleSelectAll}
-								className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-							>
-								{selectedGames.length === filteredGames.length && filteredGames.length > 0
-									? "Deselect All"
-									: "Select All"}
-							</button>
-							<span className="text-sm text-muted-foreground">
-								{selectedGames.length} of {filteredGames.length} selected
-							</span>
 						</div>
+					) : filteredGames.length === 0 ? (
+						<div className="flex items-center justify-center p-12">
+							<p className="text-muted-foreground">No games found</p>
+						</div>
+					) : (
+						<>
+							{/* Desktop Table View */}
+							<div className="hidden lg:block space-y-0">
+							{/* Table Header */}
+							<div className="grid grid-cols-7 gap-4 p-4 text-sm font-medium text-muted-foreground border-b">
+								<div>Game ID</div>
+								<div>Created</div>
+								<div>Status</div>
+								<div>Players</div>
+								<div>Total Buy-ins</div>
+								<div>Winner</div>
+								<div>Actions</div>
+							</div>							{/* Table Rows */}
+							{filteredGames.map((game) => (
+								<div
+									key={game.id}
+									className="grid grid-cols-7 gap-4 p-4 hover:bg-muted/50 transition-colors border-b last:border-b-0 items-center"
+								>
+									<div>
+										<div className="font-medium text-sm">{game.id}</div>
+										</div>
 
-						{/* Mobile Game Cards */}
-						{filteredGames.map((game) => (
-							<div
-								key={game.id}
-								className={`border rounded-lg p-4 space-y-3 transition-all duration-200 ${
-									selectedGames.includes(game.id)
-										? "border-orange-500 bg-orange-50 dark:bg-orange-950/20 shadow-sm"
-										: "border-border hover:border-orange-200 hover:shadow-sm"
-								}`}
-							>
-								{/* Game Header */}
-								<div className="flex items-start justify-between">
-									<div className="flex items-center space-x-3 flex-1 min-w-0">
-										<input
-											type="checkbox"
-											checked={selectedGames.includes(game.id)}
-											onChange={() => toggleGameSelection(game.id)}
-											className="rounded border-gray-300 mt-1"
-										/>
-										<div className="flex-1 min-w-0">
-											<div className="font-semibold text-base truncate">{game.name}</div>
-											<div className="flex items-center space-x-2 mt-1">
-												{getTypeIcon(game.type)}
-												<span className="text-sm font-medium">{game.type}</span>
+										<div className="text-sm">
+											{new Date(game.createdDate).toLocaleDateString()}
+										</div>
+
+										<div className="flex items-center space-x-2">
+											{getStatusIcon(game.status)}
+											<span className="text-sm">{game.status === "ACTIVE" ? "Active" : "Finished"}</span>
+										</div>
+
+										<div className="text-sm">{game.playerCount}</div>
+
+									<div className="text-sm font-medium">{formatCurrency(game.totalBuyIns)}</div>
+
+									<div className="text-sm">
+										{game.winner ? (
+											<div className="flex items-center space-x-1">
+												<Trophy className="w-4 h-4 text-yellow-500" />
+												<span className="font-medium">{game.winner}</span>
 											</div>
-										</div>
+										) : (
+											<span className="text-muted-foreground">-</span>
+										)}
 									</div>
-									<div className="flex items-center space-x-2 flex-shrink-0">
-										{getStatusIcon(game.status)}
-										<span className="text-sm font-medium">{game.status}</span>
-									</div>
-								</div>
 
-								{/* Game Stats Grid */}
-								<div className="grid grid-cols-2 gap-3 text-sm bg-muted/30 rounded-lg p-3">
-									<div className="space-y-1">
-										<span className="text-muted-foreground text-xs">Players</span>
-										<div className="font-semibold">
-											{game.players.length}/{game.maxPlayers}
-										</div>
-									</div>
-									<div className="space-y-1">
-										<span className="text-muted-foreground text-xs">Buy-in</span>
-										<div className="font-semibold">{formatCurrency(game.buyIn)}</div>
-									</div>
-									<div className="space-y-1">
-										<span className="text-muted-foreground text-xs">Prize Pool</span>
-										<div className="font-semibold">{formatCurrency(game.prizePool)}</div>
-									</div>
-									<div className="space-y-1">
-										<span className="text-muted-foreground text-xs">Start Time</span>
-										<div className="font-medium text-xs">{game.startTime.split(" ")[1]}</div>
-									</div>
-								</div>
-
-								{/* Players List */}
-								{game.players.length > 0 && (
-									<div className="space-y-2">
-										<span className="text-xs text-muted-foreground">Players:</span>
-										<div className="flex flex-wrap gap-2">
-											{game.players.slice(0, 3).map((player) => (
-												<div
-													key={player.id}
-													className="flex items-center space-x-2 bg-background rounded-md p-2 border"
-												>
-													<Avatar className="h-6 w-6">
-														<AvatarImage
-															src={`https://api.dicebear.com/7.x/initials/svg?seed=${player.email}&backgroundColor=EC681B`}
-															alt={player.name}
-														/>
-														<AvatarFallback className="bg-primary text-primary-foreground text-xs">
-															{getUserInitials(player.name)}
-														</AvatarFallback>
-													</Avatar>
-													<span className="text-xs font-medium">{player.name}</span>
-													{player.earnings !== 0 && (
-														<span className="text-xs">
-															{formatEarnings(player.earnings)}
-														</span>
-													)}
-												</div>
-											))}
-											{game.players.length > 3 && (
-												<div className="flex items-center justify-center bg-muted rounded-md p-2 border text-xs text-muted-foreground">
-													+{game.players.length - 3} more
-												</div>
-											)}
-										</div>
-									</div>
-								)}
-
-								{/* Action Buttons */}
-								<div className="flex items-center justify-between pt-3 border-t border-border/50">
 									<div className="flex items-center space-x-1">
 										<button
 											type="button"
+											onClick={() => navigate(`/games/${game.id}`)}
 											className="p-2 hover:bg-accent rounded-md transition-colors"
-											title="View Details"
+											title="View Game Details"
 										>
 											<Eye className="w-4 h-4" />
 										</button>
-										<button
-											type="button"
-											className="p-2 hover:bg-accent rounded-md transition-colors"
-											title="Edit Game"
-										>
-											<Edit className="w-4 h-4" />
-										</button>
 									</div>
+									</div>
+								))}
+							</div>
+
+							{/* Mobile Card View */}
+							<div className="lg:hidden space-y-3 p-4">
+								{/* Select All Button for Mobile */}
+								<div className="flex items-center justify-between pb-2">
 									<button
 										type="button"
-										className="p-2 hover:bg-accent rounded-md transition-colors"
-										title="More Options"
+										onClick={toggleSelectAll}
+										className="text-sm text-muted-foreground hover:text-foreground transition-colors"
 									>
-										<MoreVertical className="w-4 h-4" />
+										{selectedGames.length === filteredGames.length && filteredGames.length > 0
+											? "Deselect All"
+											: "Select All"}
 									</button>
+									<span className="text-sm text-muted-foreground">
+										{selectedGames.length} of {filteredGames.length} selected
+									</span>
 								</div>
+
+								{/* Mobile Game Cards */}
+								{filteredGames.map((game) => (
+									<div
+										key={game.id}
+										className="border rounded-lg p-4 space-y-3 transition-all duration-200 border-border hover:border-orange-200 hover:shadow-sm"
+									>
+										{/* Game Header */}
+										<div className="flex items-start justify-between">
+											<div className="flex-1 min-w-0">
+													<div className="font-semibold text-base truncate">Game {game.id}</div>
+													<div className="text-xs text-muted-foreground">
+														Created: {new Date(game.createdDate).toLocaleDateString()}
+													</div>
+												</div>
+											<div className="flex items-center space-x-2 flex-shrink-0">
+												{getStatusIcon(game.status)}
+												<span className="text-sm font-medium">
+													{game.status === "ACTIVE" ? "Active" : "Finished"}
+												</span>
+											</div>
+										</div>
+
+										{/* Game Stats Grid */}
+										<div className="grid grid-cols-2 gap-3 text-sm bg-muted/30 rounded-lg p-3">
+											<div className="space-y-1">
+												<span className="text-muted-foreground text-xs">Players</span>
+												<div className="font-semibold">{game.playerCount}</div>
+											</div>
+											<div className="space-y-1">
+											<span className="text-muted-foreground text-xs">Total Buy-ins</span>
+											<div className="font-semibold">{formatCurrency(game.totalBuyIns)}</div>
+										</div>
+										<div className="space-y-1">
+											<span className="text-muted-foreground text-xs">Balance</span>
+											<div className="font-semibold">{formatBalance(game.balance)}</div>
+											</div>
+										<div className="space-y-1">
+											<span className="text-muted-foreground text-xs">Winner</span>
+											<div className="font-semibold flex items-center space-x-1">
+												{game.winner ? (
+													<>
+														<Trophy className="w-4 h-4 text-yellow-500" />
+														<span>{game.winner}</span>
+													</>
+												) : (
+													<span className="text-muted-foreground">-</span>
+												)}
+											</div>
+										</div>
+										</div>
+
+										{/* Action Buttons */}
+										<div className="flex items-center justify-between pt-3 border-t border-border/50">
+											<div className="flex items-center space-x-1">
+												<button
+													type="button"
+													onClick={() => navigate(`/games/${game.id}`)}
+													className="p-2 hover:bg-accent rounded-md transition-colors"
+													title="View Details"
+												>
+													<Eye className="w-4 h-4" />
+												</button>
+											</div>
+											<button
+												type="button"
+												className="p-2 hover:bg-accent rounded-md transition-colors"
+												title="More Options"
+											>
+												<MoreVertical className="w-4 h-4" />
+											</button>
+										</div>
+									</div>
+								))}
 							</div>
-						))}
-					</div>
+						</>
+					)}
 
 					{/* Pagination */}
 					<div className="flex items-center justify-between p-4 border-t">
 						<div className="text-sm text-muted-foreground">
-							Showing 1-{filteredGames.length} of {filteredGames.length} games
+							Page {currentPage} of {totalPages}
 						</div>
-						<div className="flex items-center space-x-2">
+						<div className="flex items-center space-x-1">
 							<button
 								type="button"
+								onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
 								className="p-2 border border-input bg-background hover:bg-accent rounded-md transition-colors disabled:opacity-50"
-								disabled
+								disabled={currentPage === 1}
+								title="Previous page"
 							>
 								<ChevronLeft className="w-4 h-4" />
 							</button>
 
-							<div className="flex space-x-1">
-								<button
-									type="button"
-									className="px-3 py-1 text-sm rounded-md transition-colors bg-orange-500 text-white"
-								>
-									1
-								</button>
+							<div className="flex space-x-1 px-2">
+								{(() => {
+									const pages = [];
+									const startPage = Math.max(1, currentPage - 2);
+									const endPage = Math.min(totalPages, currentPage + 2);
+
+									if (startPage > 1) {
+										pages.push(
+											<button
+												key={1}
+												type="button"
+												onClick={() => setCurrentPage(1)}
+												className="px-2 py-1 text-sm rounded-md border border-input bg-background hover:bg-accent transition-colors"
+											>
+												1
+											</button>
+										);
+										if (startPage > 2) {
+											pages.push(
+												<span key="dots-start" className="px-1 py-1 text-muted-foreground">
+													...
+												</span>
+											);
+										}
+									}
+
+									for (let page = startPage; page <= endPage; page++) {
+										pages.push(
+											<button
+												key={page}
+												type="button"
+												onClick={() => setCurrentPage(page)}
+												className={`px-2 py-1 text-sm rounded-md transition-colors ${
+													currentPage === page
+														? "bg-orange-500 text-white"
+														: "border border-input bg-background hover:bg-accent"
+												}`}
+											>
+												{page}
+											</button>
+										);
+									}
+
+									if (endPage < totalPages) {
+										if (endPage < totalPages - 1) {
+											pages.push(
+												<span key="dots-end" className="px-1 py-1 text-muted-foreground">
+													...
+												</span>
+											);
+										}
+										pages.push(
+											<button
+												key={totalPages}
+												type="button"
+												onClick={() => setCurrentPage(totalPages)}
+												className="px-2 py-1 text-sm rounded-md border border-input bg-background hover:bg-accent transition-colors"
+											>
+												{totalPages}
+											</button>
+										);
+									}
+
+									return pages;
+								})()}
 							</div>
 
 							<button
 								type="button"
+								onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
 								className="p-2 border border-input bg-background hover:bg-accent rounded-md transition-colors disabled:opacity-50"
-								disabled
+								disabled={currentPage === totalPages}
+								title="Next page"
 							>
 								<ChevronRight className="w-4 h-4" />
 							</button>
@@ -742,6 +592,7 @@ export function GamesManagement() {
 					</div>
 				</div>
 			)}
-		</div>
+		
+	</div>
 	);
 }

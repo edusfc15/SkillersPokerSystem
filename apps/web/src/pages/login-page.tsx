@@ -8,9 +8,9 @@ export function LoginPage() {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		// Se o usuário já estiver logado, redirecionar para a home
+		// Se o usuário já estiver logado, redirecionar para o app
 		if (user && !isLoading) {
-			navigate("/");
+			navigate("/app");
 		}
 	}, [user, isLoading, navigate]);
 

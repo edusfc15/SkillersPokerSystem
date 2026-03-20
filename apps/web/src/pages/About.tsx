@@ -1,4 +1,4 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@skillers/ui";
+import { Card, CardContent, CardHeader, CardTitle } from "@skillers/ui";
 
 export function About() {
 	return (

@@ -8,8 +8,155 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id                   String             @id(map: "idx_16679_pk_users")
+model efmigrationshistory {
+  migrationid    String @id(map: "idx_25786_pk___efmigrationshistory")
+  productversion String
+
+  @@map("__efmigrationshistory")
+}
+
+model aspnetroleclaims {
+  id          BigInt      @id(map: "idx_25792_pk_aspnetroleclaims") @default(autoincrement())
+  roleid      String
+  claimtype   String?
+  claimvalue  String?
+  aspnetroles aspnetroles @relation(fields: [roleid], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_aspnetroleclaims_aspnetroles_roleid")
+
+  @@index([roleid], map: "idx_25792_ix_aspnetroleclaims_roleid")
+}
+
+model aspnetroles {
+  id               String             @id(map: "idx_25798_pk_aspnetroles")
+  name             String?
+  normalizedname   String?
+  concurrencystamp String?
+  aspnetroleclaims aspnetroleclaims[]
+  aspnetuserroles  aspnetuserroles[]
+}
+
+model aspnetuserclaims {
+  id         BigInt  @id(map: "idx_25804_pk_aspnetuserclaims") @default(autoincrement())
+  userid     String
+  claimtype  String?
+  claimvalue String?
+  users      users   @relation(fields: [userid], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_aspnetuserclaims_users_userid")
+
+  @@index([userid], map: "idx_25804_ix_aspnetuserclaims_userid")
+}
+
+model aspnetuserlogins {
+  loginprovider       String
+  providerkey         String
+  providerdisplayname String?
+  userid              String
+  users               users   @relation(fields: [userid], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_aspnetuserlogins_users_userid")
+
+  @@id([loginprovider, providerkey], map: "idx_25810_pk_aspnetuserlogins")
+  @@index([userid], map: "idx_25810_ix_aspnetuserlogins_userid")
+}
+
+model aspnetuserroles {
+  userid      String
+  roleid      String
+  aspnetroles aspnetroles @relation(fields: [roleid], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_aspnetuserroles_aspnetroles_roleid")
+  users       users       @relation(fields: [userid], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_aspnetuserroles_users_userid")
+
+  @@id([userid, roleid], map: "idx_25815_pk_aspnetuserroles")
+  @@index([roleid], map: "idx_25815_ix_aspnetuserroles_roleid")
+}
+
+model aspnetusertokens {
+  userid        String
+  loginprovider String
+  name          String
+  value         String?
+  users         users   @relation(fields: [userid], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_aspnetusertokens_users_userid")
+
+  @@id([userid, loginprovider, name], map: "idx_25820_pk_aspnetusertokens")
+}
+
+model gamedetails {
+  id               BigInt   @id(map: "idx_25826_pk_gamedetails") @default(autoincrement())
+  gameid           BigInt
+  playerid         BigInt
+  value            Decimal  @db.Decimal
+  createddate      DateTime @db.Timestamptz(6)
+  lastmodifieddate DateTime @db.Timestamptz(6)
+  chipstotal       Decimal  @db.Decimal
+  ispaid           Boolean  @default(false)
+  tip              Decimal  @default(0.0) @db.Decimal
+  games            games    @relation(fields: [gameid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_gamedetails_games_gameid")
+  players          players  @relation(fields: [playerid], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_gamedetails_players_playerid")
+
+  @@index([gameid], map: "idx_25826_ix_gamedetails_gameid")
+  @@index([playerid], map: "idx_25826_ix_gamedetails_playerid")
+}
+
+model games {
+  id               BigInt        @id(map: "idx_25835_pk_games") @default(autoincrement())
+  rakeid           BigInt
+  viewcount        Int
+  createddate      DateTime      @db.Timestamptz(6)
+  lastmodifieddate DateTime      @db.Timestamptz(6)
+  userid           String
+  status           String        @default("")
+  numberofhands    Int           @default(0)
+  gamedetails      gamedetails[]
+  rakes            rakes         @relation(fields: [rakeid], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_games_rakes_rakeid")
+  users            users         @relation(fields: [userid], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_games_users_userid")
+
+  @@index([rakeid], map: "idx_25835_ix_games_rakeid")
+  @@index([userid], map: "idx_25835_ix_games_userid")
+}
+
+model players {
+  id               BigInt        @id(map: "idx_25844_pk_players") @default(autoincrement())
+  name             String
+  firstgamedate    DateTime      @db.Timestamptz(6)
+  lastmodifieddate DateTime      @db.Timestamptz(6)
+  viewcount        Int
+  userid           String?
+  isactive         Boolean       @default(false)
+  createddate      DateTime      @default(dbgenerated("'0001-01-01 00:00:00+00'::timestamp with time zone")) @db.Timestamptz(6)
+  imageurl         String?
+  gamedetails      gamedetails[]
+  users            users?        @relation(fields: [userid], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "fk_players_users_userid")
+
+  @@index([userid], map: "idx_25844_ix_players_userid")
+}
+
+model rakedetails {
+  id      BigInt  @id(map: "idx_25853_pk_rakedetails") @default(autoincrement())
+  value   Decimal @db.Decimal
+  percent Decimal @db.Decimal
+  rakeid  BigInt
+  rakes   rakes   @relation(fields: [rakeid], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_rakedetails_rakes_rakeid")
+
+  @@index([rakeid], map: "idx_25853_ix_rakedetails_rakeid")
+}
+
+model rakes {
+  id          BigInt        @id(map: "idx_25860_pk_rakes") @default(autoincrement())
+  enddate     DateTime      @db.Timestamptz(6)
+  games       games[]
+  rakedetails rakedetails[]
+}
+
+model tokens {
+  id               BigInt   @id(map: "idx_25865_pk_tokens") @default(autoincrement())
+  clientid         String
+  type             Int
+  value            String
+  userid           String
+  createddate      DateTime @db.Timestamptz(6)
+  lastmodifieddate DateTime @db.Timestamptz(6)
+  users            users    @relation(fields: [userid], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_tokens_users_userid")
+
+  @@index([userid], map: "idx_25865_ix_tokens_userid")
+}
+
+model users {
+  id                   String             @id(map: "idx_25871_pk_users")
   username             String?
   normalizedusername   String?
   email                String?
@@ -28,169 +175,16 @@ model User {
   notes                String?
   type                 Int
   flags                Int
+  isadmin              Boolean            @default(false)
   createddate          DateTime           @db.Timestamptz(6)
   lastmodifieddate     DateTime           @db.Timestamptz(6)
   aspnetuserclaims     aspnetuserclaims[]
   aspnetuserlogins     aspnetuserlogins[]
   aspnetuserroles      aspnetuserroles[]
   aspnetusertokens     aspnetusertokens[]
-  games                Game[]
-  players              Player[]
+  games                games[]
+  players              players[]
   tokens               tokens[]
 
-  @@index([normalizedemail], map: "idx_16679_emailindex")
-  @@map("users")
-}
-
-model Player {
-  id               BigInt       @id(map: "idx_16652_pk_players") @default(autoincrement())
-  name             String
-  firstgamedate    DateTime     @db.Timestamptz(6)
-  lastmodifieddate DateTime     @db.Timestamptz(6)
-  viewcount        Int
-  userid           String
-  isactive         Boolean      @default(false)
-  createddate      DateTime     @default(dbgenerated("'0001-01-01 00:00:00+00'::timestamp with time zone")) @db.Timestamptz(6)
-  imageurl         String?
-  gamedetails      GameDetail[]
-  user             User         @relation(fields: [userid], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_players_users_userid")
-
-  @@index([userid], map: "idx_16652_ix_players_userid")
-  @@map("players")
-}
-
-model Game {
-  id               BigInt       @id(map: "idx_16643_pk_games") @default(autoincrement())
-  rakeid           BigInt
-  viewcount        Int
-  createddate      DateTime     @db.Timestamptz(6)
-  lastmodifieddate DateTime     @db.Timestamptz(6)
-  userid           String
-  status           String       @default("")
-  numberofhands    Int          @default(0)
-  gamedetails      GameDetail[]
-  rakes            Rake         @relation(fields: [rakeid], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_games_rakes_rakeid")
-  user             User         @relation(fields: [userid], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_games_users_userid")
-
-  @@index([rakeid], map: "idx_16643_ix_games_rakeid")
-  @@index([userid], map: "idx_16643_ix_games_userid")
-  @@map("games")
-}
-
-model GameDetail {
-  id               BigInt   @id(map: "idx_16634_pk_gamedetails") @default(autoincrement())
-  gameid           BigInt
-  playerid         BigInt
-  value            Decimal  @db.Decimal
-  createddate      DateTime @db.Timestamptz(6)
-  lastmodifieddate DateTime @db.Timestamptz(6)
-  chipstotal       Decimal  @db.Decimal
-  ispaid           Boolean  @default(false)
-  tip              Decimal  @default(0.0) @db.Decimal
-  games            Game     @relation(fields: [gameid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_gamedetails_games_gameid")
-  players          Player   @relation(fields: [playerid], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_gamedetails_players_playerid")
-
-  @@index([gameid], map: "idx_16634_ix_gamedetails_gameid")
-  @@index([playerid], map: "idx_16634_ix_gamedetails_playerid")
-  @@map("gamedetails")
-}
-
-model Rake {
-  id          BigInt       @id(map: "idx_16668_pk_rakes") @default(autoincrement())
-  enddate     DateTime     @db.Timestamptz(6)
-  games       Game[]
-  rakedetails RakeDetail[]
-
-  @@map("rakes")
-}
-
-model RakeDetail {
-  id      BigInt  @id(map: "idx_16661_pk_rakedetails") @default(autoincrement())
-  value   Decimal @db.Decimal
-  percent Decimal @db.Decimal
-  rakeid  BigInt
-  rakes   Rake    @relation(fields: [rakeid], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_rakedetails_rakes_rakeid")
-
-  @@index([rakeid], map: "idx_16661_ix_rakedetails_rakeid")
-  @@map("rakedetails")
-}
-
-model efmigrationshistory {
-  migrationid    String @id(map: "idx_16594_pk___efmigrationshistory")
-  productversion String
-
-  @@map("__efmigrationshistory")
-}
-
-model aspnetroleclaims {
-  id          BigInt      @id(map: "idx_16600_pk_aspnetroleclaims") @default(autoincrement())
-  roleid      String
-  claimtype   String?
-  claimvalue  String?
-  aspnetroles aspnetroles @relation(fields: [roleid], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_aspnetroleclaims_aspnetroles_roleid")
-
-  @@index([roleid], map: "idx_16600_ix_aspnetroleclaims_roleid")
-}
-
-model aspnetroles {
-  id               String             @id(map: "idx_16606_pk_aspnetroles")
-  name             String?
-  normalizedname   String?
-  concurrencystamp String?
-  aspnetroleclaims aspnetroleclaims[]
-  aspnetuserroles  aspnetuserroles[]
-}
-
-model aspnetuserclaims {
-  id         BigInt  @id(map: "idx_16612_pk_aspnetuserclaims") @default(autoincrement())
-  userid     String
-  claimtype  String?
-  claimvalue String?
-  users      User    @relation(fields: [userid], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_aspnetuserclaims_users_userid")
-
-  @@index([userid], map: "idx_16612_ix_aspnetuserclaims_userid")
-}
-
-model aspnetuserlogins {
-  loginprovider       String
-  providerkey         String
-  providerdisplayname String?
-  userid              String
-  users               User    @relation(fields: [userid], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_aspnetuserlogins_users_userid")
-
-  @@id([loginprovider, providerkey], map: "idx_16618_pk_aspnetuserlogins")
-  @@index([userid], map: "idx_16618_ix_aspnetuserlogins_userid")
-}
-
-model aspnetuserroles {
-  userid      String
-  roleid      String
-  aspnetroles aspnetroles @relation(fields: [roleid], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_aspnetuserroles_aspnetroles_roleid")
-  users       User        @relation(fields: [userid], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_aspnetuserroles_users_userid")
-
-  @@id([userid, roleid], map: "idx_16623_pk_aspnetuserroles")
-  @@index([roleid], map: "idx_16623_ix_aspnetuserroles_roleid")
-}
-
-model aspnetusertokens {
-  userid        String
-  loginprovider String
-  name          String
-  value         String?
-  users         User    @relation(fields: [userid], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_aspnetusertokens_users_userid")
-
-  @@id([userid, loginprovider, name], map: "idx_16628_pk_aspnetusertokens")
-}
-
-model tokens {
-  id               BigInt   @id(map: "idx_16673_pk_tokens") @default(autoincrement())
-  clientid         String
-  type             Int
-  value            String
-  userid           String
-  createddate      DateTime @db.Timestamptz(6)
-  lastmodifieddate DateTime @db.Timestamptz(6)
-  users            User     @relation(fields: [userid], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_tokens_users_userid")
-
-  @@index([userid], map: "idx_16673_ix_tokens_userid")
+  @@index([normalizedemail], map: "idx_25871_emailindex")
 }

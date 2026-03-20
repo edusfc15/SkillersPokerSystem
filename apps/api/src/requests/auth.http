@@ -44,8 +44,8 @@ POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
-  "emailOrUsername": "eduardo",
-  "password": "Y!n291189"
+  "emailOrUsername": "admin",
+  "password": "admin123"
 }
 
 ###

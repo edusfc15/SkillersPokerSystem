@@ -47,7 +47,7 @@ export function Header() {
 				<div className="hidden md:flex items-center justify-between">
 					{/* Logo */}
 					<div className="flex items-center">
-						<Link to="/" className="flex items-center">
+						<Link to="/app" className="flex items-center">
 							<h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-poker-orange to-poker-blue">
 								Skillers Poker System
 							</h1>
@@ -60,7 +60,7 @@ export function Header() {
 							<NavigationMenuList>
 								<NavigationMenuItem>
 									<NavigationMenuLink asChild>
-										<Link to="/" className={navigationMenuTriggerStyle()}>
+										<Link to="/app" className={navigationMenuTriggerStyle()}>
 											<Home className="w-4 h-4 mr-2" />
 											Home
 										</Link>
@@ -76,7 +76,7 @@ export function Header() {
 										<div className="grid gap-3 p-4 w-[400px] lg:w-[500px] lg:grid-cols-2">
 											<div className="grid gap-1">
 												<Link
-													to="/players"
+													to="/app/players"
 													className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
 												>
 													<div className="text-sm font-medium leading-none">Lista de Jogadores</div>
@@ -85,7 +85,7 @@ export function Header() {
 													</p>
 												</Link>
 												<Link
-													to="/players/create"
+													to="/app/players/create"
 													className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
 												>
 													<div className="text-sm font-medium leading-none">Novo Jogador</div>
@@ -107,7 +107,7 @@ export function Header() {
 										<div className="grid gap-3 p-4 w-[400px] lg:w-[500px] lg:grid-cols-2">
 											<div className="grid gap-1">
 												<Link
-													to="/games"
+													to="/app/games"
 													className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
 												>
 													<div className="text-sm font-medium leading-none">Lista de Jogos</div>
@@ -116,7 +116,7 @@ export function Header() {
 													</p>
 												</Link>
 												<Link
-													to="/games/create"
+													to="/app/games/create"
 													className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
 												>
 													<div className="text-sm font-medium leading-none">Novo Jogo</div>
@@ -131,7 +131,7 @@ export function Header() {
 
 								<NavigationMenuItem>
 									<NavigationMenuLink asChild>
-										<Link to="/about" className={navigationMenuTriggerStyle()}>
+									<Link to="/app/about" className={navigationMenuTriggerStyle()}>
 											<Info className="w-4 h-4 mr-2" />
 											About
 										</Link>
@@ -182,13 +182,13 @@ export function Header() {
 									</div>
 									<DropdownMenuSeparator />
 									<DropdownMenuItem asChild>
-										<Link to="/profile" className="flex items-center">
-											<User className="w-4 h-4 mr-2" />
-											Perfil
-										</Link>
-									</DropdownMenuItem>
-									<DropdownMenuItem asChild>
-										<Link to="/settings" className="flex items-center">
+									<Link to="/app/profile" className="flex items-center">
+										<User className="w-4 h-4 mr-2" />
+										Perfil
+									</Link>
+								</DropdownMenuItem>
+								<DropdownMenuItem asChild>
+									<Link to="/app/settings" className="flex items-center">
 											<Settings className="w-4 h-4 mr-2" />
 											Configurações
 										</Link>
@@ -225,11 +225,11 @@ export function Header() {
 				{/* Mobile Layout */}
 				<div className="md:hidden flex items-center justify-between">
 					{/* Logo */}
-					<Link to="/" className="flex items-center">
-						<h1 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-poker-orange to-poker-blue">
-							Skillers Poker
-						</h1>
-					</Link>
+				<Link to="/app" className="flex items-center">
+					<h1 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-poker-orange to-poker-blue">
+						Skillers Poker System
+					</h1>
+				</Link>
 
 					{/* Mobile Menu Button & User */}
 					<div className="flex items-center gap-2">
@@ -268,38 +268,38 @@ export function Header() {
 									</div>
 									<DropdownMenuSeparator />
 									<DropdownMenuItem asChild>
-										<Link to="/" className="flex items-center">
+										<Link to="/app" className="flex items-center">
 											<Home className="w-4 h-4 mr-2" />
 											Home
 										</Link>
 									</DropdownMenuItem>
 									<DropdownMenuItem asChild>
-										<Link to="/players" className="flex items-center">
+										<Link to="/app/players" className="flex items-center">
 											<User className="w-4 h-4 mr-2" />
 											Jogadores
 										</Link>
 									</DropdownMenuItem>
 									<DropdownMenuItem asChild>
-										<Link to="/games" className="flex items-center">
+										<Link to="/app/games" className="flex items-center">
 											<Gamepad2 className="w-4 h-4 mr-2" />
 											Jogos
 										</Link>
 									</DropdownMenuItem>
 									<DropdownMenuItem asChild>
-										<Link to="/about" className="flex items-center">
+										<Link to="/app/about" className="flex items-center">
 											<Info className="w-4 h-4 mr-2" />
 											About
 										</Link>
 									</DropdownMenuItem>
 									<DropdownMenuSeparator />
 									<DropdownMenuItem asChild>
-										<Link to="/profile" className="flex items-center">
+										<Link to="/app/profile" className="flex items-center">
 											<User className="w-4 h-4 mr-2" />
 											Perfil
 										</Link>
 									</DropdownMenuItem>
 									<DropdownMenuItem asChild>
-										<Link to="/settings" className="flex items-center">
+										<Link to="/app/settings" className="flex items-center">
 											<Settings className="w-4 h-4 mr-2" />
 											Configurações
 										</Link>
@@ -327,7 +327,7 @@ export function Header() {
 										</Link>
 									</DropdownMenuItem>
 									<DropdownMenuItem asChild>
-										<Link to="/about" className="flex items-center">
+										<Link to="/" className="flex items-center">
 											<Info className="w-4 h-4 mr-2" />
 											About
 										</Link>

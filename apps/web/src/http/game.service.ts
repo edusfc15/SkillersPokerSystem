@@ -1,26 +1,58 @@
 import { apiClient, extractApiError } from './api-client';
-
-// Tipos para exemplo (você pode criar interfaces mais específicas)
-interface Game {
-  id: string;
-  name: string;
-  status: string;
-  createdDate: string;
-  // adicione outros campos conforme necessário
-}
-
-interface CreateGameDto {
-  name: string;
-  // adicione outros campos conforme necessário
-}
+import type {
+  PokerGame,
+  CreateGameDto,
+  BuyInDto,
+  CashoutDto,
+  FinishGameDto,
+  GameSummary,
+  GamePlayer,
+  GameDetail,
+} from '../types/game';
 
 export class GameHttpService {
   /**
-   * Lista todos os jogos do usuário
+   * Lista todos os jogos ativos do usuário
    */
-  async getGames(): Promise<Game[]> {
+  async getActiveGames(): Promise<PokerGame[]> {
     try {
-      const response = await apiClient.get('games').json<Game[]>();
+      const response = await apiClient.get('games').json<PokerGame[]>();
+      return response;
+    } catch (error) {
+      const message = await extractApiError(error);
+      throw new Error(message);
+    }
+  }
+
+  /**
+   * Lista todos os jogos do sistema com paginação
+   */
+  async getAllGames(page: number = 1, limit: number = 10): Promise<{
+    data: PokerGame[];
+    pagination: {
+      total: number;
+      page: number;
+      limit: number;
+      totalPages: number;
+    };
+  }> {
+    try {
+      const response = await apiClient
+        .get('games/all/list', {
+          searchParams: {
+            page: page.toString(),
+            limit: limit.toString(),
+          },
+        })
+        .json<{
+          data: PokerGame[];
+          pagination: {
+            total: number;
+            page: number;
+            limit: number;
+            totalPages: number;
+          };
+        }>();
       return response;
     } catch (error) {
       const message = await extractApiError(error);
@@ -31,9 +63,22 @@ export class GameHttpService {
   /**
    * Busca um jogo específico por ID
    */
-  async getGame(id: string): Promise<Game> {
+  async getGame(id: string): Promise<PokerGame> {
     try {
-      const response = await apiClient.get(`games/${id}`).json<Game>();
+      const response = await apiClient.get(`games/${id}`).json<PokerGame>();
+      return response;
+    } catch (error) {
+      const message = await extractApiError(error);
+      throw new Error(message);
+    }
+  }
+
+  /**
+   * Busca o resumo de um jogo específico
+   */
+  async getGameSummary(id: string): Promise<GameSummary> {
+    try {
+      const response = await apiClient.get(`games/${id}/summary`).json<GameSummary>();
       return response;
     } catch (error) {
       const message = await extractApiError(error);
@@ -44,11 +89,11 @@ export class GameHttpService {
   /**
    * Cria um novo jogo
    */
-  async createGame(data: CreateGameDto): Promise<Game> {
+  async createGame(data: CreateGameDto): Promise<PokerGame> {
     try {
       const response = await apiClient.post('games', {
         json: data,
-      }).json<Game>();
+      }).json<PokerGame>();
       
       return response;
     } catch (error) {
@@ -58,13 +103,45 @@ export class GameHttpService {
   }
 
   /**
-   * Atualiza um jogo existente
+   * Registra um buy-in de jogador
    */
-  async updateGame(id: string, data: Partial<CreateGameDto>): Promise<Game> {
+  async registerBuyIn(gameId: string, data: BuyInDto): Promise<GameDetail> {
     try {
-      const response = await apiClient.patch(`games/${id}`, {
+      const response = await apiClient.post(`games/${gameId}/buy-in`, {
         json: data,
-      }).json<Game>();
+      }).json<GameDetail>();
+      
+      return response;
+    } catch (error) {
+      const message = await extractApiError(error);
+      throw new Error(message);
+    }
+  }
+
+  /**
+   * Registra um cashout de jogador
+   */
+  async registerCashout(gameId: string, data: CashoutDto): Promise<GameDetail> {
+    try {
+      const response = await apiClient.post(`games/${gameId}/cashout`, {
+        json: data,
+      }).json<GameDetail>();
+      
+      return response;
+    } catch (error) {
+      const message = await extractApiError(error);
+      throw new Error(message);
+    }
+  }
+
+  /**
+   * Finaliza um jogo
+   */
+  async finishGame(gameId: string, data: FinishGameDto): Promise<PokerGame> {
+    try {
+      const response = await apiClient.put(`games/${gameId}/finish`, {
+        json: data,
+      }).json<PokerGame>();
       
       return response;
     } catch (error) {
@@ -79,6 +156,31 @@ export class GameHttpService {
   async deleteGame(id: string): Promise<void> {
     try {
       await apiClient.delete(`games/${id}`);
+    } catch (error) {
+      const message = await extractApiError(error);
+      throw new Error(message);
+    }
+  }
+
+  /**
+   * Deleta uma transação de um jogo
+   */
+  async deleteTransaction(gameId: string, transactionId: string): Promise<void> {
+    try {
+      await apiClient.delete(`games/${gameId}/transactions/${transactionId}`);
+    } catch (error) {
+      const message = await extractApiError(error);
+      throw new Error(message);
+    }
+  }
+
+  /**
+   * Lista todos os jogadores ativos
+   */
+  async getActivePlayers(): Promise<GamePlayer[]> {
+    try {
+      const response = await apiClient.get('players').json<GamePlayer[]>();
+      return response;
     } catch (error) {
       const message = await extractApiError(error);
       throw new Error(message);

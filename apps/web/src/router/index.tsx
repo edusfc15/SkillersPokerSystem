@@ -9,11 +9,33 @@ import { SettingsPage } from "../pages/SettingsPage";
 import { About } from "../pages/About";
 import { Home } from "../pages/Home";
 import { RootLayout } from "../pages/RootLayout";
+import { ProtectedLayout } from "../pages/ProtectedLayout";
+import { LandingPage } from "../pages/LandingPage";
+import { CreateGamePage } from "../pages/CreateGamePage";
+import { GameDetailPage } from "../pages/GameDetailPage";
 
 export const router = createBrowserRouter([
 	{
 		path: "/",
 		element: <RootLayout />,
+		children: [
+			{
+				index: true,
+				element: <LandingPage />,
+			},
+			{
+				path: "login",
+				element: <LoginPage />,
+			},
+			{
+				path: "register",
+				element: <RegisterPage />,
+			},
+		],
+	},
+	{
+		path: "/app",
+		element: <ProtectedLayout />,
 		children: [
 			{
 				index: true,
@@ -28,6 +50,14 @@ export const router = createBrowserRouter([
 				element: <GamesPage />,
 			},
 			{
+				path: "games/create",
+				element: <CreateGamePage />,
+			},
+			{
+				path: "games/:gameId",
+				element: <GameDetailPage />,
+			},
+			{
 				path: "players",
 				element: <PlayersPage />,
 			},
@@ -40,13 +70,5 @@ export const router = createBrowserRouter([
 				element: <SettingsPage />,
 			},
 		],
-	},
-	{
-		path: "/login",
-		element: <LoginPage />,
-	},
-	{
-		path: "/register",
-		element: <RegisterPage />,
 	},
 ]);

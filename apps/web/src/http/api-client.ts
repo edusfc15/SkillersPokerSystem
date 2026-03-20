@@ -11,7 +11,7 @@ export const apiClient = ky.create({
     beforeRequest: [
       (request) => {
         // Adiciona token de autenticação se disponível
-        const token = localStorage.getItem(API_CONFIG.STORAGE_KEYS.AUTH_TOKEN);
+        const token = localStorage.getItem("skillers-auth-token");
         if (token) {
           request.headers.set('Authorization', `Bearer ${token}`);
         }
