@@ -1,0 +1,1 @@
+//# sourceMappingURL=totalGameDetail.js.map

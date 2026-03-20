@@ -1,0 +1,58 @@
+<div class="container">
+
+  <h2>Iniciar nova partida</h2>
+
+  <p>Uma partida sera iniciada no dia {{date }} as {{time}} </p>
+
+  <h4>Jogadores</h4>
+
+
+  <form [formGroup]="gameForm" class="form">
+
+
+    <div formArrayName="gameDetailsArray">
+      <div *ngIf="this.gameDetails.value.length == 0">
+        Ops... Não tem ninguem pra ver um flopinho?
+      </div>
+      <div *ngFor="let item of gameDetails.controls; let gdIndex=index" [formGroupName]="gdIndex">
+        <hr />
+        <div class="row">
+          <div class="form-group col">
+            <label>Jogador:</label>
+            <select formControlName="PlayerId" required class="form-control">
+              <option value="">Escolha um jogador...</option>
+              <option *ngFor="let player of players; let pIndex = index" [value]="player.Id">{{ player.Name}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col hideRange" id="hideRange">
+            <label>Buy in:</label>
+            <input formControlName="Value" type="range" class="form-control custom-range" min="5" max="50" step="5">
+          </div>
+
+          <div class="form-group col">
+            <label>R$</label>
+            <input formControlName="Value" value="{{ this.gameDetails.controls[gdIndex].value.Value}}" class="form-control" type="number" min="5" max="1000" step="5">  
+          </div>
+          <button type="button" class="btn btn-dark m-2"(click)="onClear(0, gdIndex)" ><i class="fas fa-broom"></i></button>
+          <button type="button" class="btn btn-outline-dark m-2" (click)="deleteGameDetails(gdIndex)">X</button>
+        </div>
+
+
+
+        <div (click)="onAddValue(5, gdIndex)" class="pokerchip flat purple"></div>
+        <div (click)="onAddValue(10, gdIndex)" class="pokerchip flat red"></div>
+        <div (click)="onAddValue(25, gdIndex)" class="pokerchip flat blue"></div>
+        
+
+
+      </div>
+      <button type="button" class="btn btn-info m-2" (click)="addGameDetails()">Adicionar jogador</button>
+    </div>
+
+    <button type="button" class="btn btn-success m-2" (click)="startGame(this.gameDetails)" [disabled]="this.gameDetails.value.length == 0 || gameForm.invalid">Iniciar</button>
+
+  </form>
+
+</div>
