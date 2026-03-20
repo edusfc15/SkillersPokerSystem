@@ -6,21 +6,6 @@ import { CreateGameDto, BuyInDto, CashoutDto, FinishGameDto } from './dto';
 export class GamesService {
   constructor(private prisma: PrismaService) {}
 
-  /**
-   * Normaliza o status de um jogo para garantir valores válidos
-   * Se status for 'FINISHED' ou 'Encerrado' (português), retorna 'FINISHED'
-   * Caso contrário, retorna 'ACTIVE'
-   */
-  private normalizeGameStatus(game: any): any {
-    const statusStr = String(game.status || '').trim().toUpperCase();
-    // Treat both 'FINISHED' and 'ENCERRADO' (Portuguese) as finished
-    const isFinished = statusStr === 'FINISHED' || statusStr === 'ENCERRADO';
-    return {
-      ...game,
-      status: isFinished ? 'FINISHED' : 'ACTIVE',
-    };
-  }
-
   async createGame(userId: string, createGameDto: CreateGameDto) {
     const { rakeId } = createGameDto;
 
@@ -56,7 +41,7 @@ export class GamesService {
       },
     });
 
-    return this.normalizeGameStatus(game);
+    return game;
   }
 
   async getActiveGames(userId: string) {
@@ -82,7 +67,7 @@ export class GamesService {
       },
     });
 
-    return games.map(game => this.normalizeGameStatus(game));
+    return games;
   }
 
   async getAllGames(page: number = 1, limit: number = 10) {
@@ -123,7 +108,7 @@ export class GamesService {
     console.log('Games statuses:', games.map(g => ({ id: g.id, status: g.status })));
 
     return {
-      data: games.map(game => this.normalizeGameStatus(game)),
+      data: games,
       pagination: {
         total,
         page,
@@ -167,7 +152,7 @@ export class GamesService {
       throw new NotFoundException('Game not found');
     }
 
-    return this.normalizeGameStatus(game);
+    return game;
   }
 
   async registerBuyIn(gameId: string, userId: string, buyInDto: BuyInDto) {
@@ -305,12 +290,7 @@ export class GamesService {
       where: {
         id: BigInt(gameId),
         userid: userId,
-        // Game status should not be 'FINISHED' (or 'Encerrado' in Portuguese)
-        NOT: {
-          status: {
-            in: ['FINISHED', 'Encerrado'],
-          },
-        },
+        NOT: { status: 'Encerrado' },
       },
       include: {
         gamedetails: true,
@@ -358,11 +338,11 @@ export class GamesService {
       );
     }
 
-    console.log(`Attempting to update game ${gameId} status to FINISHED`);
+    console.log(`Attempting to update game ${gameId} status to Encerrado`);
     const game = await this.prisma.game.update({
       where: { id: BigInt(gameId) },
       data: {
-        status: 'FINISHED',
+        status: 'Encerrado',
         lastmodifieddate: new Date(),
       },
       include: {
@@ -380,10 +360,8 @@ export class GamesService {
     });
 
     console.log(`Game ${gameId} finished. Status in DB:`, game.status);
-    const normalized = this.normalizeGameStatus(game);
-    console.log(`Game ${gameId} after normalization. Status:`, normalized.status);
-    
-    return normalized;
+
+    return game;
   }
 
   async getGameSummary(gameId: string, userId: string) {
