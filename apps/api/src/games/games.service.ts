@@ -12,7 +12,7 @@ export class GamesService {
     console.log('Creating game for userId:', userId, 'with rakeId:', rakeId);
 
     // Verify that the rake exists
-    const rake = await this.prisma.rake.findUnique({
+    const rake = await this.prisma.rakes.findUnique({
       where: { id: BigInt(rakeId) },
     });
 
@@ -20,7 +20,7 @@ export class GamesService {
       throw new NotFoundException('Rake configuration not found');
     }
 
-    const game = await this.prisma.game.create({
+    const game = await this.prisma.games.create({
       data: {
         status: 'ACTIVE',
         userid: userId,
@@ -31,7 +31,7 @@ export class GamesService {
         numberofhands: 0,
       },
       include: {
-        user: {
+        users: {
           select: {
             id: true,
             username: true,
@@ -45,7 +45,7 @@ export class GamesService {
   }
 
   async getActiveGames(userId: string) {
-    const games = await this.prisma.game.findMany({
+    const games = await this.prisma.games.findMany({
       where: {
         userid: userId,
       },
@@ -74,7 +74,7 @@ export class GamesService {
     const skip = (page - 1) * limit;
 
     const [games, total] = await Promise.all([
-      this.prisma.game.findMany({
+      this.prisma.games.findMany({
         include: {
           rakes: true,
           gamedetails: {
@@ -82,7 +82,7 @@ export class GamesService {
               players: true,
             },
           },
-          user: {
+          users: {
             select: {
               id: true,
               username: true,
@@ -101,7 +101,7 @@ export class GamesService {
         skip,
         take: limit,
       }),
-      this.prisma.game.count(),
+      this.prisma.games.count(),
     ]);
 
     console.log(`getAllGames: Found ${games.length} games, total: ${total}`);
@@ -119,7 +119,7 @@ export class GamesService {
   }
 
   async getGameById(gameId: string, userId: string) {
-    const game = await this.prisma.game.findFirst({
+    const game = await this.prisma.games.findFirst({
       where: {
         id: BigInt(gameId),
         userid: userId,
@@ -138,7 +138,7 @@ export class GamesService {
             createddate: 'asc',
           },
         },
-        user: {
+        users: {
           select: {
             id: true,
             username: true,
@@ -181,7 +181,7 @@ export class GamesService {
     }
 
     // Verify game exists and is active
-    const game = await this.prisma.game.findFirst({
+    const game = await this.prisma.games.findFirst({
       where: {
         id: BigInt(gameId),
         userid: userId,
@@ -198,7 +198,7 @@ export class GamesService {
 
     // Verify player exists (allow playerId 0 for rake)
     if (playerId !== 0) {
-      const player = await this.prisma.player.findUnique({
+      const player = await this.prisma.players.findUnique({
         where: { id: BigInt(playerId) },
       });
 
@@ -209,7 +209,7 @@ export class GamesService {
 
     const totalAmount = amount + tip;
 
-    return this.prisma.gameDetail.create({
+    return this.prisma.gamedetails.create({
       data: {
         gameid: BigInt(gameId),
         playerid: BigInt(playerId),
@@ -230,7 +230,7 @@ export class GamesService {
     const { playerId, amount } = cashoutDto;
 
     // Verify game exists and is active
-    const game = await this.prisma.game.findFirst({
+    const game = await this.prisma.games.findFirst({
       where: {
         id: BigInt(gameId),
         userid: userId,
@@ -243,7 +243,7 @@ export class GamesService {
     }
 
     // Verify player exists
-    const player = await this.prisma.player.findUnique({
+    const player = await this.prisma.players.findUnique({
       where: { id: BigInt(playerId) },
     });
 
@@ -252,7 +252,7 @@ export class GamesService {
     }
 
     // Check if player has bought in (has positive value transactions)
-    const playerBuyIns = await this.prisma.gameDetail.findMany({
+    const playerBuyIns = await this.prisma.gamedetails.findMany({
       where: {
         gameid: BigInt(gameId),
         playerid: BigInt(playerId),
@@ -267,7 +267,7 @@ export class GamesService {
     }
 
     // Create cashout transaction
-    return this.prisma.gameDetail.create({
+    return this.prisma.gamedetails.create({
       data: {
         gameid: BigInt(gameId),
         playerid: BigInt(playerId),
@@ -286,7 +286,7 @@ export class GamesService {
 
   async finishGame(gameId: string, userId: string, _finishGameDto: FinishGameDto) {
     // Verify game exists and is not already finished
-    const existingGame = await this.prisma.game.findFirst({
+    const existingGame = await this.prisma.games.findFirst({
       where: {
         id: BigInt(gameId),
         userid: userId,
@@ -339,7 +339,7 @@ export class GamesService {
     }
 
     console.log(`Attempting to update game ${gameId} status to Encerrado`);
-    const game = await this.prisma.game.update({
+    const game = await this.prisma.games.update({
       where: { id: BigInt(gameId) },
       data: {
         status: 'Encerrado',
@@ -428,7 +428,7 @@ export class GamesService {
 
   async deleteGame(gameId: string, userId: string) {
     // Only allow deletion if game has no transactions
-    const game = await this.prisma.game.findFirst({
+    const game = await this.prisma.games.findFirst({
       where: {
         id: BigInt(gameId),
         userid: userId,
@@ -446,14 +446,14 @@ export class GamesService {
       throw new BadRequestException('Cannot delete game with existing transactions');
     }
 
-    return this.prisma.game.delete({
+    return this.prisma.games.delete({
       where: { id: BigInt(gameId) },
     });
   }
 
   async deleteTransaction(gameId: string, transactionId: string, userId: string) {
     // Verify that the game belongs to the user
-    const game = await this.prisma.game.findFirst({
+    const game = await this.prisma.games.findFirst({
       where: {
         id: BigInt(gameId),
         userid: userId,
@@ -465,7 +465,7 @@ export class GamesService {
     }
 
     // Verify that the transaction belongs to this game
-    const transaction = await this.prisma.gameDetail.findFirst({
+    const transaction = await this.prisma.gamedetails.findFirst({
       where: {
         id: BigInt(transactionId),
         gameid: BigInt(gameId),
@@ -481,7 +481,7 @@ export class GamesService {
       throw new BadRequestException('Cannot delete transactions from finished games');
     }
 
-    return this.prisma.gameDetail.delete({
+    return this.prisma.gamedetails.delete({
       where: { id: BigInt(transactionId) },
     });
   }

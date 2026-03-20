@@ -28,7 +28,7 @@ export class AuthService {
 		}
 
 		// Check if user exists
-		const existingUser = await this.prisma.user.findFirst({
+		const existingUser = await this.prisma.users.findFirst({
 			where: {
 				OR: [
 					{ normalizedemail: email.toLowerCase() },
@@ -51,7 +51,7 @@ export class AuthService {
 		const userId = this.generateUserId();
 
 		// Create user
-		const user = await this.prisma.user.create({
+		const user = await this.prisma.users.create({
 			data: {
 				id: userId,
 				username,
@@ -105,7 +105,7 @@ export class AuthService {
 		const { emailOrUsername, password } = loginDto;
 
 		// Find user by email or username
-		const user = await this.prisma.user.findFirst({
+		const user = await this.prisma.users.findFirst({
 			where: {
 				OR: [
 					{ normalizedemail: emailOrUsername.toLowerCase() },
@@ -137,7 +137,7 @@ export class AuthService {
 
 		// Reset failed login attempts on successful login
 		if (user.accessfailedcount > 0) {
-			await this.prisma.user.update({
+			await this.prisma.users.update({
 				where: { id: user.id },
 				data: { accessfailedcount: 0, lockoutend: null },
 			});
@@ -170,7 +170,7 @@ export class AuthService {
 	}
 
 	async validateUserById(userId: string): Promise<AuthenticatedUser | null> {
-		const user = await this.prisma.user.findUnique({
+		const user = await this.prisma.users.findUnique({
 			where: { id: userId },
 		});
 
@@ -214,7 +214,7 @@ export class AuthService {
 	}
 
 	private async handleFailedLogin(userId: string): Promise<void> {
-		const user = await this.prisma.user.findUnique({
+		const user = await this.prisma.users.findUnique({
 			where: { id: userId },
 		});
 
@@ -229,7 +229,7 @@ export class AuthService {
 			lockoutEnd = new Date(Date.now() + 30 * 60 * 1000);
 		}
 
-		await this.prisma.user.update({
+		await this.prisma.users.update({
 			where: { id: userId },
 			data: {
 				accessfailedcount: newFailedCount,
