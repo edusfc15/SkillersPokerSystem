@@ -29,8 +29,8 @@ export function RegisterForm() {
 			};
 
 			await register(cleanData);
-			// Redirecionar para a home após registro bem-sucedido
-			navigate("/");
+			// Redirecionar para o app após registro bem-sucedido
+			navigate("/app");
 		} catch (error) {
 			console.error("Erro no registro:", error);
 		}

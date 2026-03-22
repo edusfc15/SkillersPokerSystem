@@ -17,8 +17,8 @@ export function LoginForm() {
 		e.preventDefault();
 		try {
 			await login(formData);
-			// Redirecionar para a home após login bem-sucedido
-			navigate("/");
+			// Redirecionar para o app após login bem-sucedido
+			navigate("/app");
 		} catch (error) {
 			// Erro já tratado no context
 			console.error("Erro no login:", error);

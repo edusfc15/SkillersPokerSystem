@@ -234,3 +234,5 @@ SkillersPokerSystem/appsettings.json
 .turbo
 apps/api/*
 apps/web/*
+
+.superpowers
