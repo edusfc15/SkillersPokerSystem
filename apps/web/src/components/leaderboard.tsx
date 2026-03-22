@@ -62,7 +62,7 @@ export function Leaderboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold mb-2">Leaderboard</h1>
+        <h1 className="text-3xl font-bold mb-2">Classificação</h1>
         <p className="text-muted-foreground">Ranking de performance dos jogadores</p>
       </div>
 
@@ -127,7 +127,7 @@ export function Leaderboard() {
                           <div className="font-semibold">{player.gamesPlayed}</div>
                         </div>
                         <div>
-                          <div className="text-xs opacity-75">Win Rate</div>
+                          <div className="text-xs opacity-75">Aproveitamento</div>
                           <div className="font-semibold">{player.winRate}%</div>
                         </div>
                       </div>
@@ -144,18 +144,18 @@ export function Leaderboard() {
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <Trophy className="h-5 w-5" />
-                  <span>Rankings</span>
+                  <span>Classificação</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-0">
                 {/* Desktop */}
                 <div className="hidden md:block">
                   <div className="grid grid-cols-5 gap-4 p-4 text-sm font-medium text-muted-foreground border-b">
-                    <div>Rank</div>
+                    <div>Pos.</div>
                     <div>Jogador</div>
                     <div className="flex items-center space-x-1"><Gamepad2 className="h-4 w-4" /><span>Jogos</span></div>
                     <div className="flex items-center space-x-1"><TrendingUp className="h-4 w-4" /><span>Lucro</span></div>
-                    <div>Win Rate</div>
+                    <div>Aproveitamento</div>
                   </div>
                   {rest.map((player) => (
                     <div key={player.playerId} className="grid grid-cols-5 gap-4 p-4 hover:bg-muted/50 transition-colors border-b last:border-b-0">
@@ -188,7 +188,7 @@ export function Leaderboard() {
                         </div>
                         <div className="text-right">
                           <div className="font-bold">{formatProfit(player.totalProfit)}</div>
-                          <div className="text-sm text-muted-foreground">{player.winRate}% win rate</div>
+                          <div className="text-sm text-muted-foreground">{player.winRate}% aproveitamento</div>
                         </div>
                       </div>
                     </div>
