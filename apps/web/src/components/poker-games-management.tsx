@@ -57,7 +57,7 @@ export function PokerGamesManagement() {
     return (
       <div className="flex items-center justify-center p-8">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        <span className="ml-2">Loading games...</span>
+        <span className="ml-2">Carregando jogos...</span>
       </div>
     );
   }
@@ -67,8 +67,8 @@ export function PokerGamesManagement() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Poker Games</h1>
-          <p className="text-gray-600">Manage your poker home games</p>
+          <h1 className="text-2xl font-bold text-gray-900">Jogos de Poker</h1>
+          <p className="text-gray-600">Gerencie seus jogos de poker</p>
         </div>
         {/* TODO: Implement create game functionality
         <Button
@@ -103,8 +103,8 @@ export function PokerGamesManagement() {
       {games.length === 0 ? (
         <div className="text-center py-12">
           <Trophy className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No games yet</h3>
-          <p className="text-gray-600 mb-4">Create your first poker game to get started</p>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhum jogo ainda</h3>
+          <p className="text-gray-600 mb-4">Crie seu primeiro jogo de poker para começar</p>
           {/* TODO: Implement create game functionality
           <Button onClick={() => setShowCreateModal(true)}>
             Create New Game
@@ -201,7 +201,7 @@ function GameCard({ game, onView, onDelete }: GameCardProps) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Users className="w-4 h-4 text-gray-500" />
-              <span className="text-sm text-gray-600">Players</span>
+              <span className="text-sm text-gray-600">Jogadores</span>
             </div>
             <span className="font-medium">{game.playerCount}</span>
           </div>
@@ -225,7 +225,7 @@ function GameCard({ game, onView, onDelete }: GameCardProps) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-gray-500" />
-              <span className="text-sm text-gray-600">Balance</span>
+              <span className="text-sm text-gray-600">Saldo</span>
             </div>
             <span className={`font-medium ${balanceColor}`}>
               {gameService.formatCurrency(game.balance)}
@@ -243,7 +243,7 @@ function GameCard({ game, onView, onDelete }: GameCardProps) {
             className="flex-1 flex items-center gap-2"
           >
             <Eye className="w-4 h-4" />
-            View
+            Ver
           </Button>
           {game.playerCount === 0 && (
             <Button
