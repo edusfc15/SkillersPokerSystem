@@ -147,7 +147,7 @@ export function GameDetailModal({ isOpen, onClose, gameId }: GameDetailModalProp
   const handleFinishGame = async () => {
     if (!gameId || !canFinish.canFinish) return;
     
-    const confirmed = confirm('Are you sure you want to finish this game? This action cannot be undone.');
+    const confirmed = confirm('Tem certeza que deseja encerrar este jogo? Esta ação não pode ser desfeita.');
     if (confirmed) {
       try {
         await finishGame(gameId, {});
@@ -170,7 +170,7 @@ export function GameDetailModal({ isOpen, onClose, gameId }: GameDetailModalProp
           <div className="bg-card border border-border p-4 rounded-lg">
             <div className="flex items-center gap-2">
               <Users className="w-5 h-5 text-secondary" />
-              <span className="text-sm font-medium text-muted-foreground">Players</span>
+              <span className="text-sm font-medium text-muted-foreground">Jogadores</span>
             </div>
             <p className="text-2xl font-bold text-secondary mt-2">{stats.playerCount}</p>
           </div>
@@ -241,7 +241,7 @@ export function GameDetailModal({ isOpen, onClose, gameId }: GameDetailModalProp
               className="flex items-center gap-2 ml-auto"
             >
               <CheckCircle className="w-4 h-4" />
-              Finish Game
+              Encerrar Jogo
             </Button>
           </div>
         )}
@@ -250,7 +250,7 @@ export function GameDetailModal({ isOpen, onClose, gameId }: GameDetailModalProp
         {!canFinish.canFinish && currentGame.status === 'ACTIVE' && (
           <div className="p-4 bg-warning/10 border border-warning/20 rounded-lg">
             <p className="text-warning">
-              <strong>Cannot finish game:</strong> {canFinish.reason}
+              <strong>Não é possível encerrar o jogo:</strong> {canFinish.reason}
             </p>
           </div>
         )}
@@ -258,12 +258,12 @@ export function GameDetailModal({ isOpen, onClose, gameId }: GameDetailModalProp
         {/* Buy-in Form */}
         {showBuyInForm && (
           <div className="border border-border rounded-lg p-4 bg-card">
-            <h3 className="text-lg font-medium mb-4">Register Buy-in</h3>
+            <h3 className="text-lg font-medium mb-4">Registrar Buy-in</h3>
             <form onSubmit={handleBuyIn} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="buyinPlayer" className="block text-sm font-medium text-card-foreground mb-1">
-                    Player
+                    Jogador
                   </label>
                   <select
                     id="buyinPlayer"
@@ -272,7 +272,7 @@ export function GameDetailModal({ isOpen, onClose, gameId }: GameDetailModalProp
                     required
                     className="w-full px-3 py-2 border border-border bg-background text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                   >
-                    <option value={0}>Select player</option>
+                    <option value={0}>Selecionar jogador</option>
                     {allPlayersForSelection.map(player => (
                       <option key={String(player.id)} value={Number(player.id)}>
                         {player.name}
@@ -283,7 +283,7 @@ export function GameDetailModal({ isOpen, onClose, gameId }: GameDetailModalProp
                 
                 <div>
                   <label htmlFor="buyinAmount" className="block text-sm font-medium text-card-foreground mb-1">
-                    Amount
+                    Valor
                   </label>
                   <Input
                     id="buyinAmount"
@@ -299,10 +299,10 @@ export function GameDetailModal({ isOpen, onClose, gameId }: GameDetailModalProp
               
               <div className="flex gap-2">
                 <Button type="submit" disabled={loading}>
-                  Register Buy-in
+                  Registrar Buy-in
                 </Button>
                 <Button type="button" variant="outline" onClick={() => setShowBuyInForm(false)}>
-                  Cancel
+                  Cancelar
                 </Button>
               </div>
             </form>
@@ -312,12 +312,12 @@ export function GameDetailModal({ isOpen, onClose, gameId }: GameDetailModalProp
         {/* Cashout Form */}
         {showCashoutForm && (
           <div className="border border-border rounded-lg p-4 bg-card">
-            <h3 className="text-lg font-medium mb-4">Register Cashout</h3>
+            <h3 className="text-lg font-medium mb-4">Registrar Cashout</h3>
             <form onSubmit={handleCashout} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="cashoutPlayer" className="block text-sm font-medium text-card-foreground mb-1">
-                    Player
+                    Jogador
                   </label>
                   <select
                     id="cashoutPlayer"
@@ -326,7 +326,7 @@ export function GameDetailModal({ isOpen, onClose, gameId }: GameDetailModalProp
                     required
                     className="w-full px-3 py-2 border border-border bg-background text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                   >
-                    <option value={0}>Select player</option>
+                    <option value={0}>Selecionar jogador</option>
                     {allPlayersForSelection.map(player => (
                       <option key={String(player.id)} value={Number(player.id)}>
                         {player.name}
@@ -337,7 +337,7 @@ export function GameDetailModal({ isOpen, onClose, gameId }: GameDetailModalProp
                 
                 <div>
                   <label htmlFor="cashoutAmount" className="block text-sm font-medium text-card-foreground mb-1">
-                    Amount
+                    Valor
                   </label>
                   <Input
                     id="cashoutAmount"
@@ -353,10 +353,10 @@ export function GameDetailModal({ isOpen, onClose, gameId }: GameDetailModalProp
               
               <div className="flex gap-2">
                 <Button type="submit" disabled={loading}>
-                  Register Cashout
+                  Registrar Cashout
                 </Button>
                 <Button type="button" variant="outline" onClick={() => setShowCashoutForm(false)}>
-                  Cancel
+                  Cancelar
                 </Button>
               </div>
             </form>
@@ -365,9 +365,9 @@ export function GameDetailModal({ isOpen, onClose, gameId }: GameDetailModalProp
 
         {/* Players Summary */}
         <div>
-          <h3 className="text-lg font-medium mb-4">Players Summary</h3>
+          <h3 className="text-lg font-medium mb-4">Resumo dos Jogadores</h3>
           {playerSummaries.size === 0 ? (
-            <p className="text-muted-foreground text-center py-8">No players yet</p>
+            <p className="text-muted-foreground text-center py-8">Nenhum jogador ainda</p>
           ) : (
             <div className="space-y-3">
               {Array.from(playerSummaries.entries()).map(([playerId, summary]) => {
@@ -392,7 +392,7 @@ export function GameDetailModal({ isOpen, onClose, gameId }: GameDetailModalProp
                         <p className="font-semibold text-primary">{gameService.formatCurrency(summary.cashOutTotal)}</p>
                       </div>
                       <div className="bg-secondary/10 border border-secondary/20 p-2 rounded">
-                        <p className="text-muted-foreground">Transactions</p>
+                        <p className="text-muted-foreground">Transações</p>
                         <p className="font-semibold text-secondary">{summary.transactions.length}</p>
                       </div>
                     </div>
@@ -405,9 +405,9 @@ export function GameDetailModal({ isOpen, onClose, gameId }: GameDetailModalProp
 
         {/* Transactions List */}
         <div>
-          <h3 className="text-lg font-medium mb-4">Transaction History</h3>
+          <h3 className="text-lg font-medium mb-4">Histórico de Transações</h3>
           {transactions.length === 0 ? (
-            <p className="text-muted-foreground text-center py-8">No transactions yet</p>
+            <p className="text-muted-foreground text-center py-8">Nenhuma transação ainda</p>
           ) : (
             <div className="space-y-2 max-h-96 overflow-y-auto">
               {transactions.map(transaction => (
