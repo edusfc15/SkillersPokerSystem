@@ -1,0 +1,5 @@
+{
+  "buildCommand": "bun install && cd apps/web && bunx vite build",
+  "outputDirectory": "apps/web/dist",
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}
