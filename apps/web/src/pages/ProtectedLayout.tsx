@@ -2,6 +2,7 @@ import { Outlet, Navigate } from "react-router-dom";
 import { useAuth } from "../contexts/auth-context";
 import { Header } from "../components/header";
 import { PageTransition } from "../components/page-transition";
+import { BottomTabBar } from "../components/BottomTabBar";
 
 export function ProtectedLayout() {
 	const { user, isLoading } = useAuth();
@@ -27,18 +28,20 @@ export function ProtectedLayout() {
 			<Header />
 
 			{/* Conteúdo das páginas */}
-			<main className="container mx-auto px-4 py-8">
+			<main className="container mx-auto px-4 py-8 pb-14 md:pb-0">
 				<PageTransition>
 					<Outlet />
 				</PageTransition>
 			</main>
 
 			{/* Footer global */}
-			<footer className="border-t bg-card mt-auto">
+			<footer className="hidden md:block border-t bg-card mt-auto">
 				<div className="container mx-auto px-4 py-6 text-center text-muted-foreground">
 					<p>Skillers Poker Club</p>
 				</div>
 			</footer>
+
+			<BottomTabBar />
 		</div>
 	);
 }
