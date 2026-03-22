@@ -23,4 +23,4 @@ COPY --from=builder /app/node_modules ./node_modules
 
 EXPOSE 3001
 
-CMD ["sh", "-c", "node_modules/.bin/prisma migrate deploy && node dist/main"]
+CMD ["sh", "-c", "node_modules/.bin/prisma migrate resolve --applied 20240301000000_baseline || true && node_modules/.bin/prisma migrate resolve --applied 20250306100000_add_isadmin_field || true && node_modules/.bin/prisma migrate deploy && node dist/main"]
