@@ -45,7 +45,7 @@ export function CreateGameModal({ isOpen, onClose, onSubmit }: CreateGameModalPr
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      title="Create New Game"
+      title="Criar Novo Jogo"
       maxWidth="max-w-md"
     >
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -57,7 +57,7 @@ export function CreateGameModal({ isOpen, onClose, onSubmit }: CreateGameModalPr
 
         <div>
           <label htmlFor="rakeId" className="block text-sm font-medium text-gray-700 mb-1">
-            Rake Configuration ID
+            ID da Configuração de Rake
           </label>
           <Input
             id="rakeId"
@@ -70,20 +70,20 @@ export function CreateGameModal({ isOpen, onClose, onSubmit }: CreateGameModalPr
             disabled={loading}
           />
           <p className="text-xs text-gray-500 mt-1">
-            Select the rake configuration for this game
+            Selecione a configuração de rake para este jogo
           </p>
         </div>
 
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-            Game Name (Optional)
+            Nome do Jogo (Opcional)
           </label>
           <Input
             id="name"
             type="text"
             value={formData.name || ''}
             onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-            placeholder="Enter game name"
+            placeholder="Digite o nome do jogo"
             className="w-full"
             disabled={loading}
           />
@@ -91,13 +91,13 @@ export function CreateGameModal({ isOpen, onClose, onSubmit }: CreateGameModalPr
 
         <div>
           <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-            Description (Optional)
+            Descrição (Opcional)
           </label>
           <textarea
             id="description"
             value={formData.description || ''}
             onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-            placeholder="Enter game description"
+            placeholder="Digite a descrição do jogo"
             rows={3}
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             disabled={loading}
@@ -112,14 +112,14 @@ export function CreateGameModal({ isOpen, onClose, onSubmit }: CreateGameModalPr
             disabled={loading}
             className="flex-1"
           >
-            Cancel
+            Cancelar
           </Button>
           <Button
             type="submit"
             disabled={loading}
             className="flex-1"
           >
-            {loading ? 'Creating...' : 'Create Game'}
+            {loading ? 'Criando...' : 'Criar Jogo'}
           </Button>
         </div>
       </form>
