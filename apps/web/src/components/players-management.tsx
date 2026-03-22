@@ -670,38 +670,38 @@ export function PlayersManagement() {
 				<div className="fixed bottom-4 left-4 right-4 md:left-1/2 md:right-auto md:transform md:-translate-x-1/2 md:w-auto bg-background border border-border rounded-lg shadow-lg p-4 z-50">
 					<div className="flex flex-col md:flex-row items-stretch md:items-center space-y-3 md:space-y-0 md:space-x-4">
 						<span className="text-sm font-medium text-center md:text-left">
-							{selectedPlayers.length} selected
+							{selectedPlayers.length} selecionados
 						</span>
 						<div className="grid grid-cols-2 md:flex md:items-center gap-2 md:space-x-2">
 							<button
 								type="button"
 								className="px-3 py-2 text-sm border border-input bg-background hover:bg-accent rounded-md transition-colors flex items-center justify-center space-x-1"
 							>
-								<span>Export</span>
+								<span>Exportar</span>
 							</button>
 							<button
 								type="button"
 								className="px-3 py-2 text-sm border border-input bg-background hover:bg-accent rounded-md transition-colors flex items-center justify-center space-x-1"
 							>
-								<span>Suspend</span>
+								<span>Suspender</span>
 							</button>
 							<button
 								type="button"
 								className="px-3 py-2 text-sm border border-input bg-background hover:bg-accent rounded-md transition-colors flex items-center justify-center space-x-1"
 							>
-								<span>Activate</span>
+								<span>Ativar</span>
 							</button>
 							<button
 								type="button"
 								className="px-3 py-2 text-sm bg-orange-500 hover:bg-orange-600 text-white rounded-md transition-colors flex items-center justify-center space-x-1"
 							>
-								<span>Bonus</span>
+								<span>Bônus</span>
 							</button>
 							<button
 								type="button"
 								className="px-3 py-2 text-sm border border-input bg-background hover:bg-accent rounded-md transition-colors flex items-center justify-center space-x-1 col-span-2 md:col-span-1"
 							>
-								<span>Notify</span>
+								<span>Notificar</span>
 							</button>
 						</div>
 					</div>
