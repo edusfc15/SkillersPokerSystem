@@ -1,5 +1,5 @@
 {
-  "buildCommand": "cd ../.. && bun install && cd apps/web && bun run build",
+  "buildCommand": "cd ../.. && bun install && cd apps/web && bunx vite build",
   "outputDirectory": "dist",
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }
