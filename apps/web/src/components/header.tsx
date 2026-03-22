@@ -264,11 +264,11 @@ export function Header() {
 				{/* Mobile Layout */}
 				<div className="md:hidden flex items-center justify-between">
 					{/* Logo */}
-				<Link to="/app" className="flex items-center">
-					<h1 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-poker-orange to-poker-blue">
-						Skillers Poker System
-					</h1>
-				</Link>
+					<Link to="/app" className="flex items-center">
+						<h1 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-poker-orange to-poker-blue">
+							Skillers Poker System
+						</h1>
+					</Link>
 
 					{/* Mobile Menu Button & User */}
 					<div className="flex items-center gap-2">
