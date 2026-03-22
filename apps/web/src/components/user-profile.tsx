@@ -26,7 +26,7 @@ export function UserProfile() {
 
         <div className="space-y-3">
           <div className="flex justify-between items-center py-2 border-b border-border">
-            <span className="text-sm font-medium text-muted-foreground">Email:</span>
+            <span className="text-sm font-medium text-muted-foreground">E-mail:</span>
             <span className="text-sm text-foreground">{user.email}</span>
           </div>
 
@@ -37,7 +37,7 @@ export function UserProfile() {
 
           {user.roles && user.roles.length > 0 && (
             <div className="flex justify-between items-center py-2 border-b border-border">
-              <span className="text-sm font-medium text-muted-foreground">Roles:</span>
+              <span className="text-sm font-medium text-muted-foreground">Funções:</span>
               <div className="flex gap-1">
                 {user.roles.map((role) => (
                   <span
