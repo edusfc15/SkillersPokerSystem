@@ -35,6 +35,12 @@ export function GamesManagement() {
 	const [pageSize] = useState(10);
 
 	const filters: GameFilter[] = ["All Games", "Active", "Finished"];
+	const filterLabels: Record<GameFilter, string> = {
+		"All Games": "Todos os Jogos",
+		"Active": "Ativo",
+		"Completed": "Encerrado",
+		"Finished": "Encerrado",
+	};
 
 	const handleStartNewGame = async () => {
 		try {
@@ -42,18 +48,18 @@ export function GamesManagement() {
 			// Check if there's already an active game
 			const activeGames = await gameService.getActiveGames();
 			const activeGame = activeGames.find(g => g.status === 'ACTIVE');
-			
+
 			if (activeGame) {
 				// If there's an active game, redirect to it
-				navigate(`/games/${activeGame.id}`);
+				navigate(`/app/games/${activeGame.id}`);
 			} else {
 				// Otherwise, go to create game page
-				navigate('/games/create');
+				navigate('/app/games/create');
 			}
 		} catch (err) {
 			console.error('Error checking active games:', err);
 			// If there's an error, allow navigation to create page
-			navigate('/games/create');
+			navigate('/app/games/create');
 		} finally {
 			setLoading(false);
 		}
@@ -157,9 +163,9 @@ export function GamesManagement() {
 			{/* Header */}
 			<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
 				<div>
-					<h1 className="text-3xl font-bold mb-2">Games Management</h1>
+					<h1 className="text-3xl font-bold mb-2">Gerenciamento de Jogos</h1>
 					<p className="text-muted-foreground">
-						Monitor and manage poker games, tournaments, and cash tables
+						Monitore e gerencie jogos de poker, torneios e mesas cash
 					</p>
 				</div>
 				<button
@@ -181,7 +187,7 @@ export function GamesManagement() {
 							<Gamepad2 className="w-5 h-5 text-orange-500" />
 							<div>
 								<div className="text-2xl font-bold">{stats.total}</div>
-								<div className="text-sm text-muted-foreground">Total Games</div>
+								<div className="text-sm text-muted-foreground">Total de Jogos</div>
 							</div>
 						</div>
 					</CardContent>
@@ -193,7 +199,7 @@ export function GamesManagement() {
 							<Play className="w-5 h-5 text-green-500" />
 							<div>
 								<div className="text-2xl font-bold">{stats.active}</div>
-								<div className="text-sm text-muted-foreground">Active Games</div>
+								<div className="text-sm text-muted-foreground">Jogos Ativos</div>
 							</div>
 						</div>
 					</CardContent>
@@ -205,7 +211,7 @@ export function GamesManagement() {
 							<Trophy className="w-5 h-5 text-blue-500" />
 							<div>
 								<div className="text-2xl font-bold">{stats.completedToday}</div>
-								<div className="text-sm text-muted-foreground">Completed Today</div>
+								<div className="text-sm text-muted-foreground">Encerrados Hoje</div>
 							</div>
 						</div>
 					</CardContent>
@@ -217,7 +223,7 @@ export function GamesManagement() {
 							<DollarSign className="w-5 h-5 text-yellow-500" />
 							<div>
 								<div className="text-2xl font-bold">{formatCurrency(stats.totalPrizePool)}</div>
-								<div className="text-sm text-muted-foreground">Total Prize Pool</div>
+								<div className="text-sm text-muted-foreground">Premiação Total</div>
 							</div>
 						</div>
 					</CardContent>
@@ -240,7 +246,7 @@ export function GamesManagement() {
 										: "text-muted-foreground hover:text-foreground"
 								}`}
 							>
-								{filter}
+								{filterLabels[filter]}
 							</button>
 						))}
 					</div>
@@ -252,7 +258,7 @@ export function GamesManagement() {
 								<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
 								<input
 									type="text"
-									placeholder="Search games..."
+									placeholder="Buscar jogos..."
 									value={searchQuery}
 									onChange={(e) => setSearchQuery(e.target.value)}
 									className="w-full pl-10 pr-4 py-2 border border-input bg-background rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
@@ -274,9 +280,9 @@ export function GamesManagement() {
 									onChange={(e) => setSortBy(e.target.value as SortOption)}
 									className="px-3 py-2 border border-input bg-background rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring"
 								>
-									<option value="Start Time">Start Time</option>
-									<option value="Prize Pool">Prize Pool</option>
-									<option value="Players">Players</option>
+									<option value="Start Time">Hora de Início</option>
+									<option value="Prize Pool">Premiação</option>
+									<option value="Players">Jogadores</option>
 									<option value="Buy-in">Buy-in</option>
 								</select>
 							</div>
@@ -307,7 +313,7 @@ export function GamesManagement() {
 						</div>
 					) : filteredGames.length === 0 ? (
 						<div className="flex items-center justify-center p-12">
-							<p className="text-muted-foreground">No games found</p>
+							<p className="text-muted-foreground">Nenhum jogo encontrado</p>
 						</div>
 					) : (
 						<>
@@ -315,13 +321,13 @@ export function GamesManagement() {
 							<div className="hidden lg:block space-y-0">
 							{/* Table Header */}
 							<div className="grid grid-cols-7 gap-4 p-4 text-sm font-medium text-muted-foreground border-b">
-								<div>Game ID</div>
-								<div>Created</div>
+								<div>ID do Jogo</div>
+								<div>Criado</div>
 								<div>Status</div>
-								<div>Players</div>
-								<div>Total Buy-ins</div>
-								<div>Winner</div>
-								<div>Actions</div>
+								<div>Jogadores</div>
+								<div>Total de Buy-ins</div>
+								<div>Vencedor</div>
+								<div>Ações</div>
 							</div>							{/* Table Rows */}
 							{filteredGames.map((game) => (
 								<div
@@ -338,7 +344,7 @@ export function GamesManagement() {
 
 										<div className="flex items-center space-x-2">
 											{getStatusIcon(game.status)}
-											<span className="text-sm">{game.status === "ACTIVE" ? "Active" : "Finished"}</span>
+											<span className="text-sm">{game.status === "ACTIVE" ? "Ativo" : "Encerrado"}</span>
 										</div>
 
 										<div className="text-sm">{game.playerCount}</div>
@@ -359,9 +365,9 @@ export function GamesManagement() {
 									<div className="flex items-center space-x-1">
 										<button
 											type="button"
-											onClick={() => navigate(`/games/${game.id}`)}
+											onClick={() => navigate(`/app/games/${game.id}`)}
 											className="p-2 hover:bg-accent rounded-md transition-colors"
-											title="View Game Details"
+											title="Ver Detalhes do Jogo"
 										>
 											<Eye className="w-4 h-4" />
 										</button>
@@ -380,11 +386,11 @@ export function GamesManagement() {
 										className="text-sm text-muted-foreground hover:text-foreground transition-colors"
 									>
 										{selectedGames.length === filteredGames.length && filteredGames.length > 0
-											? "Deselect All"
-											: "Select All"}
+											? "Desmarcar Todos"
+											: "Selecionar Todos"}
 									</button>
 									<span className="text-sm text-muted-foreground">
-										{selectedGames.length} of {filteredGames.length} selected
+										{selectedGames.length} de {filteredGames.length} selecionados
 									</span>
 								</div>
 
@@ -397,15 +403,15 @@ export function GamesManagement() {
 										{/* Game Header */}
 										<div className="flex items-start justify-between">
 											<div className="flex-1 min-w-0">
-													<div className="font-semibold text-base truncate">Game {game.id}</div>
+													<div className="font-semibold text-base truncate">Jogo {game.id}</div>
 													<div className="text-xs text-muted-foreground">
-														Created: {new Date(game.createdDate).toLocaleDateString()}
+														Criado: {new Date(game.createdDate).toLocaleDateString()}
 													</div>
 												</div>
 											<div className="flex items-center space-x-2 flex-shrink-0">
 												{getStatusIcon(game.status)}
 												<span className="text-sm font-medium">
-													{game.status === "ACTIVE" ? "Active" : "Finished"}
+													{game.status === "ACTIVE" ? "Ativo" : "Encerrado"}
 												</span>
 											</div>
 										</div>
@@ -413,19 +419,19 @@ export function GamesManagement() {
 										{/* Game Stats Grid */}
 										<div className="grid grid-cols-2 gap-3 text-sm bg-muted/30 rounded-lg p-3">
 											<div className="space-y-1">
-												<span className="text-muted-foreground text-xs">Players</span>
+												<span className="text-muted-foreground text-xs">Jogadores</span>
 												<div className="font-semibold">{game.playerCount}</div>
 											</div>
 											<div className="space-y-1">
-											<span className="text-muted-foreground text-xs">Total Buy-ins</span>
+											<span className="text-muted-foreground text-xs">Total de Buy-ins</span>
 											<div className="font-semibold">{formatCurrency(game.totalBuyIns)}</div>
 										</div>
 										<div className="space-y-1">
-											<span className="text-muted-foreground text-xs">Balance</span>
+											<span className="text-muted-foreground text-xs">Saldo</span>
 											<div className="font-semibold">{formatBalance(game.balance)}</div>
 											</div>
 										<div className="space-y-1">
-											<span className="text-muted-foreground text-xs">Winner</span>
+											<span className="text-muted-foreground text-xs">Vencedor</span>
 											<div className="font-semibold flex items-center space-x-1">
 												{game.winner ? (
 													<>
@@ -444,9 +450,9 @@ export function GamesManagement() {
 											<div className="flex items-center space-x-1">
 												<button
 													type="button"
-													onClick={() => navigate(`/games/${game.id}`)}
+													onClick={() => navigate(`/app/games/${game.id}`)}
 													className="p-2 hover:bg-accent rounded-md transition-colors"
-													title="View Details"
+													title="Ver Detalhes"
 												>
 													<Eye className="w-4 h-4" />
 												</button>
@@ -454,7 +460,7 @@ export function GamesManagement() {
 											<button
 												type="button"
 												className="p-2 hover:bg-accent rounded-md transition-colors"
-												title="More Options"
+												title="Mais Opções"
 											>
 												<MoreVertical className="w-4 h-4" />
 											</button>
@@ -468,7 +474,7 @@ export function GamesManagement() {
 					{/* Pagination */}
 					<div className="flex items-center justify-between p-4 border-t">
 						<div className="text-sm text-muted-foreground">
-							Page {currentPage} of {totalPages}
+							Página {currentPage} de {totalPages}
 						</div>
 						<div className="flex items-center space-x-1">
 							<button
@@ -476,7 +482,7 @@ export function GamesManagement() {
 								onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
 								className="p-2 border border-input bg-background hover:bg-accent rounded-md transition-colors disabled:opacity-50"
 								disabled={currentPage === 1}
-								title="Previous page"
+								title="Página anterior"
 							>
 								<ChevronLeft className="w-4 h-4" />
 							</button>
@@ -553,7 +559,7 @@ export function GamesManagement() {
 								onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
 								className="p-2 border border-input bg-background hover:bg-accent rounded-md transition-colors disabled:opacity-50"
 								disabled={currentPage === totalPages}
-								title="Next page"
+								title="Próxima página"
 							>
 								<ChevronRight className="w-4 h-4" />
 							</button>
@@ -567,32 +573,32 @@ export function GamesManagement() {
 				<div className="fixed bottom-4 left-4 right-4 md:left-1/2 md:right-auto md:transform md:-translate-x-1/2 md:w-auto bg-background border border-border rounded-lg shadow-lg p-4 z-50">
 					<div className="flex flex-col md:flex-row items-stretch md:items-center space-y-3 md:space-y-0 md:space-x-4">
 						<span className="text-sm font-medium text-center md:text-left">
-							{selectedGames.length} selected
+							{selectedGames.length} selecionados
 						</span>
 						<div className="grid grid-cols-2 md:flex md:items-center gap-2 md:space-x-2">
 							<button
 								type="button"
 								className="px-3 py-2 text-sm border border-input bg-background hover:bg-accent rounded-md transition-colors flex items-center justify-center space-x-1"
 							>
-								<span>Export</span>
+								<span>Exportar</span>
 							</button>
 							<button
 								type="button"
 								className="px-3 py-2 text-sm border border-input bg-background hover:bg-accent rounded-md transition-colors flex items-center justify-center space-x-1"
 							>
-								<span>Cancel</span>
+								<span>Cancelar</span>
 							</button>
 							<button
 								type="button"
 								className="px-3 py-2 text-sm bg-orange-500 hover:bg-orange-600 text-white rounded-md transition-colors flex items-center justify-center space-x-1 col-span-2 md:col-span-1"
 							>
-								<span>Manage Selected</span>
+								<span>Gerenciar Selecionados</span>
 							</button>
 						</div>
 					</div>
 				</div>
 			)}
-		
+
 	</div>
 	);
 }
