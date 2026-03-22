@@ -62,7 +62,7 @@ export function Header() {
 									<NavigationMenuLink asChild>
 										<Link to="/app" className={navigationMenuTriggerStyle()}>
 											<Home className="w-4 h-4 mr-2" />
-											Home
+											Início
 										</Link>
 									</NavigationMenuLink>
 								</NavigationMenuItem>
@@ -133,7 +133,7 @@ export function Header() {
 									<NavigationMenuLink asChild>
 									<Link to="/app/about" className={navigationMenuTriggerStyle()}>
 											<Info className="w-4 h-4 mr-2" />
-											About
+											Sobre
 										</Link>
 									</NavigationMenuLink>
 								</NavigationMenuItem>
@@ -361,7 +361,7 @@ export function Header() {
 									<DropdownMenuItem asChild>
 										<Link to="/" className="flex items-center">
 											<Info className="w-4 h-4 mr-2" />
-											About
+											Sobre
 										</Link>
 									</DropdownMenuItem>
 									<DropdownMenuSeparator />

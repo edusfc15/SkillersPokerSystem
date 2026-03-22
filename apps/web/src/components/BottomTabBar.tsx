@@ -3,7 +3,7 @@ import { Gamepad2, Home, Trophy, Users } from "lucide-react";
 
 const TABS = [
 	{
-		label: "Home",
+		label: "Início",
 		icon: Home,
 		href: "/app",
 		isActive: (pathname: string) => pathname === "/app",
