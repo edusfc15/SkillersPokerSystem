@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { GamesModule } from './games/games.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { PrismaService } from './prisma.service';
+import { AdminGuard } from './auth/guards/admin.guard';
 import { GlobalExceptionFilter } from './common/filters';
 import { BigIntSerializerInterceptor } from './common/interceptors';
 
@@ -15,6 +16,7 @@ import { BigIntSerializerInterceptor } from './common/interceptors';
   providers: [
     AppService,
     PrismaService,
+    AdminGuard,
     {
       provide: APP_FILTER,
       useClass: GlobalExceptionFilter,

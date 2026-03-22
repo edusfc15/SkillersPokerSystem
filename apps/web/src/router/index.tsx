@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 // Import pages directly for now
 import { GamesPage } from "../pages/GamesPage";
 import { LoginPage } from "../pages/login-page";
@@ -6,7 +6,6 @@ import { PlayersPage } from "../pages/PlayersPage";
 import { ProfilePage } from "../pages/ProfilePage";
 import { RegisterPage } from "../pages/register-page";
 import { SettingsPage } from "../pages/SettingsPage";
-import { About } from "../pages/About";
 import { Home } from "../pages/Home";
 import { RootLayout } from "../pages/RootLayout";
 import { ProtectedLayout } from "../pages/ProtectedLayout";
@@ -44,10 +43,6 @@ export const router = createBrowserRouter([
 				element: <Home />,
 			},
 			{
-				path: "about",
-				element: <About />,
-			},
-			{
 				path: "games",
 				element: <GamesPage />,
 			},
@@ -62,6 +57,10 @@ export const router = createBrowserRouter([
 			{
 				path: "players",
 				element: <PlayersPage />,
+			},
+			{
+				path: "players/create",
+				element: <Navigate to="/app/players" replace />,
 			},
 			{
 				path: "profile",

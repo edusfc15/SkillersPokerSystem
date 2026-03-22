@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { GamesService } from './games.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { AdminGuard } from '../auth/guards/admin.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { AuthenticatedUser } from '../auth/interfaces/auth.interface';
 import { ZodValidationPipe } from '../common/pipes';
@@ -30,7 +31,7 @@ export class GamesController {
   constructor(private readonly gamesService: GamesService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
   async createGame(
     @Body(new ZodValidationPipe(createGameSchema)) createGameDto: CreateGameDto,
     @CurrentUser() user: AuthenticatedUser
@@ -73,7 +74,7 @@ export class GamesController {
   }
 
   @Post(':id/buy-in')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
   async registerBuyIn(
     @Param('id') id: string,
     @Body(new ZodValidationPipe(buyInSchema)) buyInDto: BuyInDto,
@@ -83,7 +84,7 @@ export class GamesController {
   }
 
   @Post(':id/cashout')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
   async registerCashout(
     @Param('id') id: string,
     @Body(new ZodValidationPipe(cashoutSchema)) cashoutDto: CashoutDto,
@@ -93,7 +94,7 @@ export class GamesController {
   }
 
   @Put(':id/finish')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
   async finishGame(
     @Param('id') id: string,
     @Body(new ZodValidationPipe(finishGameSchema)) finishGameDto: FinishGameDto,
@@ -103,7 +104,7 @@ export class GamesController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
   async deleteGame(
     @Param('id') id: string,
     @CurrentUser() user: AuthenticatedUser
@@ -112,7 +113,7 @@ export class GamesController {
   }
 
   @Delete(':gameId/transactions/:transactionId')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
   async deleteTransaction(
     @Param('gameId') gameId: string,
     @Param('transactionId') transactionId: string,

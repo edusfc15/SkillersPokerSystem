@@ -7,7 +7,6 @@ import {
 	Filter,
 	Gamepad2,
 	MoreVertical,
-	Play,
 	Plus,
 	Search,
 	Trophy,
@@ -110,13 +109,10 @@ export function GamesManagement() {
 
 	const getStats = () => {
 		const totalGames = games.length;
-		const activeGames = games.filter((g) => g.status === "ACTIVE").length;
 		const totalPrizePool = games.reduce((sum, game) => sum + game.balance, 0);
 
 		return {
 			total: totalGames,
-			active: activeGames,
-			completedToday: totalGames - activeGames,
 			totalPrizePool,
 		};
 	};
@@ -136,7 +132,7 @@ export function GamesManagement() {
 	};
 
 	const formatCurrency = (amount: number) => {
-		if (amount === 0) return "Free";
+		if (amount === 0) return "Grátis";
 		return `$${amount.toLocaleString()}`;
 	};
 
@@ -165,7 +161,7 @@ export function GamesManagement() {
 				<div>
 					<h1 className="text-3xl font-bold mb-2">Gerenciamento de Jogos</h1>
 					<p className="text-muted-foreground">
-						Monitore e gerencie jogos de poker, torneios e mesas cash
+						Monitore e gerencie o cash game do Skillers
 					</p>
 				</div>
 				<button
@@ -180,7 +176,7 @@ export function GamesManagement() {
 			</div>
 
 			{/* Stats Cards */}
-			<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+			<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 				<Card>
 					<CardContent className="p-4 md:p-6">
 						<div className="flex items-center space-x-2">
@@ -188,30 +184,6 @@ export function GamesManagement() {
 							<div>
 								<div className="text-2xl font-bold">{stats.total}</div>
 								<div className="text-sm text-muted-foreground">Total de Jogos</div>
-							</div>
-						</div>
-					</CardContent>
-				</Card>
-
-				<Card>
-					<CardContent className="p-4 md:p-6">
-						<div className="flex items-center space-x-2">
-							<Play className="w-5 h-5 text-green-500" />
-							<div>
-								<div className="text-2xl font-bold">{stats.active}</div>
-								<div className="text-sm text-muted-foreground">Jogos Ativos</div>
-							</div>
-						</div>
-					</CardContent>
-				</Card>
-
-				<Card>
-					<CardContent className="p-4 md:p-6">
-						<div className="flex items-center space-x-2">
-							<Trophy className="w-5 h-5 text-blue-500" />
-							<div>
-								<div className="text-2xl font-bold">{stats.completedToday}</div>
-								<div className="text-sm text-muted-foreground">Encerrados Hoje</div>
 							</div>
 						</div>
 					</CardContent>
@@ -307,7 +279,7 @@ export function GamesManagement() {
 									onClick={() => window.location.reload()}
 									className="mt-4 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-md text-sm font-medium transition-colors"
 								>
-									Retry
+									Tentar novamente
 								</button>
 							</div>
 						</div>

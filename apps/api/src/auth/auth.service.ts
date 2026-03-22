@@ -345,6 +345,39 @@ export class AuthService {
 		return { success: true, data: updated };
 	}
 
+	async setUserPlayer(requestingUserId: string, targetUserId: string, playerId: number | null) {
+		const requester = await this.prisma.users.findUnique({
+			where: { id: requestingUserId },
+			select: { isadmin: true },
+		});
+		if (!requester?.isadmin) {
+			throw new ForbiddenException('Admin access required');
+		}
+
+		// Ensure column allows NULL (may differ from schema.prisma due to legacy migration)
+		await this.prisma.$executeRaw`ALTER TABLE players ALTER COLUMN userid DROP NOT NULL`;
+		// Clear current player association for this user
+		await this.prisma.$executeRaw`UPDATE players SET userid = NULL WHERE userid = ${targetUserId}`;
+
+		// Set new player association
+		if (playerId !== null) {
+			await this.prisma.players.update({
+				where: { id: playerId },
+				data: { userid: targetUserId },
+			});
+		}
+
+		return { success: true };
+	}
+
+	async listPlayers() {
+		const players = await this.prisma.players.findMany({
+			select: { id: true, name: true, userid: true },
+			orderBy: { name: 'asc' },
+		});
+		return players.map(p => ({ id: Number(p.id), name: p.name, userid: p.userid }));
+	}
+
 	async onModuleDestroy() {
 		await this.prisma.$disconnect();
 	}

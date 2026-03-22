@@ -120,6 +120,45 @@ export class AuthHttpService {
 	}
 
 	/**
+	 * Lista todos os jogadores ativos
+	 */
+	async listPlayers(): Promise<{ id: number; name: string; userid: string | null }[]> {
+		try {
+			return await apiClient.get("auth/players").json();
+		} catch (error) {
+			const message = await extractApiError(error);
+			throw new Error(message);
+		}
+	}
+
+	/**
+	 * Associa um jogador a um usuário (admin)
+	 */
+	async setUserPlayer(userId: string, playerId: number | null): Promise<void> {
+		try {
+			await apiClient.put(`auth/users/${userId}/player`, { json: { playerId } }).json();
+		} catch (error) {
+			const message = await extractApiError(error);
+			throw new Error(message);
+		}
+	}
+
+	/**
+	 * Cria um novo usuário (admin)
+	 */
+	async createUser(data: { username: string; email: string; password: string; displayName?: string }): Promise<UserAdminEntry> {
+		try {
+			const response = await apiClient
+				.post("auth/register", { json: data })
+				.json<{ accessToken: string; user: UserAdminEntry }>();
+			return response.user;
+		} catch (error) {
+			const message = await extractApiError(error);
+			throw new Error(message);
+		}
+	}
+
+	/**
 	 * Define o papel (role) de um usuário (admin)
 	 */
 	async setUserRole(userId: string, isadmin: boolean): Promise<void> {

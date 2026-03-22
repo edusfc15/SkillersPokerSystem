@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Button, Input, Alert, AlertDescription, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@skillers/ui';
+import { Button, Input, Alert, AlertDescription, Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue, AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@skillers/ui';
 import { 
   ChevronLeft, 
   Plus, 
@@ -111,15 +111,11 @@ export function GameDetailPage() {
 
   const handleFinishGame = async () => {
     if (!gameId || !canFinish.canFinish) return;
-    
-    const confirmed = confirm('Are you sure you want to finish this game? This action cannot be undone.');
-    if (confirmed) {
-      try {
-        await finishGame(gameId, {});
-        navigate('/games');
-      } catch (error) {
-        console.error('Failed to finish game:', error);
-      }
+    try {
+      await finishGame(gameId, {});
+      navigate('/app/games');
+    } catch (error) {
+      console.error('Failed to finish game:', error);
     }
   };
 
@@ -214,31 +210,46 @@ export function GameDetailPage() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/games')}
+              onClick={() => navigate('/app/games')}
               className="flex items-center gap-2"
             >
               <ChevronLeft className="w-4 h-4" />
-              Back to Games
+              Voltar para Jogos
             </Button>
           </div>
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold">Game #{currentGame.id.toString()}</h1>
+              <h1 className="text-3xl font-bold">Jogo #{currentGame.id.toString()}</h1>
               <p className="text-muted-foreground mt-2">
                 Status: <span className={`font-semibold ${currentGame.status === 'ACTIVE' ? 'text-success' : 'text-secondary'}`}>
-                  {currentGame.status}
+                  {currentGame.status === 'ACTIVE' ? 'Ativo' : 'Encerrado'}
                 </span>
               </p>
             </div>
             {currentGame.status === 'ACTIVE' && (
-              <Button
-                onClick={handleFinishGame}
-                disabled={!canFinish.canFinish || loading}
-                className={!canFinish.canFinish ? 'opacity-50 cursor-not-allowed' : ''}
-              >
-                <CheckCircle className="w-4 h-4 mr-2" />
-                Finish Game
-              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    disabled={!canFinish.canFinish || loading}
+                    className={!canFinish.canFinish ? 'opacity-50 cursor-not-allowed' : ''}
+                  >
+                    <CheckCircle className="w-4 h-4 mr-2" />
+                    Finalizar Jogo
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Finalizar jogo?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Tem certeza que deseja finalizar este jogo? Esta ação não pode ser desfeita.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleFinishGame}>Finalizar</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             )}
           </div>
         </div>
@@ -257,7 +268,7 @@ export function GameDetailPage() {
           <Alert variant="warning">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
-              <strong>Cannot finish game:</strong> {canFinish.reason}
+              <strong>Não é possível finalizar o jogo:</strong> {canFinish.reason}
             </AlertDescription>
           </Alert>
         )}
@@ -267,7 +278,7 @@ export function GameDetailPage() {
           <div className="bg-card border border-border rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-muted-foreground text-sm">Players</p>
+                <p className="text-muted-foreground text-sm">Jogadores</p>
                 <p className="text-3xl font-bold text-secondary">{stats.playerCount}</p>
               </div>
               <Users className="w-8 h-8 text-secondary opacity-20" />
@@ -287,7 +298,7 @@ export function GameDetailPage() {
           <div className="bg-card border border-border rounded-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-muted-foreground text-sm">Cashouts</p>
+                <p className="text-muted-foreground text-sm">Cashout</p>
                 <p className="text-3xl font-bold text-primary">{gameService.formatCurrency(stats.totalCashOuts)}</p>
               </div>
               <TrendingUp className="w-8 h-8 text-primary opacity-20" />
@@ -308,31 +319,49 @@ export function GameDetailPage() {
         {/* Buy-in Form */}
         {showBuyInForm && (
           <div className="border border-border rounded-lg p-4 bg-card">
-            <h3 className="text-lg font-medium mb-4">Register Buy-in</h3>
+            <h3 className="text-lg font-medium mb-4">Adicionar Buy-in</h3>
             <form onSubmit={handleBuyIn} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                   <label className="block text-sm font-medium text-card-foreground mb-1">
-                    Player
+                    Jogador
                   </label>
                   <Select value={String(buyInData.playerId)} onValueChange={(value: string) => setBuyInData(prev => ({ ...prev, playerId: Number(value) }))}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select player" />
+                      <SelectValue placeholder="Selecione um jogador" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="-1">Select player</SelectItem>
-                      {allPlayersForSelection.map(player => (
-                        <SelectItem key={String(player.id)} value={String(player.id)}>
-                          {player.name}
-                        </SelectItem>
-                      ))}
+                      <SelectItem value="-1">Selecione um jogador</SelectItem>
+                      {(() => {
+                        const ativos = allPlayersForSelection.filter(p => p.isactive);
+                        const inativos = allPlayersForSelection.filter(p => !p.isactive);
+                        return (
+                          <>
+                            {ativos.length > 0 && (
+                              <SelectGroup>
+                                <SelectLabel>Ativos</SelectLabel>
+                                {ativos.map(p => <SelectItem key={String(p.id)} value={String(p.id)}>{p.name}</SelectItem>)}
+                              </SelectGroup>
+                            )}
+                            {inativos.length > 0 && (
+                              <>
+                                {ativos.length > 0 && <SelectSeparator />}
+                                <SelectGroup>
+                                  <SelectLabel>Inativos</SelectLabel>
+                                  {inativos.map(p => <SelectItem key={String(p.id)} value={String(p.id)}>{p.name}</SelectItem>)}
+                                </SelectGroup>
+                              </>
+                            )}
+                          </>
+                        );
+                      })()}
                     </SelectContent>
                   </Select>
                 </div>
                 
                 <div>
                   <label htmlFor="buyinAmount" className="block text-sm font-medium text-card-foreground mb-1">
-                    Amount
+                    Valor
                   </label>
                   <Input
                     id="buyinAmount"
@@ -340,8 +369,8 @@ export function GameDetailPage() {
                     value={buyInData.amount}
                     onChange={(e) => setBuyInData(prev => ({ ...prev, amount: Number(e.target.value) }))}
                     required
-                    min="0"
-                    step="0.01"
+                    min="5"
+                    step="5"
                   />
                   {/* Quick add buttons */}
                   <div className="grid grid-cols-4 gap-2 mt-2">
@@ -362,7 +391,7 @@ export function GameDetailPage() {
                     onClick={() => setBuyInData(prev => ({ ...prev, amount: 5 }))}
                     className="w-full mt-2 px-3 py-1 text-sm bg-secondary/20 hover:bg-secondary/30 text-secondary rounded transition-colors"
                   >
-                    Reset to 5 (min)
+                    Valor mínimo (5)
                   </button>
                   {/* Repeat last buy-in button */}
                   {buyInData.playerId > 0 && transactions.some(t => t.playerId === String(buyInData.playerId) && t.type === 'BUY_IN') && (
@@ -379,10 +408,10 @@ export function GameDetailPage() {
               
               <div className="flex gap-2">
                 <Button type="submit" disabled={loading}>
-                  Register Buy-in
+                  Registrar Buy-in
                 </Button>
                 <Button type="button" variant="outline" onClick={() => setShowBuyInForm(false)}>
-                  Cancel
+                  Cancelar
                 </Button>
               </div>
             </form>
@@ -392,31 +421,49 @@ export function GameDetailPage() {
         {/* Cashout Form */}
         {showCashoutForm && (
           <div className="border border-border rounded-lg p-4 bg-card">
-            <h3 className="text-lg font-medium mb-4">Register Cashout</h3>
+            <h3 className="text-lg font-medium mb-4">Registrar Cashout</h3>
             <form onSubmit={handleCashout} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-card-foreground mb-1">
-                    Player
+                    Jogador
                   </label>
                   <Select value={String(cashoutData.playerId)} onValueChange={(value: string) => setCashoutData(prev => ({ ...prev, playerId: Number(value) }))}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select player" />
+                      <SelectValue placeholder="Selecione um jogador" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="-1">Select player</SelectItem>
-                      {allPlayersForSelection.map(player => (
-                        <SelectItem key={String(player.id)} value={String(player.id)}>
-                          {player.name}
-                        </SelectItem>
-                      ))}
+                      <SelectItem value="-1">Selecione um jogador</SelectItem>
+                      {(() => {
+                        const ativos = allPlayersForSelection.filter(p => p.isactive);
+                        const inativos = allPlayersForSelection.filter(p => !p.isactive);
+                        return (
+                          <>
+                            {ativos.length > 0 && (
+                              <SelectGroup>
+                                <SelectLabel>Ativos</SelectLabel>
+                                {ativos.map(p => <SelectItem key={String(p.id)} value={String(p.id)}>{p.name}</SelectItem>)}
+                              </SelectGroup>
+                            )}
+                            {inativos.length > 0 && (
+                              <>
+                                {ativos.length > 0 && <SelectSeparator />}
+                                <SelectGroup>
+                                  <SelectLabel>Inativos</SelectLabel>
+                                  {inativos.map(p => <SelectItem key={String(p.id)} value={String(p.id)}>{p.name}</SelectItem>)}
+                                </SelectGroup>
+                              </>
+                            )}
+                          </>
+                        );
+                      })()}
                     </SelectContent>
                   </Select>
                 </div>
                 
                 <div>
                   <label htmlFor="cashoutAmount" className="block text-sm font-medium text-card-foreground mb-1">
-                    Amount
+                    Valor
                   </label>
                   <Input
                     id="cashoutAmount"
@@ -424,8 +471,8 @@ export function GameDetailPage() {
                     value={cashoutData.amount}
                     onChange={(e) => setCashoutData(prev => ({ ...prev, amount: Number(e.target.value) }))}
                     required
-                    min="0"
-                    step="0.01"
+                    min="0.5"
+                    step="0.5"
                   />
                   {/* Quick add buttons */}
                   <div className="grid grid-cols-4 gap-2 mt-2">
@@ -446,17 +493,17 @@ export function GameDetailPage() {
                     onClick={() => setCashoutData(prev => ({ ...prev, amount: 5 }))}
                     className="w-full mt-2 px-3 py-1 text-sm bg-secondary/20 hover:bg-secondary/30 text-secondary rounded transition-colors"
                   >
-                    Reset to 5 (min)
+                    Valor mínimo (5)
                   </button>
                 </div>
               </div>
-              
+
               <div className="flex gap-2">
                 <Button type="submit" disabled={loading}>
-                  Register Cashout
+                  Registrar Cashout
                 </Button>
                 <Button type="button" variant="outline" onClick={() => setShowCashoutForm(false)}>
-                  Cancel
+                  Cancelar
                 </Button>
               </div>
             </form>
@@ -487,11 +534,11 @@ export function GameDetailPage() {
                     setRakeError('');
                   }}
                   required
-                  min="0"
-                  step="0.01"
-                  placeholder="0.00"
+                  min="0.5"
+                  step="0.5"
+                  placeholder="0,00"
                 />
-                <p className="text-xs text-muted-foreground mt-1">Amount must be positive</p>
+                <p className="text-xs text-muted-foreground mt-1">O valor deve ser positivo</p>
                 {/* Quick add buttons */}
                 <div className="grid grid-cols-4 gap-2 mt-2">
                   {[5, 10, 20, 50].map(value => (
@@ -529,26 +576,26 @@ export function GameDetailPage() {
 
         {/* Action Buttons */}
         {!showBuyInForm && !showCashoutForm && !showRakeForm && currentGame.status === 'ACTIVE' && (
-          <div className="flex gap-3">
+          <div className="grid grid-cols-2 md:flex gap-3">
             <Button
               onClick={() => setShowBuyInForm(true)}
-              className="flex items-center gap-2"
+              className="flex items-center justify-center gap-2"
             >
               <Plus className="w-4 h-4" />
-              Add Buy-in
+              Adicionar Buy-in
             </Button>
             <Button
               onClick={() => setShowCashoutForm(true)}
               variant="outline"
-              className="flex items-center gap-2"
+              className="flex items-center justify-center gap-2"
             >
               <Minus className="w-4 h-4" />
-              Add Cashout
+              Adicionar Cashout
             </Button>
             <Button
               onClick={() => setShowRakeForm(true)}
               variant="outline"
-              className="flex items-center gap-2"
+              className="flex items-center justify-center gap-2 col-span-2 md:col-span-1"
             >
               <DollarSign className="w-4 h-4" />
               Adicionar Rake
@@ -558,9 +605,9 @@ export function GameDetailPage() {
 
         {/* Players Summary */}
         <div>
-          <h3 className="text-lg font-medium mb-4">Players Summary</h3>
+          <h3 className="text-lg font-medium mb-4">Resumo do jogador</h3>
           {playerSummaries.size === 0 ? (
-            <p className="text-muted-foreground text-center py-8">No players yet</p>
+            <p className="text-muted-foreground text-center py-8">Não há jogadores registrados.</p>
           ) : (
             <div className="space-y-3">
               {Array.from(playerSummaries.entries()).map(([playerId, summary]) => {
@@ -585,7 +632,7 @@ export function GameDetailPage() {
                         <p className="font-semibold text-primary">{gameService.formatCurrency(summary.cashOutTotal)}</p>
                       </div>
                       <div className="bg-secondary/10 border border-secondary/20 p-2 rounded">
-                        <p className="text-muted-foreground">Transactions</p>
+                        <p className="text-muted-foreground">Transações</p>
                         <p className="font-semibold text-secondary">{summary.transactions.length}</p>
                       </div>
                     </div>
@@ -598,9 +645,9 @@ export function GameDetailPage() {
 
         {/* Transactions List */}
         <div>
-          <h3 className="text-lg font-medium mb-4">Transaction History</h3>
+          <h3 className="text-lg font-medium mb-4">Histórico de Transações</h3>
           {transactions.length === 0 ? (
-            <p className="text-muted-foreground text-center py-8">No transactions yet</p>
+            <p className="text-muted-foreground text-center py-8">Nenhuma transação ainda</p>
           ) : (
             <div className="space-y-2 max-h-96 overflow-y-auto">
               {transactions.map(transaction => (
@@ -637,7 +684,7 @@ export function GameDetailPage() {
                         type="button"
                         onClick={() => handleDeleteTransaction(String(transaction.id))}
                         className="p-2 hover:bg-destructive/20 rounded-md transition-colors text-destructive"
-                        title="Delete transaction"
+                        title="Excluir transação"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>

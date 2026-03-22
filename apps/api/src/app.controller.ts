@@ -3,6 +3,7 @@ import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { AppService } from "./app.service";
 import { PrismaService } from "./prisma.service";
 import { JwtAuthGuard } from "./auth/guards/jwt-auth.guard";
+import { AdminGuard } from "./auth/guards/admin.guard";
 import { CurrentUser } from "./auth/decorators/current-user.decorator";
 import type { AuthenticatedUser } from "./auth/interfaces/auth.interface";
 
@@ -204,6 +205,7 @@ export class AppController {
 	}
 
 	@Put("players/:id")
+	@UseGuards(JwtAuthGuard, AdminGuard)
 	@ApiOperation({ summary: "Update player" })
 	@ApiResponse({ status: 200, description: "Player updated successfully" })
 	@ApiResponse({ status: 404, description: "Player not found" })
@@ -234,6 +236,7 @@ export class AppController {
 	}
 
 	@Post("players")
+	@UseGuards(JwtAuthGuard, AdminGuard)
 	@ApiOperation({ summary: "Create new player" })
 	@ApiResponse({ status: 201, description: "Player created successfully" })
 	@ApiResponse({ status: 400, description: "Invalid input" })

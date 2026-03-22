@@ -6,4 +6,5 @@ export * from "./input";
 export * from "./navigation-menu";
 export * from "./select";
 export * from "./alert";
+export * from "./alert-dialog";
 // Add other component exports here

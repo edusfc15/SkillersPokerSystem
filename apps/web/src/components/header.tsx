@@ -10,12 +10,11 @@ import {
 	NavigationMenu,
 	NavigationMenuContent,
 	NavigationMenuItem,
-	NavigationMenuLink,
 	NavigationMenuList,
 	NavigationMenuTrigger,
 	navigationMenuTriggerStyle,
 } from "@skillers/ui";
-import { ChevronDown, Gamepad2, Home, Info, LogOut, Menu, Settings, ShieldCheck, Trophy, User } from "lucide-react";
+import { ChevronDown, Gamepad2, Home, LogOut, Menu, Settings, ShieldCheck, Trophy, User } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/auth-context";
 import { ThemeSwitcher } from "./theme-switcher";
@@ -59,12 +58,10 @@ export function Header() {
 						<NavigationMenu>
 							<NavigationMenuList>
 								<NavigationMenuItem>
-									<NavigationMenuLink asChild>
-										<Link to="/app" className={navigationMenuTriggerStyle()}>
-											<Home className="w-4 h-4 mr-2" />
-											Início
-										</Link>
-									</NavigationMenuLink>
+									<Link to="/app" className={navigationMenuTriggerStyle()}>
+										<Home className="w-4 h-4 mr-2" />
+										Início
+									</Link>
 								</NavigationMenuItem>
 
 								<NavigationMenuItem>
@@ -130,31 +127,18 @@ export function Header() {
 								</NavigationMenuItem>
 
 								<NavigationMenuItem>
-									<NavigationMenuLink asChild>
-									<Link to="/app/about" className={navigationMenuTriggerStyle()}>
-											<Info className="w-4 h-4 mr-2" />
-											Sobre
-										</Link>
-									</NavigationMenuLink>
-								</NavigationMenuItem>
-
-								<NavigationMenuItem>
-									<NavigationMenuLink asChild>
-										<Link to="/app/ranking" className={navigationMenuTriggerStyle()}>
-											<Trophy className="w-4 h-4 mr-2" />
-											Ranking
-										</Link>
-									</NavigationMenuLink>
+									<Link to="/app/ranking" className={navigationMenuTriggerStyle()}>
+										<Trophy className="w-4 h-4 mr-2" />
+										Ranking
+									</Link>
 								</NavigationMenuItem>
 
 								{user?.isadmin && (
 									<NavigationMenuItem>
-										<NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-											<Link to="/app/admin">
-												<ShieldCheck className="w-4 h-4 mr-2" />
-												Admin
-											</Link>
-										</NavigationMenuLink>
+										<Link to="/app/admin" className={navigationMenuTriggerStyle()}>
+											<ShieldCheck className="w-4 h-4 mr-2" />
+											Admin
+										</Link>
 									</NavigationMenuItem>
 								)}
 							</NavigationMenuList>
@@ -356,12 +340,6 @@ export function Header() {
 										<Link to="/" className="flex items-center">
 											<Home className="w-4 h-4 mr-2" />
 											Home
-										</Link>
-									</DropdownMenuItem>
-									<DropdownMenuItem asChild>
-										<Link to="/" className="flex items-center">
-											<Info className="w-4 h-4 mr-2" />
-											Sobre
 										</Link>
 									</DropdownMenuItem>
 									<DropdownMenuSeparator />

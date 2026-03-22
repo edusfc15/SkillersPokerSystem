@@ -5,6 +5,7 @@ import { AuthService } from "./auth.service";
 import { CurrentUser } from "./decorators/current-user.decorator";
 import { AuthResponseDto } from "./dto";
 import { JwtAuthGuard } from "./guards/jwt-auth.guard";
+import { AdminGuard } from "./guards/admin.guard";
 import { AuthenticatedUser } from "./interfaces/auth.interface";
 import { type LoginDto, loginSchema, type RegisterDto, registerSchema } from "./schemas";
 
@@ -14,7 +15,9 @@ export class AuthController {
 	constructor(private readonly authService: AuthService) {}
 
 	@Post('register')
-	@ApiOperation({ summary: 'Register a new user' })
+	@UseGuards(JwtAuthGuard, AdminGuard)
+	@ApiBearerAuth()
+	@ApiOperation({ summary: 'Register a new user (admin only)' })
 	@ApiResponse({
 		status: HttpStatus.CREATED,
 		description: 'User registered successfully',
@@ -80,5 +83,25 @@ export class AuthController {
 		@Body() body: { isadmin: boolean },
 	) {
 		return this.authService.setUserRole(user.id, targetId, body.isadmin);
+	}
+
+	@Put('users/:id/player')
+	@UseGuards(JwtAuthGuard)
+	@ApiBearerAuth()
+	@ApiOperation({ summary: 'Associate a player to a user (admin only)' })
+	async setUserPlayer(
+		@CurrentUser() user: AuthenticatedUser,
+		@Param('id') targetId: string,
+		@Body() body: { playerId: number | null },
+	) {
+		return this.authService.setUserPlayer(user.id, targetId, body.playerId);
+	}
+
+	@Get('players')
+	@UseGuards(JwtAuthGuard)
+	@ApiBearerAuth()
+	@ApiOperation({ summary: 'List all active players (admin only)' })
+	async listPlayers(@CurrentUser() user: AuthenticatedUser) {
+		return this.authService.listPlayers();
 	}
 }

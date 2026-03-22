@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Input, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Alert, AlertDescription } from '@skillers/ui';
+import { Button, Input, Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue, Alert, AlertDescription } from '@skillers/ui';
 import { ChevronLeft, AlertCircle, Plus, Trash2 } from 'lucide-react';
 import { gameService } from '../services/game.service';
 import { playerService } from '../services/player.service';
@@ -32,7 +32,7 @@ export function CreateGamePage() {
         const games = await gameService.getActiveGames();
         const activeGame = games.find(g => g.status === 'ACTIVE');
         if (activeGame) {
-          navigate(`/games/${activeGame.id}`, { replace: true });
+          navigate(`/app/games/${activeGame.id}`, { replace: true });
           return;
         }
 
@@ -106,7 +106,7 @@ export function CreateGamePage() {
         });
       }
 
-      navigate(`/games/${result.id}`);
+      navigate(`/app/games/${result.id}`);
     } catch (err) {
       console.error('Erro ao criar jogo:', err);
       setError(err instanceof Error ? err.message : 'Falha ao criar jogo');
@@ -135,7 +135,7 @@ export function CreateGamePage() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/games')}
+              onClick={() => navigate('/app/games')}
               className="flex items-center gap-2"
             >
               <ChevronLeft className="w-4 h-4" />
@@ -176,13 +176,38 @@ export function CreateGamePage() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="-1">Selecione um jogador</SelectItem>
-                      {activePlayers
-                        .filter(p => !playerBuyIns.some(pb => pb.playerId === String(p.id)))
-                        .map(player => (
-                          <SelectItem key={String(player.id)} value={String(player.id)}>
-                            {player.name}
-                          </SelectItem>
-                        ))}
+                      {(() => {
+                        const available = activePlayers.filter(p => !playerBuyIns.some(pb => pb.playerId === String(p.id)));
+                        const ativos = available.filter(p => p.isactive);
+                        const inativos = available.filter(p => !p.isactive);
+                        return (
+                          <>
+                            {ativos.length > 0 && (
+                              <SelectGroup>
+                                <SelectLabel>Ativos</SelectLabel>
+                                {ativos.map(player => (
+                                  <SelectItem key={String(player.id)} value={String(player.id)}>
+                                    {player.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectGroup>
+                            )}
+                            {inativos.length > 0 && (
+                              <>
+                                {ativos.length > 0 && <SelectSeparator />}
+                                <SelectGroup>
+                                  <SelectLabel>Inativos</SelectLabel>
+                                  {inativos.map(player => (
+                                    <SelectItem key={String(player.id)} value={String(player.id)}>
+                                      {player.name}
+                                    </SelectItem>
+                                  ))}
+                                </SelectGroup>
+                              </>
+                            )}
+                          </>
+                        );
+                      })()}
                     </SelectContent>
                   </Select>
                 </div>
@@ -191,6 +216,22 @@ export function CreateGamePage() {
                   <label htmlFor="buyInAmount" className="block text-sm font-medium text-card-foreground mb-1">
                     Valor do Buy-in
                   </label>
+                  <div className="flex gap-2 mb-2">
+                    {[5, 10, 20, 50].map(value => (
+                      <button
+                        key={value}
+                        type="button"
+                        onClick={() => setBuyInAmount(value)}
+                        className={`flex-1 py-1.5 text-sm font-medium rounded-md border transition-colors ${
+                          buyInAmount === value
+                            ? 'bg-primary text-primary-foreground border-primary'
+                            : 'border-border hover:bg-accent hover:text-accent-foreground'
+                        }`}
+                      >
+                        R${value}
+                      </button>
+                    ))}
+                  </div>
                   <div className="flex gap-2">
                     <Input
                       id="buyInAmount"
@@ -258,7 +299,7 @@ export function CreateGamePage() {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => navigate('/games')}
+                onClick={() => navigate('/app/games')}
                 disabled={creating}
                 className="flex-1"
               >
