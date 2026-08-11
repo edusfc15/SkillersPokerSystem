@@ -20,7 +20,7 @@ export function AdminPage() {
 	const [error, setError] = useState<string | null>(null);
 	const [savingPlayer, setSavingPlayer] = useState<string | null>(null);
 	const [showCreateUser, setShowCreateUser] = useState(false);
-	const [newUser, setNewUser] = useState({ username: '', email: '', password: '', displayName: '' });
+	const [newUser, setNewUser] = useState({ username: '', email: '', password: '', displayName: '', playerId: null as number | null });
 	const [creatingUser, setCreatingUser] = useState(false);
 
 	useEffect(() => {
@@ -88,9 +88,20 @@ export function AdminPage() {
 				password: newUser.password,
 				displayName: newUser.displayName || undefined,
 			});
-			setUsers((prev) => [{ ...created, createddate: new Date().toISOString(), player: null }, ...prev]);
+
+			let assignedPlayer: { id: string; name: string } | null = null;
+			if (newUser.playerId !== null) {
+				await authHttpService.setUserPlayer(created.id, newUser.playerId);
+				const found = players.find((p) => p.id === newUser.playerId);
+				if (found) {
+					assignedPlayer = { id: String(found.id), name: found.name };
+					setPlayers((prev) => prev.map((p) => p.id === newUser.playerId ? { ...p, userid: created.id } : p));
+				}
+			}
+
+			setUsers((prev) => [{ ...created, createddate: new Date().toISOString(), player: assignedPlayer }, ...prev]);
 			setShowCreateUser(false);
-			setNewUser({ username: '', email: '', password: '', displayName: '' });
+			setNewUser({ username: '', email: '', password: '', displayName: '', playerId: null });
 		} catch (e) {
 			setError(e instanceof Error ? e.message : 'Erro ao criar usuário');
 		} finally {
@@ -267,6 +278,25 @@ export function AdminPage() {
 									onChange={(e) => setNewUser((p) => ({ ...p, displayName: e.target.value }))}
 									placeholder="Nome completo"
 								/>
+							</div>
+							<div>
+								<label className="block text-sm font-medium mb-1">Jogador associado (opcional)</label>
+								<Select
+									value={newUser.playerId !== null ? String(newUser.playerId) : "none"}
+									onValueChange={(val) => setNewUser((p) => ({ ...p, playerId: val === "none" ? null : Number(val) }))}
+								>
+									<SelectTrigger>
+										<SelectValue placeholder="— Nenhum —" />
+									</SelectTrigger>
+									<SelectContent>
+										<SelectItem value="none">— Nenhum —</SelectItem>
+										{players.filter((p) => p.userid === null).map((p) => (
+											<SelectItem key={p.id} value={String(p.id)}>
+												{p.name}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
 							</div>
 							<div className="flex gap-2 pt-2">
 								<Button type="button" variant="outline" onClick={() => setShowCreateUser(false)} className="flex-1" disabled={creatingUser}>

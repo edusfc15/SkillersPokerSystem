@@ -23,6 +23,13 @@ export const apiClient = ky.create({
         if (isDevelopment()) {
           console.log(`${_request.method} ${response.url} - ${response.status}`);
         }
+
+        if (response.status === 401) {
+          localStorage.removeItem('skillers-auth-token');
+          localStorage.removeItem('skillers-auth-user');
+          window.location.href = '/login';
+        }
+
         return response;
       },
     ],
